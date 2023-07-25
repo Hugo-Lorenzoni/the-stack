@@ -12,12 +12,12 @@ export default function AdminLayout({
     /* Get the current route */
   }
   const currentRoute = usePathname();
-  const linkStyle = "hover:bg-neutral-200 py-2 px-4 rounded-md duration-150";
+  const linkStyle = "hover:bg-neutral-100 py-2 px-4 rounded-md duration-150";
   const activeStyle = "bg-neutral-200" + " " + linkStyle;
 
   return (
     <section className="flex min-h-screen">
-      <aside className="bg-neutral-50 p-4 font-semibold flex flex-col gap-2">
+      <aside className="p-4 font-semibold flex flex-col gap-2 shadow-2xl">
         <Link
           className={
             currentRoute === "/admin/new-event" ? activeStyle : linkStyle
@@ -26,7 +26,6 @@ export default function AdminLayout({
         >
           Créer un nouvel événement
         </Link>
-
         <Link
           className={
             currentRoute === "/admin/accounts-approval"
@@ -37,7 +36,6 @@ export default function AdminLayout({
         >
           Approbation des comptes
         </Link>
-
         <Link
           className={
             currentRoute === "/admin/accounts-management"
@@ -49,7 +47,7 @@ export default function AdminLayout({
           Gestion des comptes
         </Link>
       </aside>
-      <main className="m-6">
+      <main className="my-8 mx-14">
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
         {children}
       </main>
