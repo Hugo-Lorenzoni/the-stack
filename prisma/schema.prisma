@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum Role {
+  USER
+  WAITING
+  BAPTISE
+  ADMIN
+}
+
+enum Cercle {
+  FPMS
+  WAWA
+  FMM
+  CEFUC
+  ISIC
+  ISIMS
+  ARCHI
+  AUTRE
+}
+
+model User {
+  id          String     @id @default(uuid())
+  email       String     @unique
+  password    String
+  name        String
+  surname     String
+  role        Role       @default(USER)
+  cercle      Cercle?
+  cercleVille String?
+  autreCercle String?
+  promo       String?
+}
+
+enum Type {
+  BAPTISE
+  OUVERT
+  AUTRE
+}
+
+model Event {
+  id              String   @id @default(uuid())
+  title           String
+  date            DateTime @default(now())
+  published       Boolean  @default(false)
+  coverName       String
+  coverUrl        String
+  coverWidth      Int
+  coverHeight     Int
+  type            Type
+  photos          Photo[]
+  sponsors        Sponsor[]
+}
+
+model Photo {
+  id          String     @id @default(uuid())
+  name        String
+  url         String
+  width       Int
+  height      Int
+  event       Event      @relation(fields: [eventId], references: [id])
+  eventId     String     @unique
+  @@index([eventId])
+}
+
+model Sponsor {
+  id          String     @id @default(uuid())
+  name        String
+  url         String
+  logoName    String
+  logoUrl     String
+  logoWidth   Int
+  logoHeight  Int
+  event       Event      @relation(fields: [eventId], references: [id])
+  eventId     String     @unique
+  @@index([eventId])
+}
