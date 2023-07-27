@@ -10,7 +10,7 @@ export default function Home() {
           width={4000}
           height={2667}
           alt="Statue de Houdain FPMs"
-          quality={70}
+          quality={50}
           priority
         />
         <h1 className="absolute bottom-12 left-[15%] right-[15%] pr-[15%] text-white text-4xl font-bold drop-shadow-title">
