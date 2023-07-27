@@ -18,7 +18,7 @@ export default function Home() {
           Polytechnique de Mons !
         </h1>
       </section>
-      <section className="max-w-7xl mx-auto px-6 py-4">
+      <section className="container py-4">
         <div className="px-6 py-4 border-orange-600 border-4 rounded-2xl shadow-lg">
           <h2 className="font-semibold text-2xl mb-4 w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
             À propos

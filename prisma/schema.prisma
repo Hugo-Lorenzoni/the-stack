@@ -39,7 +39,7 @@ model User {
   cercle      Cercle?
   cercleVille String?
   autreCercle String?
-  promo       String?
+  promo       Int?
 }
 
 enum Type {
@@ -53,11 +53,13 @@ model Event {
   title           String
   date            DateTime @default(now())
   published       Boolean  @default(false)
+  pinned          Boolean  @default(false)
   coverName       String
   coverUrl        String
   coverWidth      Int
   coverHeight     Int
   type            Type
+  password        String?
   photos          Photo[]
   sponsors        Sponsor[]
 }
@@ -81,7 +83,7 @@ model Sponsor {
   logoUrl     String
   logoWidth   Int
   logoHeight  Int
-  event       Event      @relation(fields: [eventId], references: [id])
+  event       Event[]    
   eventId     String     @unique
   @@index([eventId])
 }

@@ -1,5 +1,6 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { env } from "process";
 
 const handler = NextAuth({
   providers: [
@@ -34,5 +35,32 @@ const handler = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      /* Step 1: update the token based on the user object */
+      if (user) {
+        token.surname = user.surname;
+        token.role = user.role;
+        token.id = user.id;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      /* Step 2: update the session.user based on the token object */
+      if (token && session.user) {
+        session.user.surname = token.surname;
+        session.user.role = token.role;
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: env.NEXTAUT_SECRET,
+  pages: {
+    signIn: "/connexion",
+  },
 });
 export { handler as GET, handler as POST };

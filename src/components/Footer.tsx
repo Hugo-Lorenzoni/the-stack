@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Nav() {
   return (
     <footer className="bg-orange-600 py-4 text-white">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col gap-4">
+      <div className="container flex flex-col gap-4">
         <Link
           href="/"
           className="flex bold font-semibold text-4xl items-center gap-2 mx-auto w-fit"

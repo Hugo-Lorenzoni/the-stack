@@ -16,8 +16,14 @@ export default function AdminLayout({
   const activeStyle = "bg-neutral-200" + " " + linkStyle;
 
   return (
-    <section className="flex min-h-screen">
+    <section className="flex min-h-[calc(100vh_-_10rem)]">
       <aside className="p-4 font-semibold flex flex-col gap-2 shadow-2xl">
+        <Link
+          className={currentRoute === "/admin" ? activeStyle : linkStyle}
+          href="/admin"
+        >
+          Tableau de bord
+        </Link>
         <Link
           className={
             currentRoute === "/admin/new-event" ? activeStyle : linkStyle
