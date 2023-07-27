@@ -4,13 +4,19 @@ export default withAuth({
   callbacks: {
     authorized({ req, token }) {
       // `/admin` requires admin role
-      console.log(token?.role);
-      console.log(req.nextUrl.pathname);
+      // console.log(token?.role);
+      // console.log(req.nextUrl.pathname);
 
-      if (req.nextUrl.pathname.startsWith("/admin")) {
+      if (
+        req.nextUrl.pathname.startsWith("/admin") ||
+        req.nextUrl.pathname.startsWith("/api/admin")
+      ) {
         return token?.role === "ADMIN";
       }
-      if (req.nextUrl.pathname.startsWith("/fpmsevents")) {
+      if (
+        req.nextUrl.pathname.startsWith("/fpmsevents") ||
+        req.nextUrl.pathname.startsWith("/api/fpmsevents")
+      ) {
         return token?.role === "BAPTISE" || token?.role === "ADMIN";
       }
       // `/events/:path*` only requires the user to be logged in
@@ -21,5 +27,11 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/fpmsevents/:path*", "/events/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/fpmsevents/:path*",
+    "/events/:path*",
+    "/api/admin/:path*",
+    "/api/fpmsevents/:path*",
+  ],
 };

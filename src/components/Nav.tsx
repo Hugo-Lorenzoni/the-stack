@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 
 export default function Nav() {
   const { data: session } = useSession();
-  console.log(session);
 
   const linkStyle =
     "relative after:absolute after:bg-white after:w-0 after:h-[0.15rem] after:-bottom-1 after:left-0 after:rounded-full hover:after:w-full after:duration-500";

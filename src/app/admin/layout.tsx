@@ -53,7 +53,7 @@ export default function AdminLayout({
           Gestion des comptes
         </Link>
       </aside>
-      <main className="my-8 mx-14">
+      <main className="my-8 mx-14 flex-1">
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
         {children}
       </main>

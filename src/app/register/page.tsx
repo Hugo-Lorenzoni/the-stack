@@ -207,12 +207,25 @@ export default function RegisterPage() {
           />
           <FormField
             control={form.control}
-            name="name"
+            name="surname"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nom</FormLabel>
                 <FormControl>
                   <Input type="text" required placeholder="Nom" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Prénom</FormLabel>
+                <FormControl>
+                  <Input type="text" required placeholder="Prénom" {...field} />
                 </FormControl>
                 {/* <FormDescription>
                 This is your public display name.
@@ -221,19 +234,7 @@ export default function RegisterPage() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="surname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Prénom</FormLabel>
-                <FormControl>
-                  <Input type="text" required placeholder="Prénom" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="password"
