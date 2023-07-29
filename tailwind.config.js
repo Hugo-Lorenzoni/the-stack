@@ -76,6 +76,12 @@ module.exports = {
           "0 0 2rem rgb(0, 0, 0)",
           "0 0 3rem rgb(0, 0, 0)",
         ],
+        eventtitle: [
+          "0 0 1rem rgb(0, 0, 0)",
+          "0 0 1rem rgb(0, 0, 0)",
+          "0 0 2rem rgb(0, 0, 0)",
+          "0 0 2.5rem rgb(0, 0, 0)",
+        ],
       },
     },
     plugins: [require("tailwindcss-animate")],

@@ -43,6 +43,11 @@ export default function Nav() {
           ) : (
             <></>
           )}
+          <li className="flex items-center">
+            <Link className={linkStyle} href="/autresevents">
+              Autres
+            </Link>
+          </li>
           {session && session.user?.role === "ADMIN" ? (
             <li className="flex items-center">
               <Link className={linkStyle} href="/admin">
@@ -52,7 +57,6 @@ export default function Nav() {
           ) : (
             <></>
           )}
-
           <li className="flex items-center">
             <AuthButton session={session} />
           </li>

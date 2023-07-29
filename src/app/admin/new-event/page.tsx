@@ -175,7 +175,7 @@ export default function NewEventPage() {
     console.log(formData);
 
     try {
-      const apiUrlEndpoint = `http://localhost:3000/api/admin/new-event`;
+      const apiUrlEndpoint = `http://localhost:3000/api/admin/newevent`;
       const postData = {
         method: "POST",
         body: formData,
