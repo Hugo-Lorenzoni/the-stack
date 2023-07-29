@@ -31,24 +31,24 @@ export function PhotosInput({
   const { onChange, ref } = register(name);
   // const [image, setImage] = useState<string | null>();
 
-  const onAvatarChange = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files?.[0]) {
-        // const base64 = await getBase64(event.target.files[0]);
-        // if (typeof base64 == "string") {
-        //   setImage(base64);
-        // }
-        console.log(event.target.files?.[0]);
+  // const onAvatarChange = useCallback(
+  //   async (event: ChangeEvent<HTMLInputElement>) => {
+  //     if (event.target.files?.[0]) {
+  //       // const base64 = await getBase64(event.target.files[0]);
+  //       // if (typeof base64 == "string") {
+  //       //   setImage(base64);
+  //       // }
+  //       console.log(event.target.files?.[0]);
 
-        onChange(event);
-      }
-    },
-    []
-  );
+  //       onChange(event);
+  //     }
+  //   },
+  //   []
+  // );
 
   return (
     <div>
-      <Label>Photos de l'événement</Label>
+      <Label>Photos de l&apos;événement</Label>
       {/* {image && <img src={image} className="w-full rounded-xl mt-1" />} */}
       <Input
         className="mt-2 cursor-pointer h-fit flex items-center file:cursor-pointer file:border-1  file:rounded-md"
@@ -68,12 +68,12 @@ export function PhotosInput({
   );
 }
 
-function getBase64(file: File) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+// function getBase64(file: File) {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader();
 
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-}
+//     reader.readAsDataURL(file);
+//     reader.onload = () => resolve(reader.result);
+//     reader.onerror = (error) => reject(error);
+//   });
+// }

@@ -1,5 +1,11 @@
 "use client";
-import React, { ChangeEvent, useCallback, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useState,
+} from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -7,6 +13,8 @@ import { Label } from "./ui/label";
 export function CoverInput({
   errors,
   register,
+  image,
+  setImage,
 }: {
   errors: FieldErrors<{
     title: string;
@@ -26,10 +34,11 @@ export function CoverInput({
     password?: string | undefined;
     photos: FileList;
   }>;
+  image: string | null | undefined;
+  setImage: Dispatch<SetStateAction<string | null | undefined>>;
 }) {
   const name = "cover";
   const { onChange, ref } = register(name);
-  const [image, setImage] = useState<string | null>();
 
   const onAvatarChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -41,15 +50,18 @@ export function CoverInput({
         console.log(event.target.files?.[0]);
 
         onChange(event);
+      } else {
+        setImage(null);
+        // reset();
       }
     },
-    []
+    [onChange]
   );
 
   return (
     <div>
       <Label>Photo de couverture</Label>
-      {image && <img src={image} className="w-full rounded-xl mt-1" />}
+
       <Input
         className="mt-2 cursor-pointer h-fit flex items-center file:cursor-pointer file:border-1  file:rounded-md"
         //accept=".jpg,.jpeg,.png,.webp"

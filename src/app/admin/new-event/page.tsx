@@ -24,9 +24,9 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Sponsor, Type } from "@prisma/client";
+import { Type } from "@prisma/client";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { Noop, RefCallBack, useForm } from "react-hook-form";
@@ -77,7 +77,7 @@ const formSchema = z
       .custom<FileList>((v) => v instanceof FileList)
       .refine((files) => files.length == 1, "Image is required.")
       .refine(
-        (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0].type),
+        (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
         ".jpg, .jpeg, .png and .webp files are accepted."
       )
       .refine(
@@ -103,6 +103,10 @@ const formSchema = z
 
 export default function NewEventPage() {
   const [type, setType] = useState<Type>("OUVERT");
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  const [image, setImage] = useState<string | null>();
 
   const { toast } = useToast();
   const router = useRouter();
@@ -147,15 +151,17 @@ export default function NewEventPage() {
     defaultValues: {
       title: "",
       pinned: false,
-      type: "OUVERT",
+      type: "BAPTISE",
     },
   });
   const {
     formState: { errors },
     register,
+    reset,
   } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     console.log(values.cover.length);
     console.log(values.cover?.[0].size);
 
@@ -182,7 +188,7 @@ export default function NewEventPage() {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-
+      setLoading(false);
       if (response.status == 500) {
         toast({
           variant: "destructive",
@@ -196,10 +202,13 @@ export default function NewEventPage() {
           title: "Enregistrement de l'événement réussie",
           description: "Vous pouvez maintenant vous connecter",
         });
+        setImage(null);
+        reset();
         // router.push("/connexion");
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }
   return (
@@ -215,7 +224,7 @@ export default function NewEventPage() {
             name="title"
             render={({ field }) => (
               <FormItem className="mt-4">
-                <FormLabel>Nom de l'événement</FormLabel>
+                <FormLabel>Nom de l&apos;événement</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
@@ -236,7 +245,7 @@ export default function NewEventPage() {
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Date de l'événement</FormLabel>
+                <FormLabel>Date de l&apos;événement</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -296,7 +305,15 @@ export default function NewEventPage() {
               </FormItem>
             )}
           />
-          <CoverInput errors={errors} register={register} />
+          {image && (
+            <img src={image} alt="cover" className="w-full rounded-xl mt-1" />
+          )}
+          <CoverInput
+            errors={errors}
+            register={register}
+            image={image}
+            setImage={setImage}
+          />
           <FormField
             control={form.control}
             name="type"
@@ -353,7 +370,26 @@ export default function NewEventPage() {
             <></>
           )}
           <PhotosInput errors={errors} register={register} />
-          <Button type="submit">Submit</Button>
+          <Button disabled={isLoading} type="submit">
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin pr-4" />
+                Loading
+              </>
+            ) : (
+              "Submit"
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            type="reset"
+            className="ml-4"
+            onClick={() => {
+              reset(), setImage(null);
+            }}
+          >
+            Reset
+          </Button>
         </form>
       </Form>
     </section>

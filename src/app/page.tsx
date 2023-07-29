@@ -31,9 +31,9 @@ export default function Home() {
             Nos photos sont prises à but non lucratif et visent uniquement à
             illustrer et à figer dans le temps les évènements organisés par les
             étudiants de cette même Faculté. Les photos sont sous la protection
-            d'un mot de passe par respect de la vie privée.
+            d&apos;un mot de passe par respect de la vie privée.
           </p>
-          <p>Pour toutes questions, n'hésitez pas à nous contacter !</p>
+          <p>Pour toutes questions, n&apos;hésitez pas à nous contacter !</p>
           <p className="text-end"> Le Cercle Photo-Vidéo (CPV)</p>
           <p className="text-end italic"> Mars 2023.</p>
         </div>

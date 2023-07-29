@@ -8,12 +8,6 @@ import { join } from "path";
 import mime from "mime";
 import * as z from "zod";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
   title: string;
