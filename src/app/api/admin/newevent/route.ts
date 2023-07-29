@@ -36,7 +36,8 @@ export async function POST(request: NextRequest) {
 
     const coverFile = data.get("cover") as File;
     const coverUrl = await saveFile(coverFile, title, date, type);
-    const coverDismensions = sizeOf(Buffer.from(await coverFile.arrayBuffer()));
+    const coverArray = await coverFile.arrayBuffer();
+    const coverDismensions = sizeOf(Buffer.from(coverArray));
     const parsedCover = photoSchema.parse({
       name: coverFile.name,
       url: coverUrl,
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest) {
     const photos = await Promise.all(
       photosFiles.map(async (photo) => {
         const photoURL = await saveFile(photo, title, date, type);
-        const photoDismensions = sizeOf(Buffer.from(await photo.arrayBuffer()));
+        const photoArray = await photo.arrayBuffer();
+        const photoDismensions = sizeOf(Buffer.from(photoArray));
         return {
           name: photo.name,
           url: photoURL,
@@ -107,10 +109,11 @@ const saveFile = async (
   date: string,
   type: Type
 ) => {
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const fileArray = await file.arrayBuffer();
+  const buffer = Buffer.from(fileArray);
   const relativeUploadDir = `/${type}/${date.substring(0, 10)}-${title
     .replace(/\.[^/.]+$/, "")
-    .replace(/\s+/g, "")
+    .replace(/\s+/g, "-")
     .replace(/é/g, "e")
     .replace(/è/g, "e")
     .replace(/ê/g, "e")
