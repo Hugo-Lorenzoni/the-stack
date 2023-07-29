@@ -1,16 +1,11 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import { cache } from "react";
 
-// export const revalidate = 60; // revalidate this page every 60 seconds
-
-export default async function EventPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const event = await prisma.event.findUnique({
+export const getEvent = cache(async (id: string) => {
+  const res = await prisma.event.findUnique({
     where: {
-      id: params.id,
+      id: id,
     },
     select: {
       id: true,
@@ -25,7 +20,16 @@ export default async function EventPage({
       sponsors: true,
     },
   });
-  console.log(event);
+  return res;
+});
+
+export default async function EventPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const event = await getEvent(params.id);
+  // console.log(event);
 
   return (
     <main className="container min-h-[calc(100vh_-_10rem)] my-8">

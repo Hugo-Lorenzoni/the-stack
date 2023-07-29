@@ -3,26 +3,20 @@ import Link from "next/link";
 import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
 
-export default async function EventsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const page = searchParams["page"] ?? "1";
-  const eventPerPage = 12;
+import { cache } from "react";
 
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  const countEvents = await prisma.event.count({
+export const getCount = cache(async () => {
+  const res = await prisma.event.count({
     where: {
       type: "OUVERT",
       published: true,
     },
   });
-  const events = await prisma.event.findMany({
+  return res;
+});
+
+export const getEvents = cache(async (page: string, eventPerPage: number) => {
+  const res = await prisma.event.findMany({
     skip: (Number(page) - 1) * eventPerPage,
     take: eventPerPage,
     where: {
@@ -46,6 +40,27 @@ export default async function EventsPage({
       { date: "desc" },
     ],
   });
+  return res;
+});
+
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const page = searchParams["page"] ?? "1";
+  const eventPerPage = 12;
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const countEvents = await getCount();
+  const events = await getEvents(page.toString(), eventPerPage);
+
+  // console.log(events);
   // console.log(searchParams);
   // console.log(events.length);
   // console.log(countEvents);
