@@ -308,12 +308,7 @@ export default function NewEventPage() {
           {image && (
             <img src={image} alt="cover" className="w-full rounded-xl mt-1" />
           )}
-          <CoverInput
-            errors={errors}
-            register={register}
-            image={image}
-            setImage={setImage}
-          />
+          <CoverInput errors={errors} register={register} setImage={setImage} />
           <FormField
             control={form.control}
             name="type"

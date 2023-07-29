@@ -108,10 +108,13 @@ const saveFile = async (
   type: Type
 ) => {
   const buffer = Buffer.from(await file.arrayBuffer());
-  const relativeUploadDir = `/${type}/${date.substring(0, 10)}-${title.replace(
-    /\.[^/.]+$/,
-    ""
-  )}`;
+  const relativeUploadDir = `/${type}/${date.substring(0, 10)}-${title
+    .replace(/\.[^/.]+$/, "")
+    .replace(/\s+/g, "")
+    .replace(/é/g, "e")
+    .replace(/è/g, "e")
+    .replace(/ê/g, "e")
+    .replace(/à/g, "a")}`;
   const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
   try {

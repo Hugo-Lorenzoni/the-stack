@@ -13,7 +13,6 @@ import { Label } from "./ui/label";
 export function CoverInput({
   errors,
   register,
-  image,
   setImage,
 }: {
   errors: FieldErrors<{
@@ -34,7 +33,6 @@ export function CoverInput({
     password?: string | undefined;
     photos: FileList;
   }>;
-  image: string | null | undefined;
   setImage: Dispatch<SetStateAction<string | null | undefined>>;
 }) {
   const name = "cover";
@@ -55,7 +53,7 @@ export function CoverInput({
         // reset();
       }
     },
-    [onChange]
+    [onChange, setImage]
   );
 
   return (
