@@ -71,7 +71,7 @@ model Photo {
   width       Int
   height      Int
   event       Event      @relation(fields: [eventId], references: [id])
-  eventId     String     @unique
+  eventId     String     
   @@index([eventId])
 }
 
@@ -84,6 +84,6 @@ model Sponsor {
   logoWidth   Int
   logoHeight  Int
   event       Event[]    
-  eventId     String     @unique
+  eventId     String     
   @@index([eventId])
 }

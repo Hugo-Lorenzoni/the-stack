@@ -50,7 +50,7 @@ const formSchema = z
           .trim(),
         surname: z
           .string()
-          .min(2, { message: "Must be 5 or more characters long" })
+          .min(2, { message: "Must be 2 or more characters long" })
           .max(50, { message: "Must be 50 or fewer characters long" })
           .trim(),
         check: z.literal(false),
