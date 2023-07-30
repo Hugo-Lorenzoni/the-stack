@@ -4,13 +4,11 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 export default function PaginationControls({
-  currentUrl,
   countEvents,
   eventPerPage,
   hasNextPage,
   hasPrevPage,
 }: {
-  currentUrl: string;
   countEvents: number;
   eventPerPage: number;
   hasNextPage: boolean;
@@ -19,7 +17,6 @@ export default function PaginationControls({
   const router = useRouter();
   const searchParams = useSearchParams();
   const path = usePathname();
-  console.log(path);
 
   const page = searchParams.get("page") ?? "1";
 
@@ -28,7 +25,7 @@ export default function PaginationControls({
       <Button
         disabled={!hasPrevPage}
         onClick={() => {
-          router.push(`${currentUrl}/?page=${Number(page) - 1}`);
+          router.push(`${path}/?page=${Number(page) - 1}`);
         }}
       >
         Précédant
@@ -41,7 +38,7 @@ export default function PaginationControls({
       <Button
         disabled={!hasNextPage}
         onClick={() => {
-          router.push(`${currentUrl}/?page=${Number(page) + 1}`);
+          router.push(`${path}/?page=${Number(page) + 1}`);
         }}
       >
         Suivant

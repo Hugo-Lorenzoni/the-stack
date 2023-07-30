@@ -101,7 +101,6 @@ export default async function AutresEventsPage({
             ))}
           </ul>
           <PaginationControls
-            currentUrl="/events"
             countEvents={countEvents}
             eventPerPage={eventPerPage}
             hasNextPage={countEvents > Number(page) * eventPerPage}

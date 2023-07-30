@@ -21,6 +21,7 @@ export default async function EventsPage({
 
   const count = await getEventsCount("OUVERT");
   const events = await getEvents(page.toString(), eventPerPage, "OUVERT");
+  console.log(events.length);
 
   // console.log(events);
   // console.log(searchParams);
@@ -85,7 +86,6 @@ export default async function EventsPage({
             ))}
           </ul>
           <PaginationControls
-            currentUrl="/events"
             countEvents={count}
             eventPerPage={eventPerPage}
             hasNextPage={count > Number(page) * eventPerPage}

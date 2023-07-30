@@ -9,6 +9,7 @@ import RowActions from "@/components/RowActions";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type User = {
+  id: string;
   email: string;
   name: string;
   surname: string;
@@ -18,6 +19,10 @@ export type User = {
 };
 
 export const columns: ColumnDef<User>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
   {
     accessorKey: "email",
     header: ({ column }) => {

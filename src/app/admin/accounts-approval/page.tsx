@@ -1,33 +1,23 @@
 import prisma from "@/lib/prisma";
 import { DataTable } from "./data-table";
 import { User, columns } from "./columns";
+import { getWaitingUsers } from "@/utils/getWaitingUsers";
 
 export default async function AccountsApprovalPage() {
-  const users = await prisma.user.findMany({
-    where: {
-      role: "WAITING",
-    },
-    select: {
-      email: true,
-      name: true,
-      surname: true,
-      cercle: true,
-      autreCercle: true,
-      cercleVille: true,
-      promo: true,
-    },
-  });
+  const users = await getWaitingUsers();
 
   const data: User[] = users.map((user) => {
-    const { autreCercle, cercleVille, cercle, ...result } = user;
+    const { id, autreCercle, cercleVille, cercle, ...result } = user;
     if (cercle == "AUTRE") {
       return {
+        id: id.substring(0, 8),
         ...result,
         cercle: autreCercle ? autreCercle : "Undefined",
         ville: cercleVille ? cercleVille : "Undefined",
       };
     } else {
       return {
+        id: id.substring(0, 8),
         ...result,
         cercle: cercle ? cercle : "Undefined",
         ville: "Mons",
