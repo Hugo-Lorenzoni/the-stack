@@ -21,7 +21,7 @@ export type User = {
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
-    header: "ID",
+    header: "Code de validation",
   },
   {
     accessorKey: "email",

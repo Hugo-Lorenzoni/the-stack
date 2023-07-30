@@ -1,5 +1,4 @@
 "use client";
-import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +12,7 @@ import { useState } from "react";
 import { Cercle } from "@prisma/client";
 import { Row } from "@tanstack/react-table";
 import { Button } from "@/components//ui/button";
+import { HelpCircle } from "lucide-react";
 
 export type User = {
   id: string;
@@ -70,7 +70,7 @@ export default function RowActions(props: { row: Row<User> }) {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="h-8 w-8 p-0">
             <span className="sr-only">Approuver ?</span>
-            <QuestionMarkCircledIcon className="h-4 w-4" />
+            <HelpCircle className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="space-y-1">

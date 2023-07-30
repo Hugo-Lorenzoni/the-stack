@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
@@ -47,7 +47,14 @@ export default function ConnectionPage() {
       console.log(results);
       if (results) {
         if (results.ok && results.url) {
-          router.push(results.url);
+          const res = await getSession();
+          if (res?.user?.role == "ADMIN") {
+            router.push("/admin");
+          } else if (res?.user?.role == "WAITING") {
+            router.push("/register/waiting");
+          } else {
+            router.push(results.url);
+          }
         } else if (results.error == "CredentialsSignin") {
           toast({
             variant: "destructive",

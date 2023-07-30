@@ -1,3 +1,4 @@
+import { Info } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -37,6 +38,15 @@ export default function Home() {
           <p className="text-end"> Le Cercle Photo-Vidéo (CPV)</p>
           <p className="text-end italic"> Mars 2023.</p>
         </div>
+      </section>
+      <section className="container py-4 flex">
+        <Info className="text-orange-600" />
+        <a
+          className="underline text-orange-600 ml-2"
+          href="https://cerclephotovideofpms.wordpress.com/"
+        >
+          Retrouver nos précédantes photos sur notre ancien site.
+        </a>
       </section>
     </main>
   );

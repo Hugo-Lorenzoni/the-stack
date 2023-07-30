@@ -12,9 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import Link from "next/link";
+import { Copy } from "lucide-react";
 
 export default function AuthButton({ session }: { session: Session | null }) {
   if (session && session.user) {
+    const validationCode = session.user.id.substring(0, 8);
     return (
       <div className="flex gap-4 ml-auto">
         <DropdownMenu>
@@ -28,12 +30,29 @@ export default function AuthButton({ session }: { session: Session | null }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="shadow-md" align="end">
             <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+
             <DropdownMenuItem>
-              <Button onClick={() => signOut()} className="">
+              <Button onClick={() => signOut()} className="w-full">
                 Déconnexion
               </Button>
             </DropdownMenuItem>
+            {session.user.role == "WAITING" && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Code de validation</DropdownMenuLabel>
+                <DropdownMenuItem>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      navigator.clipboard.writeText(validationCode)
+                    }
+                  >
+                    <Copy className="mr-2" />
+                    {validationCode}
+                  </Button>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
