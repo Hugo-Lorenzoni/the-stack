@@ -1,47 +1,9 @@
-import prisma from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
 
-import { cache } from "react";
-
-export const getCount = cache(async () => {
-  const res = await prisma.event.count({
-    where: {
-      type: "OUVERT",
-      published: true,
-    },
-  });
-  return res;
-});
-
-export const getEvents = cache(async (page: string, eventPerPage: number) => {
-  const res = await prisma.event.findMany({
-    skip: (Number(page) - 1) * eventPerPage,
-    take: eventPerPage,
-    where: {
-      type: "OUVERT",
-      published: true,
-    },
-    select: {
-      id: true,
-      title: true,
-      date: true,
-      pinned: true,
-      coverName: true,
-      coverUrl: true,
-      coverWidth: true,
-      coverHeight: true,
-    },
-    orderBy: [
-      {
-        pinned: "desc",
-      },
-      { date: "desc" },
-    ],
-  });
-  return res;
-});
+import { getEventsCount } from "@/utils/getEventsCount";
+import { getEvents } from "@/utils/getEvents";
 
 export default async function EventsPage({
   searchParams,
@@ -57,13 +19,13 @@ export default async function EventsPage({
     day: "numeric",
   };
 
-  const countEvents = await getCount();
-  const events = await getEvents(page.toString(), eventPerPage);
+  const count = await getEventsCount("OUVERT");
+  const events = await getEvents(page.toString(), eventPerPage, "OUVERT");
 
   // console.log(events);
   // console.log(searchParams);
   // console.log(events.length);
-  // console.log(countEvents);
+  // console.log(count;
   // console.log(Number(page) * eventPerPage);
 
   return (
@@ -124,9 +86,9 @@ export default async function EventsPage({
           </ul>
           <PaginationControls
             currentUrl="/events"
-            countEvents={countEvents}
+            countEvents={count}
             eventPerPage={eventPerPage}
-            hasNextPage={countEvents > Number(page) * eventPerPage}
+            hasNextPage={count > Number(page) * eventPerPage}
             hasPrevPage={Number(page) != 1}
           />
         </>

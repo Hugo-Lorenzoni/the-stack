@@ -1,27 +1,5 @@
-import prisma from "@/lib/prisma";
-import Image from "next/image";
-import { cache } from "react";
-
-export const getEvent = cache(async (id: string) => {
-  const res = await prisma.event.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      id: true,
-      title: true,
-      date: true,
-      pinned: true,
-      coverName: true,
-      coverUrl: true,
-      coverWidth: true,
-      coverHeight: true,
-      photos: { orderBy: { name: "asc" } },
-      sponsors: true,
-    },
-  });
-  return res;
-});
+import Gallery from "@/components/Gallery";
+import { getEvent } from "@/utils/getEvent";
 
 export default async function EventPage({
   params,
@@ -29,7 +7,7 @@ export default async function EventPage({
   params: { id: string };
 }) {
   const event = await getEvent(params.id);
-  // console.log(event);
+  console.log(event);
 
   return (
     <main className="container min-h-[calc(100vh_-_10rem)] my-8">
@@ -38,23 +16,7 @@ export default async function EventPage({
           <h1 className="font-semibold text-2xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
             {event.title}
           </h1>
-          <ul className="mt-8 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {event.photos.map((photo) => (
-              <Image
-                key={photo.id}
-                className={
-                  photo.width < photo.height
-                    ? "row-span-2 w-full h-full object-cover rounded-md"
-                    : "w-full h-full object-cover rounded-md"
-                }
-                src={photo.url}
-                width={photo.width}
-                height={photo.height}
-                alt={photo.name}
-                quality={30}
-              />
-            ))}
-          </ul>
+          <Gallery photos={event.photos} />
         </>
       ) : (
         <></>

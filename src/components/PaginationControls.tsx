@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 
 export default function PaginationControls({
@@ -18,6 +18,8 @@ export default function PaginationControls({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const path = usePathname();
+  console.log(path);
 
   const page = searchParams.get("page") ?? "1";
 
