@@ -43,25 +43,24 @@ export default async function EventsPage({
                 key={event.id}
                 className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"
               >
-                <Link
-                  href={`/events/${event.id}`}
-                  className="w-full h-full relative isolate"
-                >
-                  <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
-                    <h2>{event.title}</h2>
-                    <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
+                <Link href={`/events/${event.id}`}>
+                  <div className="w-fit h-fit relative isolate">
+                    <div className="absolute w-fit h-fit text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
+                      <h2>{event.title}</h2>
+                      <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
+                    </div>
+                    {event.pinned && (
+                      <Pin className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle rotate-45" />
+                    )}
+                    <Image
+                      className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 -z-10 relative"
+                      src={event.coverUrl}
+                      width={event.coverWidth}
+                      height={event.coverHeight}
+                      alt={event.coverName}
+                      quality={30}
+                    />
                   </div>
-                  {event.pinned && (
-                    <Pin className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle rotate-45" />
-                  )}
-                  <Image
-                    className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 "
-                    src={event.coverUrl}
-                    width={event.coverWidth}
-                    height={event.coverHeight}
-                    alt={event.coverName}
-                    quality={30}
-                  />
                 </Link>
               </li>
             ))}
