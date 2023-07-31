@@ -199,8 +199,8 @@ export default function NewEventPage() {
       if (response.status == 200) {
         toast({
           variant: "default",
-          title: "Enregistrement de l'événement réussie",
-          description: "Vous pouvez maintenant vous connecter",
+          title: "Enregistrement de l'événement réussi",
+          description: "N'oubliez pas de le publier !",
         });
         setImage(null);
         reset();
@@ -348,7 +348,7 @@ export default function NewEventPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom de votre Cercle</FormLabel>
+                  <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -368,7 +368,10 @@ export default function NewEventPage() {
           <Button disabled={isLoading} type="submit">
             {isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin pr-4" />
+                <Loader2
+                  color="#ffffff"
+                  className="h-4 w-4 animate-spin pr-4 text-white"
+                />
                 Loading
               </>
             ) : (

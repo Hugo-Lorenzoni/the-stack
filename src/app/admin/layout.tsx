@@ -34,6 +34,14 @@ export default function AdminLayout({
         </Link>
         <Link
           className={
+            currentRoute === "/admin/drafted-events" ? activeStyle : linkStyle
+          }
+          href="/admin/drafted-events"
+        >
+          Publication des événements
+        </Link>
+        <Link
+          className={
             currentRoute === "/admin/accounts-approval"
               ? activeStyle
               : linkStyle

@@ -1,18 +1,9 @@
-import prisma from "@/lib/prisma";
 import { User, columns } from "./columns";
 import { DataTable } from "./data-table";
+import { getAllUsers } from "@/utils/getAllUsers";
 
 export default async function AccountsManagementPage() {
-  const users = await prisma.user.findMany({
-    select: {
-      email: true,
-      name: true,
-      surname: true,
-      role: true,
-      cercle: true,
-      autreCercle: true,
-    },
-  });
+  const users = await getAllUsers();
   const data: User[] = users.map((user) => {
     const { cercle, autreCercle, ...result } = user;
     if (cercle == "AUTRE") {
