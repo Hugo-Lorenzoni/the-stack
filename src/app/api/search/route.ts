@@ -26,6 +26,17 @@ export async function GET(request: Request) {
         },
         published: true,
       },
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        pinned: true,
+        coverName: true,
+        coverUrl: true,
+        coverWidth: true,
+        coverHeight: true,
+      },
+      orderBy: [{ date: "desc" }],
     });
     if (!results) {
       return NextResponse.json(
@@ -55,6 +66,17 @@ export async function GET(request: Request) {
           },
         ],
       },
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        pinned: true,
+        coverName: true,
+        coverUrl: true,
+        coverWidth: true,
+        coverHeight: true,
+      },
+      orderBy: [{ date: "desc" }],
     });
     if (!results) {
       return NextResponse.json(

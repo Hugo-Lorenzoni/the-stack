@@ -28,7 +28,7 @@ export default async function SearchPage({
   const response = await fetch(apiUrlEndpoint, postData);
   // console.log(response);
   const results: Event[] = await response.json();
-  //   console.log(results);
+  console.log(results);
   if (!results.length) {
     return (
       <main className="container min-h-[calc(100vh_-_10rem)] my-8">

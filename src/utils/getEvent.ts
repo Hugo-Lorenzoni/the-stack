@@ -5,6 +5,8 @@ export const getEvent = cache(async (id: string) => {
   const res = await prisma.event.findUnique({
     where: {
       id: id,
+      type: "OUVERT",
+      published: true,
     },
     select: {
       id: true,

@@ -1,28 +1,27 @@
-import prisma from "@/lib/prisma";
+import { getFPMsEvent } from "@/utils/getFPMsEvent";
+import Gallery from "@/components/Gallery";
 
 export default async function EventPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const event = await prisma.event.findUnique({
-    where: {
-      id: params.id,
-    },
-    select: {
-      id: true,
-      title: true,
-      date: true,
-      pinned: true,
-      coverName: true,
-      coverUrl: true,
-      coverWidth: true,
-      coverHeight: true,
-      photos: true,
-      sponsors: true,
-    },
-  });
+  const event = await getFPMsEvent(params.id);
   console.log(event);
 
-  return <>Event page {JSON.stringify(event)}</>;
+  return (
+    <main className="container min-h-[calc(100vh_-_10rem)] my-8">
+      {event ? (
+        <>
+          <h1 className="font-semibold text-3xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
+            {event.title}
+          </h1>
+          <p className="mt-4 text-right italic">{event.photos.length} photos</p>
+          <Gallery eventName={event.title} photos={event.photos} />
+        </>
+      ) : (
+        <></>
+      )}
+    </main>
+  );
 }

@@ -37,5 +37,6 @@ export const config = {
     "/OUVERT/:path*",
     "/BAPTISE/:path*",
     "/search/:path*",
+    "/api/search/:path*",
   ],
 };
