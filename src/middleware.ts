@@ -36,5 +36,6 @@ export const config = {
     "/api/fpmsevents/:path*",
     "/OUVERT/:path*",
     "/BAPTISE/:path*",
+    "/search/:path*",
   ],
 };

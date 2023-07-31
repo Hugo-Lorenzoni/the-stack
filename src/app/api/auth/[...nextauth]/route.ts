@@ -1,8 +1,10 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "process";
+import { Session, SessionStrategy, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
-const handler = NextAuth({
+export const OPTIONS = {
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -36,7 +38,7 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user: User }) {
       /* Step 1: update the token based on the user object */
       if (user) {
         token.surname = user.surname;
@@ -45,7 +47,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    session({ session, token }) {
+    session({ session, token }: { session: Session; token: JWT }) {
       /* Step 2: update the session.user based on the token object */
       if (token && session.user) {
         session.user.surname = token.surname;
@@ -56,11 +58,14 @@ const handler = NextAuth({
     },
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as SessionStrategy,
   },
   secret: env.NEXTAUT_SECRET,
   pages: {
     signIn: "/connexion",
   },
-});
+};
+
+const handler = NextAuth(OPTIONS);
+
 export { handler as GET, handler as POST };
