@@ -11,18 +11,18 @@ export default async function AutreEventPage({
 }) {
   const cookieStore = cookies();
   const cookie = cookieStore.get(params.id);
-  console.log(cookie);
+  // console.log(cookie);
 
   const info = await getInfoAutreEvent(params.id);
-  console.log(info);
+  // console.log(info);
   if (cookie?.value) {
     const secret = decrypt(cookie.value);
     if (secret == info?.id) {
       const event = await getAutreEvent(params.id);
-      console.log("Cookie ok");
+      // console.log("Cookie ok");
       return <AutreEvent info={info} event={event} />;
     } else {
-      console.log("Bad cookie");
+      // console.log("Bad cookie");
     }
   }
 

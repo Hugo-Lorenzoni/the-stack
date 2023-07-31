@@ -72,7 +72,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
         body: JSON.stringify(values),
       };
       const response = await fetch(apiUrlEndpoint, postData);
-      console.log(response);
+      // console.log(response);
       if (response.status == 500) {
         toast({
           variant: "destructive",
@@ -105,7 +105,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
     }
   }
 
-  console.log(event);
+  // console.log(event);
 
   return (
     <main className="container min-h-[calc(100vh_-_10rem)] my-8">
