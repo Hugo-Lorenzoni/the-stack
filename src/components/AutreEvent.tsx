@@ -9,13 +9,20 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
 
 const formSchema = z
   .object({
-    password: z.string(),
+    password: z.string().min(1, { message: "Aucun mot de passe entré" }),
   })
   .required();
 
@@ -142,21 +149,24 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
                       <FormField
                         control={form.control}
                         name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Mot de passe</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="Mot de passe"
-                                {...field}
-                              />
-                            </FormControl>
-                            <p className="text-sm text-red-600">
-                              {isForbidden && "Mot de passe incorrect"}
-                            </p>
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Mot de passe</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Mot de passe"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <p className="text-sm text-red-600">
+                                {isForbidden && "Mot de passe incorrect"}
+                              </p>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
                       <Button type="submit">Submit</Button>
                     </form>
