@@ -5,7 +5,7 @@ import { enc } from "crypto-js";
 const encrypt = (str: string) => {
   const ciphertext = AES.encrypt(
     str,
-    env.NEXTAUT_SECRET ? env.NEXTAUT_SECRET : ""
+    env.ENCRYPTION_KEY ? env.ENCRYPTION_KEY : ""
   );
   return encodeURIComponent(ciphertext.toString());
 };
@@ -14,7 +14,7 @@ const decrypt = (str: string) => {
   const decodedStr = decodeURIComponent(str);
   return AES.decrypt(
     decodedStr,
-    env.NEXTAUT_SECRET ? env.NEXTAUT_SECRET : ""
+    env.ENCRYPTION_KEY ? env.ENCRYPTION_KEY : ""
   ).toString(enc.Utf8);
 };
 
