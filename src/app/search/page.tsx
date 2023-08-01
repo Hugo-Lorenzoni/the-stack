@@ -1,4 +1,3 @@
-import { Event } from "@prisma/client";
 import SearchPagination from "@/components/SearchPagination";
 import { getSearchedEvents } from "@/utils/getSearchedEvents";
 
@@ -9,9 +8,7 @@ export default async function SearchPage({
 }) {
   const search = searchParams["search"] ?? "";
 
-  const response = await getSearchedEvents(search.toString());
-  // console.log(response);
-  const results: Event[] = await response.json();
+  const results = await getSearchedEvents(search.toString());
   console.log(results);
 
   return (

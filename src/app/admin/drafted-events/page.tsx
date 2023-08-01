@@ -2,6 +2,8 @@ import { DataTable } from "./data-table";
 import { Event, columns } from "./columns";
 import { getDraftedEvents } from "@/utils/getDraftedEvents";
 
+export const dynamic = "force-dynamic";
+
 export default async function AccountsApprovalPage() {
   const events = await getDraftedEvents();
 

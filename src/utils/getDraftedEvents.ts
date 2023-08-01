@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
-import { cache } from "react";
 
-export const getDraftedEvents = cache(async () => {
+export const getDraftedEvents = async () => {
   const res = await prisma.event.findMany({
     where: {
       published: false,
@@ -16,4 +15,4 @@ export const getDraftedEvents = cache(async () => {
     orderBy: [{ date: "asc" }],
   });
   return res;
-});
+};

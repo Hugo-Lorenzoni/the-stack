@@ -1,16 +1,29 @@
 "use client";
-import { Event } from "@prisma/client";
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { Pin, SearchX } from "lucide-react";
 import Link from "next/link";
+import { type } from "os";
 
-export default function SearchPagination(props: { events: Event[] }) {
+type Event = {
+  id: string;
+  title: string;
+  date: Date;
+  pinned: boolean;
+  coverName: string;
+  coverUrl: string;
+  coverWidth: number;
+  coverHeight: number;
+};
+
+export default function SearchPagination(props: {
+  events: Event[] | undefined;
+}) {
   const [currentPage, setCurrentPage] = useState(1);
   const events = props.events;
 
-  if (!events.length) {
+  if (!events || !events.length) {
     return (
       <>
         <SearchX className="w-20 h-20 mt-24 mx-auto" />
