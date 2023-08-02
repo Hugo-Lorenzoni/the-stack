@@ -19,6 +19,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/use-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -52,6 +53,7 @@ type Info = {
 export default function AutreEvent(props: { info: Info; event: Event }) {
   const [event, setEvent] = useState<Event | null>(props.event);
   const [isForbidden, setForbidden] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState("password");
 
   const { toast } = useToast();
 
@@ -153,13 +155,42 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
                           return (
                             <FormItem>
                               <FormLabel>Mot de passe</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="Mot de passe"
-                                  {...field}
-                                />
-                              </FormControl>
+                              <div className="relative">
+                                <FormControl>
+                                  <Input
+                                    className="pr-16"
+                                    type={showPassword}
+                                    placeholder="Mot de passe"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  className="absolute right-0 bottom-0"
+                                  onClick={() =>
+                                    setShowPassword((prev) =>
+                                      prev == "password" ? "text" : "password"
+                                    )
+                                  }
+                                >
+                                  {showPassword == "password" ? (
+                                    <>
+                                      <span className="mr-2 sr-only">
+                                        Show password
+                                      </span>
+                                      <Eye />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="mr-2 sr-only">
+                                        Hide password
+                                      </span>
+                                      <EyeOff />
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
                               <p className="text-sm text-red-600">
                                 {isForbidden && "Mot de passe incorrect"}
                               </p>
