@@ -33,7 +33,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
     const { title, date, pinned, type, password }: Values = JSON.parse(values);
-
+    if (!password && type == "AUTRE") {
+      return NextResponse.json(
+        { error: "Something went wrong." },
+        { status: 500 }
+      );
+    }
     const coverFile = data.get("cover") as File;
     const coverUrl = await saveFile(coverFile, title, date, type);
     const coverArray = await coverFile.arrayBuffer();
