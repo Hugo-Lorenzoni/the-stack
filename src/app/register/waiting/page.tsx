@@ -18,7 +18,7 @@ export default function Waiting() {
 
     return (
       <main className=" max-w-3xl mx-auto px-6 pb-40 min-h-[calc(100vh_-_10rem)] flex items-center justify-center">
-        <section className="space-y-4 border-2 border-orange-600 rounded-2xl p-4">
+        <section className="space-y-4 border-2 border-orange-600 rounded-2xl p-4 mt-4">
           <h1 className="font-semibold text-2xl">
             Votre comptre est en attente d&apos;approbation
           </h1>

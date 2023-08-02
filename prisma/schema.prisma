@@ -84,6 +84,6 @@ model Sponsor {
   logoWidth   Int
   logoHeight  Int
   event       Event[]    
-  eventId     String     
+  eventId     String?     
   @@index([eventId])
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Separator } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -24,6 +25,7 @@ export default function AdminLayout({
         >
           Tableau de bord
         </Link>
+        <Separator className="bg-muted h-[1px]" />
         <Link
           className={
             currentRoute === "/admin/new-event" ? activeStyle : linkStyle
@@ -40,6 +42,7 @@ export default function AdminLayout({
         >
           Publication des événements
         </Link>
+        <Separator className="bg-muted h-[1px]" />
         <Link
           className={
             currentRoute === "/admin/accounts-approval"
@@ -59,6 +62,15 @@ export default function AdminLayout({
           href="/admin/accounts-management"
         >
           Gestion des comptes
+        </Link>
+        <Separator className="bg-muted h-[1px]" />
+        <Link
+          className={
+            currentRoute === "/admin/new-sponsor" ? activeStyle : linkStyle
+          }
+          href="/admin/new-sponsor"
+        >
+          Créer un nouveau sponsor
         </Link>
       </aside>
       <main className="my-8 mx-14 flex-1">

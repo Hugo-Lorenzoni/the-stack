@@ -109,7 +109,6 @@ export default function NewEventPage() {
   const [image, setImage] = useState<string | null>();
 
   const { toast } = useToast();
-  const router = useRouter();
 
   function handleChange(field: {
     onChange: any;
@@ -123,26 +122,6 @@ export default function NewEventPage() {
         setType(field?.value);
       }
     }
-    return field.onChange;
-  }
-
-  function handleFile(
-    e: ChangeEvent<HTMLInputElement>,
-    field: {
-      onChange: any;
-      onBlur?: Noop;
-      value: any;
-      name?: "cover";
-      ref?: RefCallBack;
-    }
-  ) {
-    console.log(e.target.files);
-
-    if (field) {
-      field.value = e.target.files;
-      console.log(field);
-    }
-
     return field.onChange;
   }
 
