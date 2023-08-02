@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { Pin, SearchX } from "lucide-react";
+import { Lock, SearchX } from "lucide-react";
 import Link from "next/link";
 import { Type } from "@prisma/client";
 
@@ -68,8 +68,8 @@ export default function SearchPagination(props: {
                   <h2>{event.title}</h2>
                   <p>{date.toLocaleDateString("fr-BE", options)}</p>
                 </div>
-                {event.pinned && (
-                  <Pin className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle rotate-45" />
+                {event.type == "AUTRE" && (
+                  <Lock className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle" />
                 )}
                 <Image
                   className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 "

@@ -32,7 +32,7 @@ import { ChangeEvent, useState } from "react";
 import { Noop, RefCallBack, useForm } from "react-hook-form";
 import * as z from "zod";
 
-const enumType = ["BAPTISE", "OUVERT", "AUTRE"];
+const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -85,7 +85,7 @@ const formSchema = z
         `Max file size is 10MB.`
       ),
 
-    type: z.enum(["BAPTISE", "OUVERT", "AUTRE"]),
+    type: z.enum(TypeList),
     password: z.string().optional(),
     photos: z
       .custom<FileList>((v) => v instanceof FileList)
@@ -321,7 +321,7 @@ export default function NewEventPage() {
                     defaultValue={field.value}
                     className="flex flex-col space-y-1"
                   >
-                    {enumType.map((key) => {
+                    {TypeList.map((key) => {
                       return (
                         <FormItem
                           key={key}

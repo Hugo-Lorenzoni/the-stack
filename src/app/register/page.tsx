@@ -21,7 +21,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 
-const enumCercle = [
+const CercleList = [
   "FPMS",
   "WAWA",
   "FMM",
@@ -30,7 +30,7 @@ const enumCercle = [
   "ISIMS",
   "ARCHI",
   "AUTRE",
-];
+] as const;
 
 const formSchema = z
   .discriminatedUnion("check", [
@@ -77,16 +77,7 @@ const formSchema = z
         .max(50, { message: "Must be 50 or fewer characters long" })
         .trim(),
       check: z.literal(true),
-      cercle: z.enum([
-        "FPMS",
-        "WAWA",
-        "FMM",
-        "CEFUC",
-        "ISIC",
-        "ISIMS",
-        "ARCHI",
-        "AUTRE",
-      ]),
+      cercle: z.enum(CercleList),
       autreCercle: z.string().optional(),
       cercleVille: z.string().optional(),
       promo: z.number(),
@@ -306,7 +297,7 @@ export default function RegisterPage() {
                         defaultValue={field.value}
                         className="flex flex-col space-y-1"
                       >
-                        {enumCercle.map((key) => {
+                        {CercleList.map((key) => {
                           return (
                             <>
                               <FormItem className="flex items-center space-x-3 space-y-0">
