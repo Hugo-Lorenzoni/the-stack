@@ -19,7 +19,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 
 const CercleList = [
   "FPMS",
@@ -93,6 +93,7 @@ const formSchema = z
 export default function RegisterPage() {
   const [check, setChecked] = useState(false);
   const [cercle, setCercle] = useState(undefined);
+  const [showPassword, setShowPassword] = useState("password");
 
   const { toast } = useToast();
   const router = useRouter();
@@ -233,9 +234,38 @@ export default function RegisterPage() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Mot de passe</FormLabel>
-                <FormControl>
-                  <Input required type="password" {...field} />
-                </FormControl>
+                <div className="relative">
+                  <FormControl>
+                    <Input
+                      className="pr-16"
+                      required
+                      type={showPassword}
+                      {...field}
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="absolute right-0 bottom-0"
+                    onClick={() =>
+                      setShowPassword((prev) =>
+                        prev == "password" ? "text" : "password"
+                      )
+                    }
+                  >
+                    {showPassword == "password" ? (
+                      <>
+                        <span className="mr-2 sr-only">Show password</span>
+                        <Eye />
+                      </>
+                    ) : (
+                      <>
+                        <span className="mr-2 sr-only">Hide password</span>
+                        <EyeOff />
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
