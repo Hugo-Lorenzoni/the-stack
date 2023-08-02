@@ -50,10 +50,13 @@ export default function ConnectionPage() {
           const res = await getSession();
           if (res?.user?.role == "ADMIN") {
             router.push("/admin");
+            router.refresh();
           } else if (res?.user?.role == "WAITING") {
             router.push("/register/waiting");
+            router.refresh();
           } else {
             router.push(results.url);
+            router.refresh();
           }
         } else if (results.error == "CredentialsSignin") {
           toast({

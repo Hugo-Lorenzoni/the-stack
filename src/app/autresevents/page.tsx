@@ -44,8 +44,8 @@ export default async function AutresEventsPage({
                 className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"
               >
                 <Link href={`/autresevents/${event.id}`}>
-                  <div className="w-fit h-fit relative isolate">
-                    <div className="absolute w-fit h-fit text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
+                  <div className="relative isolate">
+                    <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
                       <h2>{event.title}</h2>
                       <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
                     </div>

@@ -4,11 +4,11 @@ import { NextResponse } from "next/server";
 import { getNextAuthSession } from "@/utils/auth";
 
 export async function GET(request: Request) {
-  console.log(request);
+  // console.log(request);
 
   const { searchParams } = new URL(request.url);
-  const search = searchParams.get("search");
-  console.log(search);
+  const search = searchParams.get("q");
+  // console.log(search);
 
   if (!search) {
     return NextResponse.json(
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     );
   }
   const session = await getNextAuthSession();
-  console.log(session);
+  // console.log(session);
 
   if (session?.user?.role == "ADMIN" || session?.user?.role == "BAPTISE") {
     const results = await prisma.event.findMany({
@@ -32,6 +32,7 @@ export async function GET(request: Request) {
         title: true,
         date: true,
         pinned: true,
+        type: true,
         coverName: true,
         coverUrl: true,
         coverWidth: true,
@@ -45,7 +46,7 @@ export async function GET(request: Request) {
         { status: 500 }
       );
     }
-    console.log(results);
+    // console.log(results);
     return new Response(JSON.stringify(results));
   } else {
     const results = await prisma.event.findMany({
@@ -72,6 +73,7 @@ export async function GET(request: Request) {
         title: true,
         date: true,
         pinned: true,
+        type: true,
         coverName: true,
         coverUrl: true,
         coverWidth: true,
@@ -85,7 +87,7 @@ export async function GET(request: Request) {
         { status: 500 }
       );
     }
-    console.log(results);
+    // console.log(results);
     return new Response(JSON.stringify(results));
   }
 }

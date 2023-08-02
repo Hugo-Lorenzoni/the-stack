@@ -4,13 +4,14 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { Pin, SearchX } from "lucide-react";
 import Link from "next/link";
-import { type } from "os";
+import { Type } from "@prisma/client";
 
 type Event = {
   id: string;
   title: string;
   date: Date;
   pinned: boolean;
+  type: Type;
   coverName: string;
   coverUrl: string;
   coverWidth: number;
@@ -49,15 +50,20 @@ export default function SearchPagination(props: {
       <ul className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {results.map((event) => {
           const date = new Date(event.date);
+          const path =
+            event.type == "AUTRE"
+              ? "autresevents"
+              : event.type == "OUVERT"
+              ? "events"
+              : event.type == "BAPTISE"
+              ? "fpmsevents"
+              : "";
           return (
             <li
               key={event.id}
               className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"
             >
-              <Link
-                href={`/events/${event.id}`}
-                className="w-full h-full relative isolate"
-              >
+              <Link href={`/${path}/${event.id}`} className="relative isolate">
                 <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
                   <h2>{event.title}</h2>
                   <p>{date.toLocaleDateString("fr-BE", options)}</p>
