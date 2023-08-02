@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Row } from "@tanstack/react-table";
 import { Button } from "@/components//ui/button";
 import { Event } from "@/app/admin/drafted-events/columns";
-import { Check, Send } from "lucide-react";
+import { Check, Eye, Send } from "lucide-react";
+import Link from "next/link";
 
 export default function RowActions(props: { row: Row<Event> }) {
   const { toast } = useToast();
@@ -50,10 +51,18 @@ export default function RowActions(props: { row: Row<Event> }) {
   return (
     <>
       {event ? (
-        <Button onClick={(e) => handleChange(e, event)}>
-          <Send className="w-4 h-4 mr-2" />
-          Publier
-        </Button>
+        <>
+          <Button className="mr-2" asChild>
+            <Link href={`/admin/events/${event.id}`}>
+              <Eye className="w-4 h-4 mr-2" />
+              Preview
+            </Link>
+          </Button>
+          <Button onClick={(e) => handleChange(e, event)}>
+            <Send className="w-4 h-4 mr-2" />
+            Publier
+          </Button>
+        </>
       ) : (
         <Button disabled className="bg-green-100 text-green-600">
           <Check className="w-4 h-4 mr-2" />

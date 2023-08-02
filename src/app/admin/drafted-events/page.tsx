@@ -22,7 +22,7 @@ export default async function AccountsApprovalPage() {
 
   return (
     <section>
-      <h2 className="pb-4">Accounts Approval Page</h2>
+      <h2 className="pb-4">Event Publishing Page</h2>
       <DataTable columns={columns} data={data} />
     </section>
   );

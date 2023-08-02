@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="[&>*:last-child]:p-2 [&>*:last-child]:flex [&>*:last-child]:justify-end"
+                  className="[&>*:last-child]:text-end"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (

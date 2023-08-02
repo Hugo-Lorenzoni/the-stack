@@ -17,7 +17,7 @@ export default function AdminLayout({
   const activeStyle = "bg-neutral-200" + " " + linkStyle;
 
   return (
-    <section className="flex min-h-[calc(100vh_-_10rem)]">
+    <div className="flex min-h-[calc(100vh_-_10rem)]">
       <aside className="p-4 font-semibold flex flex-col gap-2 shadow-2xl">
         <Link
           className={currentRoute === "/admin" ? activeStyle : linkStyle}
@@ -41,6 +41,16 @@ export default function AdminLayout({
           href="/admin/drafted-events"
         >
           Publication des événements
+        </Link>
+        <Link
+          className={
+            currentRoute.includes("/admin/events-management")
+              ? activeStyle
+              : linkStyle
+          }
+          href="/admin/events-management"
+        >
+          Gestion des événements
         </Link>
         <Separator />
         <Link
@@ -87,6 +97,6 @@ export default function AdminLayout({
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
         {children}
       </main>
-    </section>
+    </div>
   );
 }

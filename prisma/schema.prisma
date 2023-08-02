@@ -60,6 +60,7 @@ model Event {
   coverHeight     Int
   type            Type
   password        String?
+  publishDate     DateTime @default(now())
   photos          Photo[]
   sponsors        Sponsor[]
 }
