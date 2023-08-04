@@ -348,7 +348,7 @@ export default function NewEventPage() {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="h-4 w-4 animate-spin pr-4 text-white"
+                  className="h-4 w-4 animate-spin mr-2 text-white"
                 />
                 Loading
               </>

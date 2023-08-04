@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
     const coverFile = data.get("cover") as File;
-    const coverUrl = await saveFile(coverFile, title, date, type);
+    const coverUrl = await saveFile(coverFile, title, date, type, true);
     const coverArray = await coverFile.arrayBuffer();
     const coverDismensions = sizeOf(Buffer.from(coverArray));
     const parsedCover = photoSchema.parse({
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     const photosFiles = data.getAll("file") as Array<File>;
     const photos = await Promise.all(
       photosFiles.map(async (photo) => {
-        const photoURL = await saveFile(photo, title, date, type);
+        const photoURL = await saveFile(photo, title, date, type, false);
         const photoArray = await photo.arrayBuffer();
         const photoDismensions = sizeOf(Buffer.from(photoArray));
         return {
@@ -112,7 +112,8 @@ const saveFile = async (
   file: File,
   title: string,
   date: string,
-  type: Type
+  type: Type,
+  cover: boolean
 ) => {
   const fileArray = await file.arrayBuffer();
   const buffer = Buffer.from(fileArray);
@@ -142,9 +143,10 @@ const saveFile = async (
     }
   }
   try {
-    const filename = `${file.name.replace(/\.[^/.]+$/, "")}.${mime.getExtension(
-      file.type
-    )}`;
+    const filename = `${cover ? "cover-" : ""}${file.name.replace(
+      /\.[^/.]+$/,
+      ""
+    )}.${mime.getExtension(file.type)}`;
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {

@@ -60,16 +60,19 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
 
   return (
     <>
-      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row-dense">
         {props.photos.map((photo, index) => {
           return (
             <Image
               key={index}
-              className={
-                photo.width < photo.height
-                  ? "row-span-2 w-full h-full object-cover rounded-md cursor-pointer"
-                  : "w-full h-full object-cover rounded-md cursor-pointer"
-              }
+              className={`w-full h-full object-cover rounded-md cursor-pointer
+                ${
+                  photo.width < photo.height
+                    ? "row-span-2"
+                    : index % 7
+                    ? ""
+                    : "row-span-2 col-span-2"
+                }`}
               src={photo.url}
               width={photo.width}
               height={photo.height}
@@ -86,7 +89,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           className="fixed inset-0 bg-black text-white py-8"
         >
           <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto">
-            LightBox
+            {currentPhoto?.name}
             <div>
               {currentPhoto ? (
                 <Button asChild>

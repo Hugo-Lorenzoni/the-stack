@@ -7,18 +7,41 @@ import {
   ChevronLeftCircle,
   ChevronRightCircle,
   Download,
+  Loader2,
+  Plus,
   XCircle,
 } from "lucide-react";
 import useSwipe from "../hooks/useSwipe";
 import useKeypress from "react-use-keypress";
+import { useToast } from "./ui/use-toast";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function AdminGallery(props: {
   eventName: string;
   photos: Photo[];
 }) {
+  const [photos, setPhotos] = useState<Photo[]>(props.photos);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
   const [isOpen, setOpen] = useState(false);
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
+
+  const [modalIsOpen, setModalOpen] = useState(false);
+
+  const { toast } = useToast();
 
   function closeModal() {
     setCurrentPhoto(null);
@@ -61,25 +84,115 @@ export default function AdminGallery(props: {
     }
   });
 
+  async function deletePhoto(
+    e: React.MouseEvent<HTMLButtonElement>,
+    photo: Photo
+  ) {
+    e.preventDefault();
+    setLoading(true);
+    console.log(photo);
+    try {
+      const apiUrlEndpoint = "http://localhost:3000/api/admin/deletephoto";
+      const postData = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(photo),
+      };
+      const response = await fetch(apiUrlEndpoint, postData);
+      console.log(response);
+      if (response.status == 500) {
+        toast({
+          variant: "destructive",
+          title: response.status.toString(),
+          description: response.statusText,
+        });
+      }
+      if (response.status == 200) {
+        const name = await response.json();
+        toast({
+          variant: "default",
+          title: "Suppression de la photo réussie",
+          description: `${name} a été supprimé !`,
+        });
+        if (photos !== null) {
+          setPhotos((prev) =>
+            prev.filter((prevphoto) => prevphoto.id !== photo.id)
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+    setModalOpen(false);
+  }
+
   return (
     <>
-      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {props.photos.map((photo, index) => {
+      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row-dense">
+        {photos?.map((photo, index) => {
           return (
-            <Image
+            <li
               key={index}
-              className={
+              className={`relative group rounded-md cursor-pointer overflow-hidden ${
                 photo.width < photo.height
-                  ? "row-span-2 w-full h-full object-cover rounded-md cursor-pointer"
-                  : "w-full h-full object-cover rounded-md cursor-pointer"
-              }
-              src={photo.url}
-              width={photo.width}
-              height={photo.height}
-              alt={props.eventName}
-              quality={30}
-              onClick={() => openModal(photo, index)}
-            />
+                  ? "row-span-2"
+                  : index % 7
+                  ? ""
+                  : "row-span-2 col-span-2"
+              }`}
+            >
+              <AlertDialog onOpenChange={setModalOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button className="absolute hidden top-4 right-4 p-2 pl-[7px] rounded-lg group-hover:flex bg-red-600 hover:bg-red-500">
+                    <Plus className="rotate-45" />
+                    <span className="text-lg sr-only">Delete</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Êtes-vous sûr de vouloir supprimer cette photo ?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Cette suppression est irréversible. Cette photo sera
+                      supprimée de manière permanente de cet événement.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isLoading}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-600 hover:bg-red-500"
+                      onClick={(e) => deletePhoto(e, photo)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2
+                            color="#ffffff"
+                            className="h-4 w-4 animate-spin mr-2 text-white"
+                          />
+                          En cours
+                        </>
+                      ) : (
+                        "Continue"
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              <Image
+                className="w-full h-full object-cover"
+                src={photo.url}
+                width={photo.width}
+                height={photo.height}
+                alt={props.eventName}
+                quality={30}
+                onClick={() => openModal(photo, index)}
+              />
+            </li>
           );
         })}
       </ul>
@@ -89,7 +202,7 @@ export default function AdminGallery(props: {
           className="fixed inset-0 bg-black text-white py-8"
         >
           <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto">
-            LightBox
+            {currentPhoto?.name}
             <div>
               {currentPhoto ? (
                 <Button asChild>
