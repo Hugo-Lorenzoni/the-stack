@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -15,7 +15,7 @@ const inter = Poppins({
 export const metadata: Metadata = {
   title: "CPV FPMs",
   description:
-    "Photos des événements du Cercle de la Faculté Polytechnique de Mons (FPMs)",
+    "Photos des événements de la Faculté Polytechnique de Mons (FPMs)",
 };
 
 export default function RootLayout({

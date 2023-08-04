@@ -47,11 +47,18 @@ export default async function Nav() {
           {session &&
           (session.user?.role === "BAPTISE" ||
             session.user?.role === "ADMIN") ? (
-            <li className="flex items-center">
-              <Link className={linkStyle} href="/fpmsevents">
-                Événements baptisés
-              </Link>
-            </li>
+            <>
+              <li className="flex items-center">
+                <Link className={linkStyle} href="/fpmsevents">
+                  Événements baptisés
+                </Link>
+              </li>
+              <li className="flex items-center">
+                <Link className={linkStyle} href="/videos">
+                  Vidéos
+                </Link>
+              </li>
+            </>
           ) : (
             <></>
           )}

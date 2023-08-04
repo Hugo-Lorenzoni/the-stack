@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string(),
@@ -22,6 +24,8 @@ const formSchema = z.object({
 });
 
 export default function ConnectionPage() {
+  const [isLoading, setLoading] = useState<boolean>(false);
+
   const router = useRouter();
   const { toast } = useToast();
 
@@ -34,6 +38,7 @@ export default function ConnectionPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -64,12 +69,20 @@ export default function ConnectionPage() {
             title: "Erreur lors de la connexion",
             description: "Nom d'utilisateur ou mot de passe incorrect",
           });
-          ("Nom d'utilisateur ou mot de passe incorrect !");
+        } else {
+          toast({
+            variant: "destructive",
+            title: results.status.toString(),
+            description: results.error
+              ? results.error.toString()
+              : results.url?.toString(),
+          });
         }
       }
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   }
 
   return (
@@ -112,7 +125,16 @@ export default function ConnectionPage() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Connexion</Button>
+            <Button disabled={isLoading} type="submit">
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  En cours de connexion
+                </>
+              ) : (
+                "Connexion"
+              )}
+            </Button>
           </form>
         </Form>
       </div>

@@ -16,7 +16,8 @@ export default withAuth({
       if (
         req.nextUrl.pathname.startsWith("/fpmsevents") ||
         req.nextUrl.pathname.startsWith("/api/fpmsevents") ||
-        req.nextUrl.pathname.startsWith("/BAPTISE")
+        req.nextUrl.pathname.startsWith("/BAPTISE") ||
+        req.nextUrl.pathname.startsWith("/videos")
       ) {
         return token?.role === "BAPTISE" || token?.role === "ADMIN";
       }
@@ -38,5 +39,6 @@ export const config = {
     "/BAPTISE/:path*",
     "/search/:path*",
     "/api/search/:path*",
+    "/videos/:path*",
   ],
 };
