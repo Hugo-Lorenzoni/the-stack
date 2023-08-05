@@ -22,6 +22,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
+
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Type } from "@prisma/client";
@@ -132,6 +133,7 @@ export default function NewEventPage() {
       type: "BAPTISE",
     },
   });
+
   const {
     formState: { errors },
     register,
@@ -166,7 +168,6 @@ export default function NewEventPage() {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      setLoading(false);
       if (response.status == 500) {
         toast({
           variant: "destructive",
@@ -186,8 +187,8 @@ export default function NewEventPage() {
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
     }
+    setLoading(false);
   }
   return (
     <section>

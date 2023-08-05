@@ -36,22 +36,26 @@ export default function Nav() {
           <div>
             <h4 className="font-semibold text-xl pb-2">Comité CPV</h4>
             <ul>
-              <li>Éva Flemal</li>
-              <li>Christopher Rodriguez</li>
-              <li>Chloé Dupont</li>
-              <li>Marithé Hupin</li>
               <li>Rodrigue Deghorain</li>
+              <li>Marithé Hupin</li>
+              <li>Janelle Merlevede</li>
+              <li>Sarah Gilles</li>
+              <li>Guillaume Chamart</li>
             </ul>
           </div>
           <div>
             <h4 className="font-semibold text-xl pb-2">© Site développé par</h4>
             <ul>
+              <li>Hugo Lorenzoni</li>
               <li>Rodrigue Deghorain</li>
               <li>Rémy Lempire</li>
-              <li>Hugo Lorenzoni</li>
             </ul>
           </div>
         </div>
+        <h5 className="text-center">
+          Un site réalisé en partie dans le cadre du cours de Modélisation des
+          données, Big Data et projet.
+        </h5>
       </div>
     </footer>
   );
