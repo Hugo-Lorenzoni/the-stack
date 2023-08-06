@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Instagram } from "lucide-react";
 
-export default function Nav() {
+export default function Footer() {
   return (
     <footer className="bg-orange-600 py-4 text-white">
       <div className="container flex flex-col gap-4">

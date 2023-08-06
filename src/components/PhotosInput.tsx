@@ -1,5 +1,4 @@
 "use client";
-import React, { ChangeEvent, useCallback, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -52,7 +51,7 @@ export function PhotosInput({
       {/* {image && <img src={image} className="w-full rounded-xl mt-1" />} */}
       <Input
         className="mt-2 cursor-pointer h-fit flex items-center file:cursor-pointer file:border-1  file:rounded-md"
-        //accept=".jpg,.jpeg,.png,.webp"
+        accept=".jpg,.jpeg,.png,.webp"
         type="file"
         multiple
         name={name}

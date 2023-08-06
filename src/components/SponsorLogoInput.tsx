@@ -1,11 +1,5 @@
 "use client";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useState,
-} from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useCallback } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -54,7 +48,7 @@ export function SponsorLogoInput({
 
       <Input
         className="mt-2 cursor-pointer h-fit flex items-center file:cursor-pointer file:border-1  file:rounded-md"
-        //accept=".jpg,.jpeg,.png,.webp"
+        accept=".jpg,.jpeg,.png,.webp"
         type="file"
         name={name}
         ref={ref}
