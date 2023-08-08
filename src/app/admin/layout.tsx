@@ -92,6 +92,15 @@ export default function AdminLayout({
         >
           Gestion des sponsors
         </Link>
+        <Separator />
+        <Link
+          className={
+            currentRoute === "/admin/new-video" ? activeStyle : linkStyle
+          }
+          href="/admin/new-video"
+        >
+          Nouvelle vidéo
+        </Link>
       </aside>
       <main className="my-8 mx-14 flex-1">
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>

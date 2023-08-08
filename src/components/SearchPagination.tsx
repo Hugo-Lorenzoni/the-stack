@@ -89,7 +89,7 @@ export default function SearchPagination(props: {
           disabled={currentPage == 1}
           onClick={() => setCurrentPage((page) => page - 1)}
         >
-          Précédant
+          Précédent
         </Button>
 
         <div>

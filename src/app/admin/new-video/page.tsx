@@ -2,6 +2,7 @@
 
 import { SponsorLogoInput } from "@/components/SponsorLogoInput";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -11,21 +12,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
-const MAX_FILE_SIZE = 10000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
 
 const formSchema = z.object({
   name: z
@@ -35,26 +35,17 @@ const formSchema = z.object({
     .trim(),
   url: z
     .string()
+    .url()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(50, { message: "Must be 50 or fewer characters long" })
     .trim(),
-  logo: z
-    .custom<FileList>((v) => v instanceof FileList)
-    .refine((files) => files.length == 1, "Image is required.")
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
-    )
-    .refine(
-      (files) => files[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 10MB.`
-    ),
+  date: z.date(),
 });
 
-export default function NewSponsorPage() {
-  const [isLoading, setLoading] = useState<boolean>(false);
+export type Video = z.infer<typeof formSchema>;
 
-  const [image, setImage] = useState<string | null>();
+export default function NewVideoPage() {
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const { toast } = useToast();
 
@@ -73,30 +64,20 @@ export default function NewSponsorPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    console.log(values.logo.length);
-    console.log(values.logo?.[0].size);
 
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    const formData = new FormData();
-    formData.append("logo", values.logo[0]);
-
-    const { logo, ...data } = values;
-
-    formData.append("values", JSON.stringify(data));
-    console.log(formData);
-
     try {
-      const apiUrlEndpoint = `http://localhost:3000/api/admin/newsponsor`;
+      const apiUrlEndpoint = "http://localhost:3000/api/admin/newvideo";
       const postData = {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      setLoading(false);
       if (response.status == 500) {
         toast({
           variant: "destructive",
@@ -107,22 +88,20 @@ export default function NewSponsorPage() {
       if (response.status == 200) {
         toast({
           variant: "default",
-          title: "Enregistrement du sponsor réussi",
+          title: "Enregistrement de la vidéo réussi",
           description:
-            "Vous pouvez maintenant l'ajouter comme sponsor d'un événement",
+            "Vous pouvez maintenant la retrouver dans l'onglet vidéo.",
         });
-        setImage(null);
         reset();
-        // router.push("/connexion");
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
     }
+    setLoading(false);
   }
   return (
     <section>
-      <h2>New Sponsor Page</h2>
+      <h2>New Video Page</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -133,18 +112,15 @@ export default function NewSponsorPage() {
             name="name"
             render={({ field }) => (
               <FormItem className="mt-4">
-                <FormLabel>Nom du sponsor</FormLabel>
+                <FormLabel>Nom du la vidéo</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
                     required
-                    placeholder="Nouveau sponsor"
+                    placeholder="Nouvelle vidéo"
                     {...field}
                   />
                 </FormControl>
-                {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -154,25 +130,59 @@ export default function NewSponsorPage() {
             name="url"
             render={({ field }) => (
               <FormItem className="mt-4">
-                <FormLabel>Lien vers le site du sponsor</FormLabel>
+                <FormLabel>Lien de la vidéo</FormLabel>
                 <FormControl>
-                  <Input type="text" required placeholder="URL" {...field} />
+                  <Input
+                    type="text"
+                    required
+                    placeholder="https://www.youtube.com/watch?v=hUl2oQ4AOzc"
+                    {...field}
+                  />
                 </FormControl>
-                {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {image && (
-            <img src={image} alt="logo" className="w-full rounded-xl mt-1" />
-          )}
-          <SponsorLogoInput
-            errors={errors}
-            register={register}
-            setImage={setImage}
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Date de la vidéo</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
           />
           <Button disabled={isLoading} type="submit">
             {isLoading ? (
@@ -192,7 +202,7 @@ export default function NewSponsorPage() {
             type="reset"
             className="ml-4"
             onClick={() => {
-              reset(), setImage(null);
+              reset();
             }}
           >
             Reset

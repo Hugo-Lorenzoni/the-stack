@@ -101,7 +101,7 @@ export default function AdminSearchPagination(props: {
           disabled={currentPage == 1}
           onClick={() => setCurrentPage((page) => page - 1)}
         >
-          Précédant
+          Précédent
         </Button>
 
         <div>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Cercle, Role } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil } from "lucide-react";
+import EditUser from "./EditUser";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -53,13 +54,7 @@ export const columns: ColumnDef<User>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original;
-
-      return (
-        <Button>
-          <span className="pr-2">Edit</span>
-          <Pencil className="w-4 h-4" />
-        </Button>
-      );
+      return <EditUser rowUser={user} />;
     },
   },
 ];

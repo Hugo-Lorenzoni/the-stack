@@ -241,7 +241,7 @@ export default function AdminGallery(props: {
             onClick={() => prevPhoto()}
           >
             <ChevronLeftCircle className="w-16 h-16" />{" "}
-            <span className="sr-only">Précédant</span>
+            <span className="sr-only">Précédent</span>
           </Button>
           <Button
             className="absolute right-8 top-1/2 rounded-full p-2 w-16 h-16"

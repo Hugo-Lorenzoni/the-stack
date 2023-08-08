@@ -49,18 +49,19 @@ enum Type {
 }
 
 model Event {
-  id              String   @id @default(uuid())
+  id              String      @id @default(uuid())
   title           String
-  date            DateTime @default(now())
-  published       Boolean  @default(false)
-  pinned          Boolean  @default(false)
+  date            DateTime    @default(now())
+  published       Boolean     @default(false)
+  pinned          Boolean     @default(false)
+  notes           String?     @db.Text
   coverName       String
   coverUrl        String
   coverWidth      Int
   coverHeight     Int
   type            Type
   password        String?
-  publishDate     DateTime @default(now())
+  publishDate     DateTime    @default(now())
   photos          Photo[]
   sponsors        Sponsor[]
 }
@@ -85,4 +86,11 @@ model Sponsor {
   logoWidth   Int
   logoHeight  Int
   event       Event[]     
+}
+
+model Video {
+  id          String      @id
+  url         String
+  name        String
+  date        DateTime
 }

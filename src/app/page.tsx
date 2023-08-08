@@ -45,7 +45,7 @@ export default function Home() {
           className="underline text-orange-600 ml-2"
           href="https://cerclephotovideofpms.wordpress.com/"
         >
-          Retrouver nos précédantes photos sur notre ancien site.
+          Retrouver nos précédentes photos sur notre ancien site.
         </a>
       </section>
     </main>

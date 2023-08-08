@@ -28,7 +28,7 @@ export default function PaginationControls({
           router.push(`${path}/?page=${Number(page) - 1}`);
         }}
       >
-        Précédant
+        Précédent
       </Button>
 
       <div>
