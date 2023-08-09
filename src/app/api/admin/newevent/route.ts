@@ -11,6 +11,7 @@ import * as z from "zod";
 type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
   title: string;
+  notes?: string | undefined;
   date: string;
   pinned: boolean;
   password?: string | undefined;
@@ -32,7 +33,8 @@ export async function POST(request: NextRequest) {
     if (!values) {
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
-    const { title, date, pinned, type, password }: Values = JSON.parse(values);
+    const { title, date, notes, pinned, type, password }: Values =
+      JSON.parse(values);
     if (!password && type == "AUTRE") {
       return NextResponse.json(
         { error: "Something went wrong." },
@@ -82,6 +84,7 @@ export async function POST(request: NextRequest) {
       data: {
         title: title,
         date: date,
+        notes: notes,
         pinned: pinned,
         type: type,
         password: password,

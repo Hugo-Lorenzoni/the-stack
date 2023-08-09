@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 
 import { cn } from "@/lib/utils";
@@ -71,6 +72,12 @@ const formSchema = z
       .max(50, { message: "Must be 50 or fewer characters long" })
       .trim(),
     date: z.date(),
+    notes: z
+      .string()
+      .min(2, { message: "Must be 2 or more characters long" })
+      .max(750, { message: "Must be 750 or fewer characters long" })
+      .trim()
+      .optional(),
     pinned: z.boolean(),
     // pinned: z.boolean().optional(),
     cover: z
@@ -256,6 +263,31 @@ export default function NewEventPage() {
                     />
                   </PopoverContent>
                 </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Notes{" "}
+                  <span className="italic text-neutral-400">
+                    (facultatives)
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Notes..."
+                    className="resize-none"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Ces notes seront affichées avant les photos de l'événement.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

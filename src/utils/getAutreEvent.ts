@@ -12,6 +12,7 @@ export const getAutreEvent = cache(async (id: string) => {
       id: true,
       title: true,
       date: true,
+      notes: true,
       pinned: true,
       coverName: true,
       coverUrl: true,

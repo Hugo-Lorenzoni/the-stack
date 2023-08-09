@@ -12,6 +12,7 @@ export function CoverInput({
   errors: FieldErrors<{
     title: string;
     date: Date;
+    notes?: string | undefined;
     pinned: boolean;
     cover: FileList;
     type: "BAPTISE" | "OUVERT" | "AUTRE";
@@ -21,6 +22,7 @@ export function CoverInput({
   register: UseFormRegister<{
     title: string;
     date: Date;
+    notes?: string | undefined;
     pinned: boolean;
     cover: FileList;
     type: "BAPTISE" | "OUVERT" | "AUTRE";

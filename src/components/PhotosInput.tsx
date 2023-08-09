@@ -10,6 +10,7 @@ export function PhotosInput({
   errors: FieldErrors<{
     title: string;
     date: Date;
+    notes?: string | undefined;
     pinned: boolean;
     cover: FileList;
     type: "BAPTISE" | "OUVERT" | "AUTRE";
@@ -19,6 +20,7 @@ export function PhotosInput({
   register: UseFormRegister<{
     title: string;
     date: Date;
+    notes?: string | undefined;
     pinned: boolean;
     cover: FileList;
     type: "BAPTISE" | "OUVERT" | "AUTRE";
