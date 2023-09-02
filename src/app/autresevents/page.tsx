@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
+import { Event } from "@prisma/client";
 
 import { getEventsCount } from "@/utils/getEventsCount";
 import { getEvents } from "@/utils/getEvents";
@@ -38,7 +39,7 @@ export default async function AutresEventsPage({
       {events ? (
         <>
           <ul className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {events.map((event) => (
+            {events.map((event: Event) => (
               <li
                 key={event.id}
                 className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"

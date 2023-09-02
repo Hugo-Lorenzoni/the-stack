@@ -1,4 +1,5 @@
 import { getVideos } from "@/utils/getVideos";
+import { Video } from "@prisma/client";
 import { SearchX } from "lucide-react";
 
 export default async function VideosPage() {
@@ -12,7 +13,7 @@ export default async function VideosPage() {
       <section className="grid lg:grid-cols-2 grid-cols-1 mt-8 gap-4">
         {videos ? (
           <>
-            {videos.map((video) => (
+            {videos.map((video: Video) => (
               <div key={video.id}>
                 <h2 className="mb-2 font-semibold">{video.name}</h2>
                 <iframe

@@ -1,12 +1,12 @@
-import prisma from "@/lib/prisma";
 import { DataTable } from "./data-table";
-import { User, columns } from "./columns";
+import { columns } from "./columns";
 import { getWaitingUsers } from "@/utils/getWaitingUsers";
+import { User } from "@prisma/client";
 
 export default async function AccountsApprovalPage() {
   const users = await getWaitingUsers();
 
-  const data: User[] = users.map((user) => {
+  const data: User[] = users.map((user: User) => {
     const { id, autreCercle, cercleVille, cercle, ...result } = user;
     if (cercle == "AUTRE") {
       return {

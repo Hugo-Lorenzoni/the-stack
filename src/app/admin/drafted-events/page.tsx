@@ -13,10 +13,11 @@ export default async function AccountsApprovalPage() {
     day: "numeric",
   };
 
-  const data: Event[] = events.map((event) => {
+  const data: Event[] = events.map((event: Event) => {
+    const date = new Date(event.date);
     return {
       ...event,
-      date: event.date.toLocaleDateString("fr-BE", options),
+      date: date.toLocaleDateString("fr-BE", options),
     };
   });
 

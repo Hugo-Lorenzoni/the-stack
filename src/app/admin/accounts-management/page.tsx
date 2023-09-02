@@ -1,10 +1,11 @@
-import { User, columns } from "./columns";
+import { User } from "@prisma/client";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { getAllUsers } from "@/utils/getAllUsers";
 
 export default async function AccountsManagementPage() {
   const users = await getAllUsers();
-  const data: User[] = users.map((user) => {
+  const data: User[] = users.map((user: User) => {
     const { cercle, autreCercle, ...result } = user;
     if (cercle == "AUTRE") {
       return {

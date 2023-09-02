@@ -1,23 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram } from "lucide-react";
+import { getComite } from "@/utils/getComite";
 
 export const revalidate = 60 * 60 * 24; // revalidate at most every day
 
-async function getData() {
-  const res = await fetch("http://localhost:3000/api/comite");
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-  return res.json();
-}
-
 export default async function Footer() {
-  const data = await getData();
-  console.log(data);
+  const comite = await getComite();
+  // console.log(comite);
 
   return (
     <footer className="bg-orange-600 py-4 text-white">
@@ -52,11 +42,11 @@ export default async function Footer() {
           <div>
             <h4 className="font-semibold text-xl pb-2">Comité CPV</h4>
             <ul>
-              <li>{data.president}</li>
-              <li>{data.responsableVideo}</li>
-              <li>{data.responsablePhoto}</li>
-              <li>{data.delegueVideo}</li>
-              <li>{data.deleguePhoto}</li>
+              <li>{comite.president}</li>
+              <li>{comite.responsableVideo}</li>
+              <li>{comite.responsablePhoto}</li>
+              <li>{comite.delegueVideo}</li>
+              <li>{comite.deleguePhoto}</li>
             </ul>
           </div>
           <div>

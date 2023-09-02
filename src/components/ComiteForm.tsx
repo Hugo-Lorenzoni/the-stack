@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Data } from "@/app/admin/comite/page";
+import { Comite } from "@/app/admin/comite/page";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
@@ -42,18 +42,18 @@ const comiteFormSchema = z.object({
     .max(30, { message: "Must be 30 or fewer characters long" }),
 });
 
-export default function ComiteForm({ data }: { data: Data }) {
+export default function ComiteForm({ comite }: { comite: Comite }) {
   const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   // 1. Define your form.
   const form = useForm<z.infer<typeof comiteFormSchema>>({
     resolver: zodResolver(comiteFormSchema),
     defaultValues: {
-      president: data.president,
-      responsableVideo: data.responsableVideo,
-      responsablePhoto: data.responsablePhoto,
-      delegueVideo: data.delegueVideo,
-      deleguePhoto: data.deleguePhoto,
+      president: comite.president,
+      responsableVideo: comite.responsableVideo,
+      responsablePhoto: comite.responsablePhoto,
+      delegueVideo: comite.delegueVideo,
+      deleguePhoto: comite.deleguePhoto,
     },
   });
 

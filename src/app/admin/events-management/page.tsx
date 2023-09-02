@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 
+import { Event } from "@prisma/client";
 import { getAdminEvents } from "@/utils/getAdminEvents";
 import { Pin } from "lucide-react";
-import AdminSearchBar from "@/components/AdminSearchBar";
 
 export default async function EventsManagementPage() {
   const options: Intl.DateTimeFormatOptions = {
@@ -29,7 +29,7 @@ export default async function EventsManagementPage() {
             Dernières publications :
           </h3>
           <ul className="mt-4 grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-            {events.map((event) => (
+            {events.map((event: Event) => (
               <li
                 key={event.id}
                 className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"

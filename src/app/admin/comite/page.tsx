@@ -1,6 +1,9 @@
 import ComiteForm from "@/components/ComiteForm";
+import { getNewComite } from "@/utils/getNewComite";
 
-export type Data = {
+export const dynamic = "force-dynamic";
+
+export type Comite = {
   president: string;
   responsableVideo: string;
   responsablePhoto: string;
@@ -8,26 +11,12 @@ export type Data = {
   deleguePhoto: string;
 };
 
-async function getData() {
-  const res = await fetch("http://localhost:3000/api/comite", {
-    cache: "no-store",
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-  return res.json();
-}
-
 export default async function ComitePage() {
-  const data: Data = await getData();
-
+  const comite: Comite = await getNewComite();
   return (
     <>
       <h2>Modification du comité</h2>
-      <ComiteForm data={data} />
+      <ComiteForm comite={comite} />
     </>
   );
 }
