@@ -66,7 +66,7 @@ export default function ComiteForm({ data }: { data: Data }) {
     // ✅ This will be type-safe and validated.
     console.log(values);
     try {
-      const response = await fetch("/api/admin/modifcomite", {
+      const response = await fetch("/api/admin/modificationcomite", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

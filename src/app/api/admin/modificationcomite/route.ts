@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
 
-export const comiteFormSchema = z.object({
+const comiteFormSchema = z.object({
   president: z.string(),
   responsableVideo: z.string(),
   responsablePhoto: z.string(),
