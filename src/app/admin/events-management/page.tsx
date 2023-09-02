@@ -18,7 +18,7 @@ export default async function EventsManagementPage() {
   // console.log(events);
   // console.log(searchParams);
   // console.log(events.length);
-  // console.log(count;
+  // console.log(count);
   // console.log(Number(page) * eventPerPage);
 
   return (

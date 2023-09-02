@@ -286,7 +286,8 @@ export default function NewEventPage() {
                   />
                 </FormControl>
                 <FormDescription>
-                  Ces notes seront affichées avant les photos de l'événement.
+                  Ces notes seront affichées avant les photos de
+                  l&apos;événement.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

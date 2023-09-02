@@ -111,9 +111,9 @@ export default function EditUser({ rowUser }: EditUserProps) {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Modification de l'utilisateur</DialogTitle>
+              <DialogTitle>Modification de l&apos;utilisateur</DialogTitle>
               <DialogDescription>
-                Vous pouvez modifier le rôle d'un utilisateur.
+                Vous pouvez modifier le rôle d&apos;un utilisateur.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -135,13 +135,16 @@ export default function EditUser({ rowUser }: EditUserProps) {
                         </FormControl>
                         <SelectContent>
                           {RoleList.map((role) => (
-                            <SelectItem value={role}>{role}</SelectItem>
+                            <SelectItem key={role} value={role}>
+                              {role}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                       <FormDescription className="text-red-600">
-                        Attention : Modifier le rôle d'un utilisateur modifie
-                        son accès aux différentes catégories d'événements
+                        Attention : Modifier le rôle d&apos;un utilisateur
+                        modifie son accès aux différentes catégories
+                        d&apos;événements
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

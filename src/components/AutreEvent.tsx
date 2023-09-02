@@ -31,7 +31,7 @@ type Event = {
   id: string;
   title: string;
   date: Date;
-  notes?: string;
+  notes?: string | null;
   pinned: boolean;
   coverName: string;
   coverUrl: string;
