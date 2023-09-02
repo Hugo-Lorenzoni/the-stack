@@ -54,19 +54,23 @@ export default async function Nav() {
                 </Link>
               </li>
               <li className="flex items-center">
+                <Link className={linkStyle} href="/autresevents">
+                  Autres
+                </Link>
+              </li>
+              <li className="flex items-center">
                 <Link className={linkStyle} href="/videos">
                   Vidéos
                 </Link>
               </li>
             </>
           ) : (
-            <></>
+            <li className="flex items-center">
+              <Link className={linkStyle} href="/autresevents">
+                Autres
+              </Link>
+            </li>
           )}
-          <li className="flex items-center">
-            <Link className={linkStyle} href="/autresevents">
-              Autres
-            </Link>
-          </li>
           {session && session.user?.role === "ADMIN" ? (
             <li className="flex items-center">
               <Link className={linkStyle} href="/admin">

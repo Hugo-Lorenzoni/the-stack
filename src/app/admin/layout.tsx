@@ -101,6 +101,13 @@ export default function AdminLayout({
         >
           Nouvelle vidéo
         </Link>
+        <Separator />
+        <Link
+          className={currentRoute === "/admin/comite" ? activeStyle : linkStyle}
+          href="/admin/comite"
+        >
+          Modification du comité
+        </Link>
       </aside>
       <main className="my-8 mx-14 flex-1">
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
