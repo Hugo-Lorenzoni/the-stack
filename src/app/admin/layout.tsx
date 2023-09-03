@@ -106,7 +106,7 @@ export default function AdminLayout({
           className={currentRoute === "/admin/comite" ? activeStyle : linkStyle}
           href="/admin/comite"
         >
-          Modification du comité
+          Comité
         </Link>
         <Link
           className={
@@ -114,7 +114,7 @@ export default function AdminLayout({
           }
           href="/admin/text-intro"
         >
-          Modification du texte d'introduction
+          Texte d&apos;introduction
         </Link>
       </aside>
       <main className="my-8 mx-14 flex-1 flex flex-col">
