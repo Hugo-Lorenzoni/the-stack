@@ -118,7 +118,7 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
           name="text"
           render={({ field }) => (
             <FormItem className="flex-1 flex flex-col">
-              <FormLabel className="my-1">Texte d'introduction</FormLabel>
+              <FormLabel className="my-1">Texte d&apos;introduction</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Texte d'introduction ..."

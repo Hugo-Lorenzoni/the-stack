@@ -8,7 +8,7 @@ export default async function ComitePage() {
   const textintro: TextIntro = await getNewTextIntro();
   return (
     <>
-      <h2>Modification du texte d'introduction</h2>
+      <h2>Modification du texte d&apos;introduction</h2>
       <TextIntroForm textintro={textintro} />
     </>
   );
