@@ -108,8 +108,16 @@ export default function AdminLayout({
         >
           Modification du comité
         </Link>
+        <Link
+          className={
+            currentRoute === "/admin/text-intro" ? activeStyle : linkStyle
+          }
+          href="/admin/text-intro"
+        >
+          Modification du texte d'introduction
+        </Link>
       </aside>
-      <main className="my-8 mx-14 flex-1">
+      <main className="my-8 mx-14 flex-1 flex flex-col">
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
         {children}
       </main>

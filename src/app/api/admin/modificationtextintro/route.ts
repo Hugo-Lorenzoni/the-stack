@@ -3,12 +3,11 @@ import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
 
-const comiteFormSchema = z.object({
-  president: z.string(),
-  responsableVideo: z.string(),
-  responsablePhoto: z.string(),
-  delegueVideo: z.string(),
-  deleguePhoto: z.string(),
+const textFormSchema = z.object({
+  title: z.string(),
+  text: z.array(z.string()),
+  signature: z.string(),
+  date: z.string(),
 });
 
 export async function POST(request: NextRequest) {
@@ -16,7 +15,7 @@ export async function POST(request: NextRequest) {
     const body: unknown = await request.json();
     // console.log(body);
 
-    const result = comiteFormSchema.safeParse(body);
+    const result = textFormSchema.safeParse(body);
     if (!result.success) {
       // handle error then return
       console.log(result.error);
@@ -34,11 +33,11 @@ export async function POST(request: NextRequest) {
         const updatedData = JSON.stringify(result.data);
 
         // Write the updated data to the JSON file
-        await fs.writeFile(jsonDirectory + "/comite.json", updatedData);
+        await fs.writeFile(jsonDirectory + "/text-intro.json", updatedData);
 
         // Send an error response
         return NextResponse.json(
-          { message: "Comité mis à jour !" },
+          { message: "Texte d'introduction mis à jour !" },
           { status: 200 }
         );
       } catch (error) {

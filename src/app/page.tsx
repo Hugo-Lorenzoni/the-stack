@@ -1,7 +1,18 @@
+import { getTextIntro } from "@/utils/getTextIntro";
 import { Info } from "lucide-react";
 import Image from "next/image";
 
-export default function Home() {
+export const revalidate = 60 * 60 * 24; // revalidate at most every day
+
+export type TextIntro = {
+  title: string;
+  text: string[];
+  signature: string;
+  date: string;
+};
+
+export default async function Home() {
+  const textintro: TextIntro = await getTextIntro();
   return (
     <main>
       <section className="h-[calc(100vh_-_10rem)] overflow-hidden relative">
@@ -22,21 +33,13 @@ export default function Home() {
       <section className="container py-4">
         <div className="px-6 py-4 border-orange-600 border-4 rounded-2xl shadow-lg">
           <h2 className="font-semibold text-2xl mb-4 w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
-            À propos
+            {textintro.title}
           </h2>
-          <p>
-            Ce site est le site officiel du Cercle Photo-Vidéo de la Faculté
-            Polytechnique de Mons.
-          </p>
-          <p>
-            Nos photos sont prises à but non lucratif et visent uniquement à
-            illustrer et à figer dans le temps les évènements organisés par les
-            étudiants de cette même Faculté. Les photos sont sous la protection
-            d&apos;un mot de passe par respect de la vie privée.
-          </p>
-          <p>Pour toutes questions, n&apos;hésitez pas à nous contacter !</p>
-          <p className="text-end"> Le Cercle Photo-Vidéo (CPV)</p>
-          <p className="text-end italic"> Mars 2023.</p>
+          {textintro.text.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+          <p className="text-end">{textintro.signature}</p>
+          <p className="text-end italic">{textintro.date}</p>
         </div>
       </section>
       <section className="container py-4 flex">
