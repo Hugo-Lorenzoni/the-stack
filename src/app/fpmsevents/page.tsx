@@ -1,11 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
-import { Event } from "@prisma/client";
 
 import { getEventsCount } from "@/utils/getEventsCount";
 import { getEvents } from "@/utils/getEvents";
-import { Pin } from "lucide-react";
+import { AlertCircle, Pin } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+type Event = {
+  id: string;
+  title: string;
+  date: Date;
+  pinned: boolean;
+  coverName: string;
+  coverUrl: string;
+  coverWidth: number;
+  coverHeight: number;
+};
 
 export default async function EventsPage({
   searchParams,
@@ -36,9 +47,21 @@ export default async function EventsPage({
       <h1 className="font-semibold text-2xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
         Événements baptisés
       </h1>
+      <Alert
+        className="mt-8 font-semibold border-4 border-red-400"
+        variant="destructive"
+      >
+        <AlertCircle className="h-4 w-4 bold" strokeWidth={3} />
+        <AlertTitle className="font-semibold">Rappel :</AlertTitle>
+        <AlertDescription>
+          Nous vous rappelons que les photos des événements baptisés ne sont pas
+          pour tout public. Nous vous faisons confiance pour juger de ce qui
+          peut être publié sur les réseaux sociaux ou pas !
+        </AlertDescription>
+      </Alert>
       {events ? (
         <>
-          <ul className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <ul className="mt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {events.map((event: Event) => (
               <li
                 key={event.id}

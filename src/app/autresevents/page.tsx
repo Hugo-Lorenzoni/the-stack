@@ -1,11 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
-import { Event } from "@prisma/client";
 
 import { getEventsCount } from "@/utils/getEventsCount";
 import { getEvents } from "@/utils/getEvents";
 import { Pin } from "lucide-react";
+
+type Event = {
+  id: string;
+  title: string;
+  date: Date;
+  pinned: boolean;
+  coverName: string;
+  coverUrl: string;
+  coverWidth: number;
+  coverHeight: number;
+};
 
 export default async function AutresEventsPage({
   searchParams,

@@ -9,7 +9,7 @@ export async function DELETE(request: Request) {
     const body: Photo = await request.json();
 
     const path = join(process.cwd(), "public", body.url);
-    console.log(await stat(path));
+    // console.log(await stat(path));
 
     await unlink(path);
 
@@ -18,7 +18,7 @@ export async function DELETE(request: Request) {
         id: body.id,
       },
     });
-    console.log(result);
+    // console.log(result);
     if (!result) {
       return NextResponse.json(
         { message: "Something went wrong !" },

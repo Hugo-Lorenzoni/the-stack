@@ -7,10 +7,10 @@ export default async function EventPage({
   params: { id: string };
 }) {
   const event = await getAdminEvent(params.id);
-  console.log(event);
+  // console.log(event);
 
   return (
-    <main className="min-h-[calc(100vh_-_10rem)] my-8">
+    <main className="min-h-[calc(100vh_-_10rem)] mt-8">
       {event ? (
         <>
           <h1 className="font-semibold text-3xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
@@ -18,7 +18,12 @@ export default async function EventPage({
           </h1>
           <p className="mt-4 text-right italic">{event.photos.length} photos</p>
           {event.notes && <p className="mt-4">{event.notes}</p>}
-          <AdminGallery eventName={event.title} photos={event.photos} />
+          {event.password && <p className="mt-4">{event.password}</p>}
+          <AdminGallery
+            eventId={event.id}
+            eventName={event.title}
+            photos={event.photos}
+          />
         </>
       ) : (
         <></>

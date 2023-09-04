@@ -1,8 +1,25 @@
 import { DataTable } from "./data-table";
-import { Event, columns } from "./columns";
+import { columns } from "./columns";
 import { getDraftedEvents } from "@/utils/getDraftedEvents";
+import { Type } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
+
+type Event = {
+  title: string;
+  id: string;
+  type: Type;
+  date: Date;
+  pinned: boolean;
+};
+
+type Data = {
+  id: string;
+  title: string;
+  date: string;
+  pinned: boolean;
+  type: Type;
+};
 
 export default async function AccountsApprovalPage() {
   const events = await getDraftedEvents();
@@ -13,7 +30,7 @@ export default async function AccountsApprovalPage() {
     day: "numeric",
   };
 
-  const data: Event[] = events.map((event: Event) => {
+  const data: Data[] = events.map((event: Event) => {
     const date = new Date(event.date);
     return {
       ...event,

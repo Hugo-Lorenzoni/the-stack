@@ -1,9 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
-
-import { Event } from "@prisma/client";
 import { getAdminEvents } from "@/utils/getAdminEvents";
 import { Pin } from "lucide-react";
+
+type Event = {
+  title: string;
+  id: string;
+  date: Date;
+  pinned: boolean;
+  coverName: string;
+  coverUrl: string;
+  coverWidth: number;
+  coverHeight: number;
+};
 
 export default async function EventsManagementPage() {
   const options: Intl.DateTimeFormatOptions = {

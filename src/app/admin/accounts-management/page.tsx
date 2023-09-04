@@ -1,11 +1,28 @@
-import { User } from "@prisma/client";
+import { Cercle, Role } from "@prisma/client";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { getAllUsers } from "@/utils/getAllUsers";
 
+type User = {
+  role: Role;
+  name: string;
+  email: string;
+  surname: string;
+  cercle: Cercle | null;
+  autreCercle: string | null;
+};
+
+type Data = {
+  email: string;
+  name: string;
+  surname: string;
+  role: Role;
+  cercle: Cercle | string | null;
+};
+
 export default async function AccountsManagementPage() {
   const users = await getAllUsers();
-  const data: User[] = users.map((user: User) => {
+  const data: Data[] = users.map((user: User) => {
     const { cercle, autreCercle, ...result } = user;
     if (cercle == "AUTRE") {
       return {
