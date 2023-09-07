@@ -7,7 +7,7 @@ export default async function EventPage({
   params: { id: string };
 }) {
   const event = await getFPMsEvent(params.id);
-  console.log(event);
+  // console.log(event);
 
   return (
     <main className="container min-h-[calc(100vh_-_10rem)] my-8">

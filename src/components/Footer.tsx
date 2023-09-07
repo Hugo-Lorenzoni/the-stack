@@ -24,7 +24,7 @@ export default async function Footer() {
           />
           CPV
         </Link>
-        <div className="grid grid-cols-3 gap-4 is">
+        <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-4">
           <div>
             <h4 className="font-semibold text-xl pb-2">Réseaux sociaux</h4>
             <ul>

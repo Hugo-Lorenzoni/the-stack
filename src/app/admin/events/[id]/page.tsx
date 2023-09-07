@@ -1,4 +1,5 @@
 import AdminGallery from "@/components/AdminGallery";
+import Password from "@/components/Password";
 import { getAdminEvent } from "@/utils/getAdminEvent";
 
 export default async function EventPage({
@@ -18,7 +19,7 @@ export default async function EventPage({
           </h1>
           <p className="mt-4 text-right italic">{event.photos.length} photos</p>
           {event.notes && <p className="mt-4">{event.notes}</p>}
-          {event.password && <p className="mt-4">{event.password}</p>}
+          {event.password && <Password password={event.password} />}
           <AdminGallery
             eventId={event.id}
             eventName={event.title}

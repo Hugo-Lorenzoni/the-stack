@@ -131,7 +131,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
       ) : (
         <>
           {info && (
-            <section className=" h-[calc(100vh_-_10rem)] overflow-hidden rounded-2xl relative">
+            <section className="h-[calc(100vh_-_10rem)] overflow-hidden rounded-2xl relative">
               <Image
                 className="w-full h-full object-cover brightness-75 blur-[1px] "
                 src={info.coverUrl}

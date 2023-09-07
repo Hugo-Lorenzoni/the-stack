@@ -1,18 +1,19 @@
-// "use client";
 import Link from "next/link";
 import Image from "next/image";
-import AuthButton from "./AuthButton";
-// import { useSession } from "next-auth/react";
-import SearchBar from "./SearchBar";
-import { getNextAuthSession } from "@/utils/auth";
+import NavLinks from "./NavLinks";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import { Menu } from "lucide-react";
 
-export default async function Nav() {
-  // const { data: session } = useSession();
-  const session = await getNextAuthSession();
-
-  const linkStyle =
-    "relative after:absolute after:bg-white after:w-0 after:h-[0.15rem] after:-bottom-1 after:left-0 after:rounded-full hover:after:w-full after:duration-500";
-
+export default function Nav() {
   return (
     <header className="bg-orange-600 text-white font-semibold">
       <nav className="container h-20 flex items-center justify-between">
@@ -29,61 +30,19 @@ export default async function Nav() {
           />
           CPV
         </Link>
-        <ul className="flex gap-6">
-          {session ? (
-            <>
-              <li className="flex items-center">
-                <SearchBar />
-              </li>
-              <li className="flex items-center">
-                <Link className={linkStyle} href="/events">
-                  Événements ouverts
-                </Link>
-              </li>
-            </>
-          ) : (
-            <></>
-          )}
-          {session &&
-          (session.user?.role === "BAPTISE" ||
-            session.user?.role === "ADMIN") ? (
-            <>
-              <li className="flex items-center">
-                <Link className={linkStyle} href="/fpmsevents">
-                  Événements baptisés
-                </Link>
-              </li>
-              <li className="flex items-center">
-                <Link className={linkStyle} href="/autresevents">
-                  Autres
-                </Link>
-              </li>
-              <li className="flex items-center">
-                <Link className={linkStyle} href="/videos">
-                  Vidéos
-                </Link>
-              </li>
-            </>
-          ) : (
-            <li className="flex items-center">
-              <Link className={linkStyle} href="/autresevents">
-                Autres
-              </Link>
-            </li>
-          )}
-          {session && session.user?.role === "ADMIN" ? (
-            <li className="flex items-center">
-              <Link className={linkStyle} href="/admin">
-                CPV
-              </Link>
-            </li>
-          ) : (
-            <></>
-          )}
-          <li className="flex items-center">
-            <AuthButton session={session} />
-          </li>
-        </ul>
+        <NavLinks className="hidden xl:flex" />
+        <Sheet>
+          <SheetTrigger className="xl:hidden ">
+            <Menu />
+            <span className="sr-only">Menu</span>
+          </SheetTrigger>
+          <SheetContent className="xl:hidden bg-orange-600 text-white">
+            <SheetHeader>
+              <SheetTitle className="text-white mb-8">Menu</SheetTitle>
+            </SheetHeader>
+            <NavLinks />
+          </SheetContent>
+        </Sheet>
       </nav>
     </header>
   );

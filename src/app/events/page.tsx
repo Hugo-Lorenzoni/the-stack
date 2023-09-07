@@ -22,8 +22,6 @@ export default async function EventsPage({
 
   const count = await getEventsCount("OUVERT");
   const events = await getEvents(page.toString(), eventPerPage, "OUVERT");
-  // console.log(events.length);
-
   // console.log(events);
   // console.log(searchParams);
   // console.log(events.length);

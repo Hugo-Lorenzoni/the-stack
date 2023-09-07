@@ -186,7 +186,6 @@ export default function AdminGallery(props: {
           setPhotos(res.event.photos);
         }
         reset();
-        // router.push("/connexion");
       }
     } catch (error) {
       console.log(error);
@@ -221,6 +220,7 @@ export default function AdminGallery(props: {
           title: "Suppression de l'événement réussie",
           description: `${name} a été supprimé !`,
         });
+        router.push("/admin/events-management");
       }
     } catch (error) {
       console.log(error);
