@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string(),
@@ -25,6 +25,7 @@ const formSchema = z.object({
 
 export default function ConnectionPage() {
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState("password");
 
   const router = useRouter();
   const { toast } = useToast();
@@ -119,7 +120,36 @@ export default function ConnectionPage() {
                 <FormItem>
                   <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
-                    <Input required type="password" {...field} />
+                    <div className="relative">
+                      <Input
+                        required
+                        type={showPassword}
+                        placeholder="Mot de passe"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="absolute right-0 bottom-0"
+                        onClick={() =>
+                          setShowPassword((prev) =>
+                            prev == "password" ? "text" : "password"
+                          )
+                        }
+                      >
+                        {showPassword == "password" ? (
+                          <>
+                            <span className="mr-2 sr-only">Show password</span>
+                            <Eye />
+                          </>
+                        ) : (
+                          <>
+                            <span className="mr-2 sr-only">Hide password</span>
+                            <EyeOff />
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
