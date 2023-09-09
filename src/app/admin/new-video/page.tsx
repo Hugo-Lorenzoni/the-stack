@@ -70,7 +70,7 @@ export default function NewVideoPage() {
     console.log(values);
 
     try {
-      const apiUrlEndpoint = "http://localhost:3000/api/admin/newvideo";
+      const apiUrlEndpoint = "/api/admin/newvideo";
       const postData = {
         method: "POST",
         headers: { "Content-Type": "application/json" },

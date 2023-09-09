@@ -49,7 +49,7 @@ export default function AdminGalleryPhoto({
     setLoading(true);
     console.log(photo);
     try {
-      const apiUrlEndpoint = "http://localhost:3000/api/admin/deletephoto";
+      const apiUrlEndpoint = "/api/admin/deletephoto";
       const postData = {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },

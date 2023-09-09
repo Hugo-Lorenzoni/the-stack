@@ -161,7 +161,7 @@ export default function AdminGallery(props: {
     console.log(formData);
 
     try {
-      const apiUrlEndpoint = `http://localhost:3000/api/admin/addphotos`;
+      const apiUrlEndpoint = `/api/admin/addphotos`;
       const postData = {
         method: "POST",
         body: formData,
@@ -197,14 +197,11 @@ export default function AdminGallery(props: {
     e.preventDefault();
     setDeleteLoading(true);
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/admin/deleteevent",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(props.eventId),
-        }
-      );
+      const response = await fetch("/api/admin/deleteevent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(props.eventId),
+      });
       console.log(response);
       if (response.status == 500) {
         toast({

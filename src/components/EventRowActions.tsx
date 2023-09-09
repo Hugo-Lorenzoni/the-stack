@@ -17,7 +17,7 @@ export default function RowActions(props: { row: Row<Event> }) {
   ) {
     e.preventDefault();
     try {
-      const apiUrlEndpoint = "http://localhost:3000/api/admin/publishevent";
+      const apiUrlEndpoint = "/api/admin/publishevent";
       const postData = {
         method: "POST",
         headers: { "Content-Type": "application/json" },

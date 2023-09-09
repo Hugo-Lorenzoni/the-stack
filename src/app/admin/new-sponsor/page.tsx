@@ -89,7 +89,7 @@ export default function NewSponsorPage() {
     console.log(formData);
 
     try {
-      const apiUrlEndpoint = `http://localhost:3000/api/admin/newsponsor`;
+      const apiUrlEndpoint = `/api/admin/newsponsor`;
       const postData = {
         method: "POST",
         body: formData,

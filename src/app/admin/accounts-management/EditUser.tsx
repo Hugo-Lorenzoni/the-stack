@@ -67,7 +67,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
 
     setLoading(true);
     try {
-      const apiUrlEndpoint = "http://localhost:3000/api/admin/user";
+      const apiUrlEndpoint = "/api/admin/user";
       const postData = {
         method: "POST",
         headers: { "Content-Type": "application/json" },

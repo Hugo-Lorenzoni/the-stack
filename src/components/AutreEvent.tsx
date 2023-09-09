@@ -74,7 +74,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
     // ✅ This will be type-safe and validated.
     console.log(values);
     try {
-      const apiUrlEndpoint = `http://localhost:3000/api/passwordcheck/${info?.id}`;
+      const apiUrlEndpoint = `/api/passwordcheck/${info?.id}`;
       const postData = {
         method: "POST",
         headers: { "Content-Type": "application/json" },

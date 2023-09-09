@@ -144,7 +144,7 @@ export default function RegisterPage() {
     console.log(values);
     const { confirmPassword, ...requestValues } = values;
     try {
-      const apiUrlEndpoint = `http://localhost:3000/api/register`;
+      const apiUrlEndpoint = `/api/register`;
       const postData = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
