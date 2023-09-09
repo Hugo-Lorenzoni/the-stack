@@ -41,8 +41,16 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
   }
 
   const swipeHandlers = useSwipe({
-    onSwipedLeft: () => nextPhoto(),
-    onSwipedRight: () => prevPhoto(),
+    onSwipedLeft: () => {
+      if (currentPhotoId != props.photos.length - 1) {
+        nextPhoto();
+      }
+    },
+    onSwipedRight: () => {
+      if (currentPhotoId != 0) {
+        prevPhoto();
+      }
+    },
   });
 
   useKeypress(["ArrowLeft", "ArrowRight", "Escape"], (e: KeyboardEvent) => {
@@ -71,7 +79,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
                     ? "row-span-2"
                     : index % 7
                     ? ""
-                    : "row-span-2 col-span-2"
+                    : "row-span-2 md:col-span-2"
                 }`}
               src={photo.url}
               width={photo.width}
@@ -88,7 +96,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           {...swipeHandlers}
           className="fixed inset-0 bg-black text-white py-8"
         >
-          <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto">
+          <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto flex-col sm:flex-row gap-2">
             {currentPhoto?.name}
             <div>
               {currentPhoto ? (
@@ -110,7 +118,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           </div>
           {currentPhoto ? (
             <Image
-              className="w-[calc(100%_-_8rem)] mx-auto h-[calc(100%_-_4rem)] object-contain"
+              className="w-[calc(100%_-_2rem)] sm:w-[calc(100%_-_8rem)] mx-auto h-[calc(100%_-_4rem)] object-contain"
               src={currentPhoto.url}
               width={currentPhoto.width}
               height={currentPhoto.height}
@@ -123,7 +131,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           )}
 
           <Button
-            className="absolute left-8 top-1/2 rounded-full p-2 w-16 h-16"
+            className="absolute left-8 bottom-4 sm:top-1/2 rounded-full p-2 w-16 h-16"
             disabled={currentPhotoId ? false : true}
             onClick={() => prevPhoto()}
           >
@@ -131,7 +139,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
             <span className="sr-only">Précédent</span>
           </Button>
           <Button
-            className="absolute right-8 top-1/2 rounded-full p-2 w-16 h-16"
+            className="absolute right-8 bottom-4 sm:top-1/2 rounded-full p-2 w-16 h-16"
             disabled={currentPhotoId == props.photos.length - 1}
             onClick={() => nextPhoto()}
           >

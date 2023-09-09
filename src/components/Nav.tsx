@@ -1,17 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "./NavLinks";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet";
-import { Menu } from "lucide-react";
+import MobileNav from "./MobileNav";
 
 export default function Nav() {
   return (
@@ -31,18 +21,9 @@ export default function Nav() {
           CPV
         </Link>
         <NavLinks className="hidden xl:flex" />
-        <Sheet>
-          <SheetTrigger className="xl:hidden ">
-            <Menu />
-            <span className="sr-only">Menu</span>
-          </SheetTrigger>
-          <SheetContent className="xl:hidden bg-orange-600 text-white">
-            <SheetHeader>
-              <SheetTitle className="text-white mb-8">Menu</SheetTitle>
-            </SheetHeader>
-            <NavLinks />
-          </SheetContent>
-        </Sheet>
+        <MobileNav>
+          <NavLinks />
+        </MobileNav>
       </nav>
     </header>
   );
