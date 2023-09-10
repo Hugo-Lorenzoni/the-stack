@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -54,9 +55,9 @@ export function DataTable<TData, TValue>({
     <>
       <section className="max-w-lg pb-4">
         <div className="flex items-center justify-between py-1">
-          <h3>Nom du sponsor</h3>
+          <h3>Titre de la vidéo</h3>
           <Input
-            placeholder="Filter names..."
+            placeholder="Filter vidéos..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -91,7 +92,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="[&>*:last-child]:text-right"
+                  className="[&>*:last-child]:text-right [&>*:last-child]:flex [&>*:last-child]:gap-2 [&>*:last-child]:justify-end"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-3">

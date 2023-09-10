@@ -3,17 +3,6 @@ import { columns } from "./columns";
 import { getWaitingUsers } from "@/utils/getWaitingUsers";
 import { Cercle } from "@prisma/client";
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  surname: string;
-  cercle: Cercle | null;
-  cercleVille: string | null;
-  autreCercle: string | null;
-  promo: number | null;
-};
-
 type Data = {
   id: string;
   email: string;
@@ -27,7 +16,7 @@ type Data = {
 export default async function AccountsApprovalPage() {
   const users = await getWaitingUsers();
 
-  const data: Data[] = users.map((user: User) => {
+  const data: Data[] = users.map((user) => {
     const { id, autreCercle, cercleVille, cercle, ...result } = user;
     if (cercle == "AUTRE") {
       return {

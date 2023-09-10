@@ -101,6 +101,16 @@ export default function AdminLayout({
         >
           Nouvelle vidéo
         </Link>
+        <Link
+          className={
+            currentRoute === "/admin/videos-management"
+              ? activeStyle
+              : linkStyle
+          }
+          href="/admin/videos-management"
+        >
+          Gestion des vidéos
+        </Link>
         <Separator />
         <Link
           className={currentRoute === "/admin/comite" ? activeStyle : linkStyle}
