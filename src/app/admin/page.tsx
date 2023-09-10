@@ -1,7 +1,90 @@
-export default function AdminPage() {
+import { getInfos } from "@/utils/getInfos";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BadgeCheck,
+  Image,
+  UserCircle,
+  Users2,
+  Lock,
+  Video,
+} from "lucide-react";
+
+export default async function AdminPage() {
+  const infos = await getInfos();
   return (
     <section>
-      <h2>Bienvenue sur le tableau de bord de la gestion du site CPV !</h2>
+      <h2 className="mb-4">
+        Bienvenue sur le tableau de bord de la gestion du site CPV !
+      </h2>
+      <h3 className="mb-2">Quelques infos sur le site :</h3>
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex gap-2 justify-between">
+              Photos
+              <Image strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{infos.countPhoto} photos</p>
+          </CardContent>
+        </Card>
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex gap-2 justify-between">
+              Utilisateurs
+              <UserCircle strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{infos.countUser} utilisateurs</p>
+          </CardContent>
+        </Card>
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex gap-2 justify-between">
+              Événements ouverts
+              <Users2 strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{infos.countEventOuvert} événements ouverts</p>
+          </CardContent>
+        </Card>
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex gap-2 justify-between">
+              Événements baptisés
+              <BadgeCheck strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{infos.countEventFpms} événements baptisés</p>
+          </CardContent>
+        </Card>
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex gap-2 justify-between">
+              Autres événements
+              <Lock strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{infos.countEventAutre} autres événements</p>
+          </CardContent>
+        </Card>
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex gap-2 justify-between">
+              Vidéos
+              <Video strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>{infos.countVideo} vidéos</p>
+          </CardContent>
+        </Card>
+      </div>
     </section>
   );
 }
