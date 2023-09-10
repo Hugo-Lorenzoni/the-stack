@@ -48,7 +48,7 @@ export default async function EventsPage({
         Événements baptisés
       </h1>
       <Alert
-        className="mt-8 font-semibold border-4 border-red-400"
+        className="mt-8 font-semibold border-4 border-red-400 pl-11"
         variant="destructive"
       >
         <AlertCircle className="h-4 w-4 bold" strokeWidth={3} />
