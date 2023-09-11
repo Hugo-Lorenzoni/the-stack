@@ -65,32 +65,31 @@ export default function AdminSearchPagination(props: {
               key={event.id}
               className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"
             >
-              <Link
-                href={`/admin/events/${event.id}`}
-                className="relative isolate"
-              >
-                <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
-                  <h2>{event.title}</h2>
-                  <p>{date.toLocaleDateString("fr-BE", options)}</p>
-                </div>
-                {event.published == false && (
-                  <TextSelect className="absolute top-4 left-4 text-white z-10 drop-shadow-eventtitle" />
-                )}
-                <div className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle flex gap-2">
-                  {event.type == "AUTRE" && <Lock />}
-                  {event.type == "OUVERT" && <Users2 />}
-                  {event.type == "BAPTISE" && <BadgeCheck />}
-                  {event.pinned && <Pin className="rotate-45" />}
-                </div>
+              <Link href={`/admin/events/${event.id}`}>
+                <div className="relative isolate">
+                  <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
+                    <h2>{event.title}</h2>
+                    <p>{date.toLocaleDateString("fr-BE", options)}</p>
+                  </div>
+                  {event.published == false && (
+                    <TextSelect className="absolute top-4 left-4 text-white z-10 drop-shadow-eventtitle" />
+                  )}
+                  <div className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle flex gap-2">
+                    {event.type == "AUTRE" && <Lock />}
+                    {event.type == "OUVERT" && <Users2 />}
+                    {event.type == "BAPTISE" && <BadgeCheck />}
+                    {event.pinned && <Pin className="rotate-45" />}
+                  </div>
 
-                <Image
-                  className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 "
-                  src={event.coverUrl}
-                  width={event.coverWidth}
-                  height={event.coverHeight}
-                  alt={event.coverName}
-                  quality={30}
-                />
+                  <Image
+                    className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 "
+                    src={event.coverUrl}
+                    width={event.coverWidth}
+                    height={event.coverHeight}
+                    alt={event.coverName}
+                    quality={30}
+                  />
+                </div>
               </Link>
             </li>
           );
