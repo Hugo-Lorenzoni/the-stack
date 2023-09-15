@@ -12,6 +12,8 @@ export async function GET() {
       "utf8"
     );
     // console.log(fileContents);
+    // const comite = JSON.parse(fileContents);
+    // console.log(comite);
 
     //Return the content of the data file in json format
     return new Response(fileContents);

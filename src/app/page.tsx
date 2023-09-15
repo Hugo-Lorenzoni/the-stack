@@ -2,7 +2,7 @@ import { getTextIntro } from "@/utils/getTextIntro";
 import { Info } from "lucide-react";
 import Image from "next/image";
 
-export const revalidate = 60 * 60 * 24; // revalidate at most every day
+// export const revalidate = 60 * 60 * 24; // revalidate at most every day
 
 export type TextIntro = {
   title: string;
@@ -13,6 +13,27 @@ export type TextIntro = {
 
 export default async function Home() {
   const textintro: TextIntro = await getTextIntro();
+
+  // const jsonDirectory = path.join(process.cwd(), "src/data");
+  // //Read the json data file data.json
+  // const fileContents = await fs.readFile(
+  //   jsonDirectory + "/text-intro.json",
+  //   "utf8"
+  // );
+  // const textintro: TextIntro = JSON.parse(fileContents);
+  // console.log(textintro);
+
+  // const textintro = {
+  //   title: "À propos",
+  //   text: [
+  //     "Ce site est le site officiel du Cercle Photo-Vidéo de la Faculté Polytechnique de Mons.",
+  //     "Nos photos sont prises à but non lucratif et visent uniquement à illustrer et à figer dans le temps les évènements organisés par les étudiants de cette même Faculté. Les photos sont sous la protection d'un mot de passe par respect de la vie privée.",
+  //     "Pour toutes questions, n'hésitez pas à nous contacter !",
+  //   ],
+  //   signature: "Le Cercle Photo-Vidéo (CPV)",
+  //   date: "Août 2023",
+  // };
+
   return (
     <main>
       <section className="h-[calc(100vh_-_10rem)] overflow-hidden relative">
