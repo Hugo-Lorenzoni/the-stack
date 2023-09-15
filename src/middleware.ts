@@ -57,6 +57,8 @@ export const config = {
     "/api/fpmsevents/:path*",
     "/OUVERT/:path*",
     "/BAPTISE/:path*",
+    "/AUTRE/:path*",
+    "/SPONSORS/:path*",
     "/search/:path*",
     "/api/search/:path*",
     "/videos/:path*",
