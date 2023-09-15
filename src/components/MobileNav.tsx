@@ -16,7 +16,7 @@ export default function MobileNav({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   useEffect(() => {
     if (open) {
-      console.log(path);
+      // console.log(path);
       setOpen(false);
     }
   }, [path]);
