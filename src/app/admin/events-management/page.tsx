@@ -58,7 +58,7 @@ export default async function EventsManagementPage() {
                       width={event.coverWidth}
                       height={event.coverHeight}
                       alt={event.coverName}
-                      quality={30}
+                      quality={10}
                     />
                   </div>
                 </Link>

@@ -138,7 +138,7 @@ export default function AdminGalleryPhoto({
         width={photo.width}
         height={photo.height}
         alt={eventName}
-        quality={30}
+        quality={10}
         onClick={() => openLightbox(photo, index)}
       />
     </li>

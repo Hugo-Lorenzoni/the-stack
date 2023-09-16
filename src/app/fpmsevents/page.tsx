@@ -82,7 +82,7 @@ export default async function EventsPage({
                       width={event.coverWidth}
                       height={event.coverHeight}
                       alt={event.coverName}
-                      quality={30}
+                      quality={10}
                     />
                   </div>
                 </Link>

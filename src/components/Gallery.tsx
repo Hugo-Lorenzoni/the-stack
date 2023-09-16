@@ -85,7 +85,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
               width={photo.width}
               height={photo.height}
               alt={props.eventName}
-              quality={30}
+              quality={10}
               onClick={() => openModal(photo, index)}
             />
           );
@@ -123,7 +123,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
               width={currentPhoto.width}
               height={currentPhoto.height}
               alt={currentPhoto.name}
-              quality={30}
+              quality={10}
               priority
             />
           ) : (

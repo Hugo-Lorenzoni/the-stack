@@ -87,7 +87,7 @@ export default function AdminSearchPagination(props: {
                     width={event.coverWidth}
                     height={event.coverHeight}
                     alt={event.coverName}
-                    quality={30}
+                    quality={10}
                   />
                 </div>
               </Link>

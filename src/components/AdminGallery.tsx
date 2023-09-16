@@ -357,7 +357,7 @@ export default function AdminGallery(props: {
               width={currentPhoto.width}
               height={currentPhoto.height}
               alt={currentPhoto.name}
-              quality={30}
+              quality={10}
               priority
             />
           ) : (
