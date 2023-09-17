@@ -129,7 +129,8 @@ const saveFile = async (
     .replace(/é/g, "e")
     .replace(/è/g, "e")
     .replace(/ê/g, "e")
-    .replace(/à/g, "a")}`;
+    .replace(/à/g, "a")
+    .replace(/â/g, "a")}`;
   const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
   try {

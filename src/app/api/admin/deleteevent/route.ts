@@ -47,7 +47,8 @@ export async function POST(request: Request) {
       .replace(/é/g, "e")
       .replace(/è/g, "e")
       .replace(/ê/g, "e")
-      .replace(/à/g, "a")}`;
+      .replace(/à/g, "a")
+      .replace(/â/g, "a")}`;
     // console.log(folder);
 
     const path = join(process.cwd(), "public", folder);
