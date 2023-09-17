@@ -163,6 +163,7 @@ export default function NewEventPage() {
       formData.append("file", values.photos[index]);
     }
     const { cover, photos, ...data } = values;
+    values.date.setDate(values.date.getDate() + 1);
 
     formData.append("values", JSON.stringify(data));
     console.log(formData);
