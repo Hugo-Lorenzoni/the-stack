@@ -17,7 +17,7 @@ type UserRequest = {
 export async function POST(request: Request) {
   try {
     const body: UserRequest = await request.json();
-    console.log(body);
+    // console.log(body);
     if (body.check) {
       const user = await prisma.user.create({
         data: {
