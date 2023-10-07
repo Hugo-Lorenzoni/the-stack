@@ -33,7 +33,8 @@ export default function Waiting() {
                 compte Instagram du CPV
               </a>
             </b>{" "}
-            (Cercle Photo Vidéo FPMs).
+            (Cercle Photo Vidéo FPMs) ou bien à un membre du comité sur
+            Facebook/Messenger.
           </p>
           <p>Code de validation : {validationCode}</p>
           <Button variant="outline" onClick={() => handelClick(validationCode)}>
