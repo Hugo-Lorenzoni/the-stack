@@ -8,9 +8,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -59,7 +69,8 @@ export default function VideosRowActions({ row }: Props) {
   const [video, setVideo] = useState<Video | null>(row.original);
 
   const [isLoading, setLoading] = useState(false);
-  const [modalIsOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isAlertOpen, setAlertOpen] = useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
@@ -159,7 +170,7 @@ export default function VideosRowActions({ row }: Props) {
     <>
       {video ? (
         <>
-          <Dialog open={modalIsOpen} onOpenChange={setModalOpen}>
+          <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>
               <Button>
                 <Pencil className="w-4 h-4" />
@@ -272,14 +283,50 @@ export default function VideosRowActions({ row }: Props) {
               </Form>
             </DialogContent>
           </Dialog>
-          <Button
-            onClick={(e) => deleteVideo(e, video.id)}
-            className="bg-red-600 text-red-100 hover:bg-red-800"
-            disabled={isLoading}
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
-          </Button>
+          <AlertDialog onOpenChange={setAlertOpen} open={isAlertOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                className="bg-red-600 text-red-100 hover:bg-red-800"
+                disabled={isLoading}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Êtes-vous sûr de vouloir supprimer cette vidéo ?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette suppression est irréversible. Cette vidéo sera supprimée
+                  de manière permanente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isLoading}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-600 hover:bg-red-500"
+                  onClick={(e) => deleteVideo(e, video.id)}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2
+                        color="#ffffff"
+                        className="h-4 w-4 animate-spin mr-2 text-white"
+                      />
+                      En cours
+                    </>
+                  ) : (
+                    "Supprimer"
+                  )}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </>
       ) : (
         <Button disabled className="bg-red-100 text-red-600">

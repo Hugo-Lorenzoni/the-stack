@@ -39,3 +39,30 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const email: string = await request.json();
+    // return new Response(JSON.stringify(body.email));
+
+    const result = await prisma.user.delete({
+      where: {
+        email: email,
+      },
+    });
+    // console.log(result);
+    if (!result) {
+      return NextResponse.json(
+        { message: "Something went wrong !" },
+        { status: 500 }
+      );
+    }
+    return new Response(JSON.stringify(result));
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Something went wrong !" },
+      { status: 500 }
+    );
+  }
+}

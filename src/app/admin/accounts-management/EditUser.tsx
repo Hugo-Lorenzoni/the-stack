@@ -8,6 +8,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -27,7 +38,7 @@ import {
 import { User } from "./columns";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { Loader2, Pencil } from "lucide-react";
+import { Loader2, Pencil, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -50,7 +61,8 @@ export default function EditUser({ rowUser }: EditUserProps) {
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(rowUser);
-  const [modalIsOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isAlertOpen, setAlertOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -99,78 +111,166 @@ export default function EditUser({ rowUser }: EditUserProps) {
     setModalOpen(false);
   }
 
+  async function deleteUser(
+    e: React.MouseEvent<HTMLButtonElement>,
+    user: User
+  ) {
+    e.preventDefault();
+    setLoading(true);
+    console.log(user);
+    try {
+      const apiUrlEndpoint = "/api/admin/user";
+      const postData = {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user.email),
+      };
+      const response = await fetch(apiUrlEndpoint, postData);
+      console.log(response);
+      if (response.status == 500) {
+        toast({
+          variant: "destructive",
+          title: response.status.toString(),
+          description: response.statusText,
+        });
+      }
+      if (response.status == 200) {
+        const result = await response.json();
+        toast({
+          variant: "default",
+          title: "Suppression de l'utilisateur réussie",
+          description: `${result.surname} ${result.name} a été supprimé !`,
+        });
+        setUser(null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+    setAlertOpen(false);
+  }
+
   return (
     <>
       {user ? (
-        <Dialog open={modalIsOpen} onOpenChange={setModalOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <span className="pr-2">Edit</span>
-              <Pencil className="w-4 h-4" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Modification de l&apos;utilisateur</DialogTitle>
-              <DialogDescription>
-                Vous pouvez modifier le rôle d&apos;un utilisateur.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Rôle</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a verified email to display" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {RoleList.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription className="text-red-600">
-                        Attention : Modifier le rôle d&apos;un utilisateur
-                        modifie son accès aux différentes catégories
-                        d&apos;événements
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <DialogFooter className="mt-4">
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2
-                          color="#ffffff"
-                          className="h-4 w-4 animate-spin mr-2 text-white"
-                        />
-                        En cours
-                      </>
-                    ) : (
-                      "Appliquer"
+        <>
+          <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <span className="pr-2">Edit</span>
+                <Pencil className="w-4 h-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Modification de l&apos;utilisateur</DialogTitle>
+                <DialogDescription>
+                  Vous pouvez modifier le rôle d&apos;un utilisateur.
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Rôle</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a verified email to display" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {RoleList.map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {role}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription className="text-red-600">
+                          Attention : Modifier le rôle d&apos;un utilisateur
+                          modifie son accès aux différentes catégories
+                          d&apos;événements
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+                  />
+                  <DialogFooter className="mt-4">
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2
+                            color="#ffffff"
+                            className="h-4 w-4 animate-spin mr-2 text-white"
+                          />
+                          En cours
+                        </>
+                      ) : (
+                        "Appliquer"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+          <AlertDialog onOpenChange={setAlertOpen} open={isAlertOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                className="ml-2 bg-red-600 text-red-100 hover:bg-red-800"
+                disabled={isLoading}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Êtes-vous sûr de vouloir supprimer cet utilisateur ?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette suppression est irréversible. Cet utilisateur sera
+                  supprimé de manière permanente.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isLoading}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-600 hover:bg-red-500"
+                  onClick={(e) => deleteUser(e, user)}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2
+                        color="#ffffff"
+                        className="h-4 w-4 animate-spin mr-2 text-white"
+                      />
+                      En cours
+                    </>
+                  ) : (
+                    "Supprimer"
+                  )}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
       ) : (
-        ""
+        <Button disabled className="bg-red-100 text-red-600">
+          <X className="w-4 h-4 mr-2" />
+          Deleted
+        </Button>
       )}
     </>
   );
