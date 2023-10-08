@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Photo } from "@prisma/client";
+import { unlink } from "fs/promises";
 import { NextResponse } from "next/server";
-import { stat, unlink } from "fs/promises";
 import { join } from "path";
 
 export async function DELETE(request: Request) {

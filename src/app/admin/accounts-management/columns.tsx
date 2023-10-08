@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Cercle, Role } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Pencil } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import EditUser from "./EditUser";
 
 // This type is used to define the shape of our data.

@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
+import { rm } from "fs/promises";
 import { NextResponse } from "next/server";
-import { stat, rm } from "fs/promises";
 import { join } from "path";
 import { z } from "zod";
 

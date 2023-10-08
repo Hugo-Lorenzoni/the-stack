@@ -1,6 +1,5 @@
 "use client";
 
-import { SponsorLogoInput } from "@/components/SponsorLogoInput";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {

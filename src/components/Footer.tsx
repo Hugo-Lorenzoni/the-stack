@@ -3,8 +3,8 @@ import Image from "next/image";
 import { Instagram } from "lucide-react";
 import { getComite } from "@/utils/getComite";
 
-import path from "path";
-import { promises as fs } from "fs";
+// import path from "path";
+// import { promises as fs } from "fs";
 
 // export const revalidate = 60 * 60 * 24; // revalidate at most every day
 

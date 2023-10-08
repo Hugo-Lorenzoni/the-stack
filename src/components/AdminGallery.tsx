@@ -8,13 +8,11 @@ import {
   ChevronRightCircle,
   Download,
   Loader2,
-  Plus,
   XCircle,
 } from "lucide-react";
 import useSwipe from "../hooks/useSwipe";
 import useKeypress from "react-use-keypress";
 import { useToast } from "./ui/use-toast";
-
 import {
   AlertDialog,
   AlertDialogAction,
