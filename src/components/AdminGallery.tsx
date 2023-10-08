@@ -237,19 +237,6 @@ export default function AdminGallery(props: {
 
   return (
     <>
-      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row-dense">
-        {photos?.map((photo, index) => (
-          <AdminGalleryPhoto
-            key={index}
-            photo={photo}
-            index={index}
-            photos={photos}
-            setPhotos={setPhotos}
-            openLightbox={openLightbox}
-            eventName={props.eventName}
-          />
-        ))}
-      </ul>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -325,6 +312,20 @@ export default function AdminGallery(props: {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row-dense">
+        {photos?.map((photo, index) => (
+          <AdminGalleryPhoto
+            key={index}
+            photo={photo}
+            index={index}
+            photos={photos}
+            setPhotos={setPhotos}
+            openLightbox={openLightbox}
+            eventName={props.eventName}
+          />
+        ))}
+      </ul>
+
       {isOpen ? (
         <section
           {...swipeHandlers}
