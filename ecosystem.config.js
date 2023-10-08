@@ -10,7 +10,7 @@ module.exports = {
       time: true,
       log_date_format: "YYYY-MM-DD HH:mm Z",
       args: "start",
-      instances: 0,
+      instances: 2,
       exec_mode: "cluster",
       watch: false,
       merge_logs: true,
