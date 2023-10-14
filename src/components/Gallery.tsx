@@ -94,7 +94,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
       {isOpen ? (
         <section
           {...swipeHandlers}
-          className="fixed inset-0 bg-black text-white py-8"
+          className="fixed inset-0 bg-black text-white py-8 z-20"
         >
           <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto flex-col sm:flex-row gap-2">
             {currentPhoto?.name}

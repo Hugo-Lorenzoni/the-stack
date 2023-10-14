@@ -5,7 +5,7 @@ import MobileNav from "./MobileNav";
 
 export default function Nav() {
   return (
-    <header className="bg-orange-600 text-white font-semibold">
+    <header className="bg-orange-600 text-white font-semibold sticky top-0 z-10">
       <nav className="container h-20 flex items-center justify-between">
         <Link
           href="/"
