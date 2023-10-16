@@ -7,7 +7,9 @@ import {
   Users2,
   Lock,
   Video,
+  DatabaseBackup,
 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 export default async function AdminPage() {
   const infos = await getInfos();
@@ -38,7 +40,7 @@ export default async function AdminPage() {
           </CardHeader>
           <CardContent>
             <p>{infos.countUser} utilisateurs</p>
-            <p className="italic text-orange-600">
+            <p className="italic text-orange-500">
               ({infos.countWaitingUser} en attente d&apos;approbation)
             </p>
           </CardContent>
@@ -85,6 +87,18 @@ export default async function AdminPage() {
           </CardHeader>
           <CardContent>
             <p>{infos.countVideo} vidéos</p>
+          </CardContent>
+        </Card>
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex justify-between gap-2">
+              Stockage
+              <DatabaseBackup strokeWidth={2.25} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="pb-1">{infos.formatedSize} / 2000 Go</p>
+            <Progress value={(infos.formatedSize / 2000) * 100} />
           </CardContent>
         </Card>
       </div>
