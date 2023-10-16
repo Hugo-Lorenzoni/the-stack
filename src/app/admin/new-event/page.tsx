@@ -85,11 +85,11 @@ const formSchema = z
       .refine((files) => files.length == 1, "Image is required.")
       .refine(
         (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
-        ".jpg, .jpeg, .png and .webp files are accepted."
+        ".jpg, .jpeg, .png and .webp files are accepted.",
       )
       .refine(
         (files) => files[0]?.size <= MAX_FILE_SIZE,
-        `Max file size is 10MB.`
+        `Max file size is 10MB.`,
       ),
 
     type: z.enum(TypeList),
@@ -99,7 +99,7 @@ const formSchema = z
       .refine((files) => files.length >= 1, "Images is required.")
       .refine(
         (files) => handleFiles(files, "type"),
-        ".jpg, .jpeg, .png and .webp files are accepted."
+        ".jpg, .jpeg, .png and .webp files are accepted.",
       )
       .refine((files) => handleFiles(files, "size"), `Max file size is 10MB.`),
   })
@@ -204,7 +204,7 @@ export default function NewEventPage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 max-w-lg"
+          className="max-w-lg space-y-4"
         >
           <FormField
             control={form.control}
@@ -240,7 +240,7 @@ export default function NewEventPage() {
                         variant={"outline"}
                         className={cn(
                           "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -319,7 +319,7 @@ export default function NewEventPage() {
             )}
           />
           {image && (
-            <img src={image} alt="cover" className="w-full rounded-xl mt-1" />
+            <img src={image} alt="cover" className="mt-1 w-full rounded-xl" />
           )}
           <CoverInput errors={errors} register={register} setImage={setImage} />
           <FormField
@@ -383,7 +383,7 @@ export default function NewEventPage() {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="h-4 w-4 animate-spin mr-2 text-white"
+                  className="mr-2 h-4 w-4 animate-spin text-white"
                 />
                 Loading
               </>

@@ -30,7 +30,7 @@ export const columns: ColumnDef<User>[] = [
         <div className="flex items-center">
           Email
           <Button
-            className="ml-2 hover:bg-neutral-200 px-3 rounded-lg"
+            className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >

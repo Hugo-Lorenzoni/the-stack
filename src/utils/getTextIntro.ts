@@ -19,7 +19,7 @@ export const getTextIntro = cache(async () => {
   //Read the json data file data.json
   const fileContents = await fs.readFile(
     jsonDirectory + "/text-intro.json",
-    "utf8"
+    "utf8",
   );
   return JSON.parse(fileContents);
 });

@@ -104,7 +104,7 @@ export default function NewVideoPage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 max-w-lg"
+          className="max-w-lg space-y-4"
         >
           <FormField
             control={form.control}
@@ -155,7 +155,7 @@ export default function NewVideoPage() {
                         variant={"outline"}
                         className={cn(
                           "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value ? (
@@ -188,7 +188,7 @@ export default function NewVideoPage() {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="h-4 w-4 animate-spin mr-2 text-white"
+                  className="mr-2 h-4 w-4 animate-spin text-white"
                 />
                 Loading
               </>

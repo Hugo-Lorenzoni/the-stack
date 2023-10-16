@@ -13,7 +13,7 @@ export default function RowActions(props: { row: Row<Event> }) {
 
   async function handleChange(
     e: React.MouseEvent<HTMLButtonElement>,
-    event: Event
+    event: Event,
   ) {
     e.preventDefault();
     try {
@@ -54,18 +54,18 @@ export default function RowActions(props: { row: Row<Event> }) {
         <>
           <Button className="mr-2" asChild>
             <Link href={`/admin/events/${event.id}`}>
-              <Eye className="w-4 h-4 mr-2" />
+              <Eye className="mr-2 h-4 w-4" />
               Preview
             </Link>
           </Button>
           <Button onClick={(e) => handleChange(e, event)}>
-            <Send className="w-4 h-4 mr-2" />
+            <Send className="mr-2 h-4 w-4" />
             Publier
           </Button>
         </>
       ) : (
         <Button disabled className="bg-green-100 text-green-600">
-          <Check className="w-4 h-4 mr-2" />
+          <Check className="mr-2 h-4 w-4" />
           Publié
         </Button>
       )}

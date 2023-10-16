@@ -67,7 +67,7 @@ const formSchema = z.object({
     .refine((files) => files.length >= 1, "Images is required.")
     .refine(
       (files) => handleFiles(files, "type"),
-      ".jpg, .jpeg, .png and .webp files are accepted."
+      ".jpg, .jpeg, .png and .webp files are accepted.",
     )
     .refine((files) => handleFiles(files, "size"), `Max file size is 10MB.`),
 });
@@ -238,7 +238,7 @@ export default function AdminGallery(props: {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 max-w-lg"
+          className="max-w-lg space-y-4"
         >
           <AddPhotosInput errors={errors} register={register} />
           <Button disabled={isLoading} type="submit">
@@ -246,7 +246,7 @@ export default function AdminGallery(props: {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="h-4 w-4 animate-spin mr-2 text-white"
+                  className="mr-2 h-4 w-4 animate-spin text-white"
                 />
                 Loading
               </>
@@ -271,7 +271,7 @@ export default function AdminGallery(props: {
         open={isDeleteEventModalOpen}
       >
         <AlertDialogTrigger asChild>
-          <Button className="bg-red-600 hover:bg-red-500 mt-6 w-full">
+          <Button className="mt-6 w-full bg-red-600 hover:bg-red-500">
             Supprimer l&apos;événement
           </Button>
         </AlertDialogTrigger>
@@ -299,7 +299,7 @@ export default function AdminGallery(props: {
                 <>
                   <Loader2
                     color="#ffffff"
-                    className="h-4 w-4 animate-spin mr-2 text-white"
+                    className="mr-2 h-4 w-4 animate-spin text-white"
                   />
                   En cours
                 </>
@@ -310,7 +310,7 @@ export default function AdminGallery(props: {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row-dense">
+      <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {photos?.map((photo, index) => (
           <AdminGalleryPhoto
             key={index}
@@ -327,9 +327,9 @@ export default function AdminGallery(props: {
       {isOpen ? (
         <section
           {...swipeHandlers}
-          className="fixed inset-0 bg-black text-white py-8 z-20"
+          className="fixed inset-0 z-20 bg-black py-8 text-white"
         >
-          <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto flex-col sm:flex-row gap-2">
+          <div className="mx-auto mb-4 flex max-w-[calc(100%_-_4rem)] flex-col items-center justify-between gap-2 sm:flex-row">
             {currentPhoto?.name}
             <div>
               {currentPhoto ? (
@@ -351,7 +351,7 @@ export default function AdminGallery(props: {
           </div>
           {currentPhoto ? (
             <Image
-              className="w-[calc(100%_-_2rem)] sm:w-[calc(100%_-_8rem)] mx-auto h-[calc(100%_-_4rem)] object-contain"
+              className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
               src={currentPhoto.url}
               width={currentPhoto.width}
               height={currentPhoto.height}
@@ -364,19 +364,19 @@ export default function AdminGallery(props: {
           )}
 
           <Button
-            className="absolute left-8 bottom-4 sm:top-1/2 rounded-full p-2 w-16 h-16"
+            className="absolute bottom-4 left-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
             disabled={currentPhotoId ? false : true}
             onClick={() => prevPhoto()}
           >
-            <ChevronLeftCircle className="w-16 h-16" />{" "}
+            <ChevronLeftCircle className="h-16 w-16" />{" "}
             <span className="sr-only">Précédent</span>
           </Button>
           <Button
-            className="absolute right-8 bottom-4 sm:top-1/2 rounded-full p-2 w-16 h-16"
+            className="absolute bottom-4 right-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
             disabled={currentPhotoId == props.photos.length - 1}
             onClick={() => nextPhoto()}
           >
-            <ChevronRightCircle className="w-16 h-16" />
+            <ChevronRightCircle className="h-16 w-16" />
             <span className="sr-only">Suivant</span>
           </Button>
         </section>

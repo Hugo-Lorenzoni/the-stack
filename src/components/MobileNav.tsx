@@ -27,9 +27,9 @@ export default function MobileNav({ children }: { children: React.ReactNode }) {
         <Menu />
         <span className="sr-only">Menu</span>
       </SheetTrigger>
-      <SheetContent className="xl:hidden bg-orange-600 text-white">
+      <SheetContent className="bg-orange-600 text-white xl:hidden">
         <SheetHeader>
-          <SheetTitle className="text-white mb-8">Menu</SheetTitle>
+          <SheetTitle className="mb-8 text-white">Menu</SheetTitle>
         </SheetHeader>
         {children}
       </SheetContent>

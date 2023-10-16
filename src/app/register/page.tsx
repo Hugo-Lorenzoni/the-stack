@@ -173,8 +173,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto px-6 my-8 min-h-[calc(100vh_-_10rem)]">
-      <h1 className="font-semibold text-2xl">Création de compte</h1>
+    <main className="mx-auto my-8 min-h-[calc(100vh_-_10rem)] max-w-md px-6">
+      <h1 className="text-2xl font-semibold">Création de compte</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -246,21 +246,21 @@ export default function RegisterPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="absolute right-0 bottom-0"
+                    className="absolute bottom-0 right-0"
                     onClick={() =>
                       setShowPassword((prev) =>
-                        prev == "password" ? "text" : "password"
+                        prev == "password" ? "text" : "password",
                       )
                     }
                   >
                     {showPassword == "password" ? (
                       <>
-                        <span className="mr-2 sr-only">Show password</span>
+                        <span className="sr-only mr-2">Show password</span>
                         <Eye />
                       </>
                     ) : (
                       <>
-                        <span className="mr-2 sr-only">Hide password</span>
+                        <span className="sr-only mr-2">Hide password</span>
                         <EyeOff />
                       </>
                     )}
@@ -304,9 +304,9 @@ export default function RegisterPage() {
           />
           {check ? (
             <>
-              <Alert className="bg-red-100 text-red-600 border-red-600 border-2 [&:has(svg)]:pl-4 py-3">
+              <Alert className="border-2 border-red-600 bg-red-100 py-3 text-red-600 [&:has(svg)]:pl-4">
                 <AlertTitle className="flex items-center">
-                  <AlertTriangle className="text-red-600 mr-2" />
+                  <AlertTriangle className="mr-2 text-red-600" />
                   Attention
                 </AlertTitle>
                 <AlertDescription>

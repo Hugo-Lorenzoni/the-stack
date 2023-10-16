@@ -29,5 +29,5 @@ export const getEvents = cache(
       ],
     });
     return res;
-  }
+  },
 );

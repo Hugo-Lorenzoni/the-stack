@@ -21,7 +21,7 @@ export default function PaginationControls({
   const page = searchParams.get("page") ?? "1";
 
   return (
-    <div className="flex gap-2 justify-between items-center mt-4">
+    <div className="mt-4 flex items-center justify-between gap-2">
       <Button
         disabled={!hasPrevPage}
         onClick={() => {

@@ -39,7 +39,7 @@ export function SponsorLogoInput({
         // reset();
       }
     },
-    [onChange, setImage]
+    [onChange, setImage],
   );
 
   return (
@@ -47,7 +47,7 @@ export function SponsorLogoInput({
       <Label>Logo du sponsor</Label>
 
       <Input
-        className="mt-2 cursor-pointer h-fit flex items-center file:cursor-pointer file:border-1  file:rounded-md"
+        className="file:border-1 mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         name={name}
@@ -55,7 +55,7 @@ export function SponsorLogoInput({
         onChange={onAvatarChange}
       />
       {errors[name]?.message && (
-        <p className="mt-2 p-2 bg-red-100 text-red-600 border-red-600 border-2 rounded-md">
+        <p className="mt-2 rounded-md border-2 border-red-600 bg-red-100 p-2 text-red-600">
           {errors[name]?.message}
         </p>
       )}

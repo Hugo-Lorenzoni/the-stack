@@ -87,9 +87,9 @@ export default function ConnectionPage() {
   }
 
   return (
-    <main className="max-w-lg mx-auto px-6 my-8 min-h-[calc(100vh_-_10rem)] relative">
-      <div className="absolute w-full top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-orange-600 p-6 shadow-xl">
-        <h1 className="font-semibold text-2xl">Connexion</h1>
+    <main className="relative mx-auto my-8 min-h-[calc(100vh_-_10rem)] max-w-lg px-6">
+      <div className="absolute left-1/2 top-1/3 w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-orange-600 p-6 shadow-xl">
+        <h1 className="text-2xl font-semibold">Connexion</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -130,21 +130,21 @@ export default function ConnectionPage() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="absolute right-0 bottom-0"
+                        className="absolute bottom-0 right-0"
                         onClick={() =>
                           setShowPassword((prev) =>
-                            prev == "password" ? "text" : "password"
+                            prev == "password" ? "text" : "password",
                           )
                         }
                       >
                         {showPassword == "password" ? (
                           <>
-                            <span className="mr-2 sr-only">Show password</span>
+                            <span className="sr-only mr-2">Show password</span>
                             <Eye />
                           </>
                         ) : (
                           <>
-                            <span className="mr-2 sr-only">Hide password</span>
+                            <span className="sr-only mr-2">Hide password</span>
                             <EyeOff />
                           </>
                         )}
@@ -158,7 +158,7 @@ export default function ConnectionPage() {
             <Button disabled={isLoading} type="submit">
               {isLoading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   En cours de connexion
                 </>
               ) : (

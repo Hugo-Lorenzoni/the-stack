@@ -18,8 +18,8 @@ export default function AdminLayout({
   const activeStyle = "bg-neutral-200" + " " + linkStyle;
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh_-_10rem)]">
-      <aside className="p-2 lg:p-4 lg:min-w-fit lg:w-fit w-full font-semibold flex flex-row lg:flex-col whitespace-nowrap overflow-x-scroll lg:overflow-auto gap-2 lg:shadow-2xl scroll-ml-0 snap-x snap-mandatory scroll-px-2">
+    <div className="flex min-h-[calc(100vh_-_10rem)] flex-col lg:flex-row">
+      <aside className="flex w-full snap-x snap-mandatory scroll-ml-0 scroll-px-2 flex-row gap-2 overflow-x-scroll whitespace-nowrap p-2 font-semibold lg:w-fit lg:min-w-fit lg:flex-col lg:overflow-auto lg:p-4 lg:shadow-2xl">
         <Link
           className={currentRoute === "/admin" ? activeStyle : linkStyle}
           href="/admin"
@@ -128,8 +128,8 @@ export default function AdminLayout({
           Texte d&apos;introduction
         </Link>
       </aside>
-      <main className="my-8 md:px-14 px-4 grow flex flex-col overflow-x-auto">
-        <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
+      <main className="my-8 flex grow flex-col overflow-x-auto px-4 md:px-14">
+        <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
         {children}
       </main>
     </div>
@@ -140,7 +140,7 @@ function ResponsiveSeparator() {
   return (
     <>
       <Separator className="hidden lg:block" />
-      <Separator orientation="vertical" className="lg:hidden h-auto" />
+      <Separator orientation="vertical" className="h-auto lg:hidden" />
     </>
   );
 }

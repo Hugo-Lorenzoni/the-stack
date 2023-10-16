@@ -5,11 +5,11 @@ import MobileNav from "./MobileNav";
 
 export default function Nav() {
   return (
-    <header className="bg-orange-600 text-white font-semibold sticky top-0 z-10">
-      <nav className="container h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-10 bg-orange-600 font-semibold text-white">
+      <nav className="container flex h-20 items-center justify-between">
         <Link
           href="/"
-          className="flex text-4xl font-bold items-center gap-2 hover:opacity-90 duration-150"
+          className="flex items-center gap-2 text-4xl font-bold duration-150 hover:opacity-90"
         >
           <Image
             src="/cpv-logo.png"

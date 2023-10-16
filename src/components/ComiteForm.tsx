@@ -100,7 +100,7 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-2 mt-4 max-w-xl"
+        className="mt-4 max-w-xl space-y-2"
       >
         <FormField
           control={form.control}
@@ -172,7 +172,7 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
             <>
               <Loader2
                 color="#ffffff"
-                className="h-4 w-4 animate-spin mr-2 text-white"
+                className="mr-2 h-4 w-4 animate-spin text-white"
               />
               Loading
             </>

@@ -35,7 +35,7 @@ export default async function Footer() {
       <div className="container flex flex-col gap-4">
         <Link
           href="/"
-          className="flex bold font-semibold text-4xl items-center gap-2 mx-auto w-fit"
+          className="bold mx-auto flex w-fit items-center gap-2 text-4xl font-semibold"
         >
           <Image
             src="/cpv-logo.png"
@@ -45,13 +45,13 @@ export default async function Footer() {
           />
           CPV
         </Link>
-        <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-4">
+        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
           <div>
-            <h4 className="font-semibold text-xl pb-2">Réseaux sociaux</h4>
+            <h4 className="pb-2 text-xl font-semibold">Réseaux sociaux</h4>
             <ul>
               <li className="transition-transform hover:translate-x-1 motion-reduce:transform-none">
                 <a
-                  className="flex gap-2 items-center"
+                  className="flex items-center gap-2"
                   href="https://www.instagram.com/cpvfpms/"
                 >
                   <Instagram />
@@ -61,7 +61,7 @@ export default async function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-xl pb-2">Comité CPV</h4>
+            <h4 className="pb-2 text-xl font-semibold">Comité CPV</h4>
             <ul>
               <li>{comite.president}</li>
               <li>{comite.responsableVideo}</li>
@@ -71,7 +71,9 @@ export default async function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-xl pb-2">© Site développé par</h4>
+            <h4 className="pb-2 text-xl font-semibold">
+              © Site développé par
+            </h4>
             <ul>
               <li>Hugo Lorenzoni</li>
               <li>Rodrigue Deghorain</li>

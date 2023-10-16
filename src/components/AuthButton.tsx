@@ -20,9 +20,9 @@ export default function AuthButton({ session }: { session: Session | null }) {
     return (
       <div className="flex gap-4">
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center hover:opacity-80 ease-in-out duration-150">
+          <DropdownMenuTrigger className="flex items-center duration-150 ease-in-out hover:opacity-80">
             <Avatar>
-              <AvatarFallback className="text-orange-600 font-semibold">
+              <AvatarFallback className="font-semibold text-orange-600">
                 {Array.from(`${session.user.name}`)[0].toUpperCase() +
                   Array.from(`${session.user.surname}`)[0].toUpperCase()}
               </AvatarFallback>
@@ -61,15 +61,15 @@ export default function AuthButton({ session }: { session: Session | null }) {
     );
   }
   return (
-    <div className="flex gap-4 flex-wrap">
+    <div className="flex flex-wrap gap-4">
       <Button
-        className="font-semibold text-orange-600 bg-white hover:bg-white hover:bg-opacity-90"
+        className="bg-white font-semibold text-orange-600 hover:bg-white hover:bg-opacity-90"
         onClick={() => signIn()}
       >
         Se connecter
       </Button>
       <Button
-        className="font-semibold text-white border-2 bg-orange-600 hover:bg-orange-500"
+        className="border-2 bg-orange-600 font-semibold text-white hover:bg-orange-500"
         asChild
       >
         <Link href="/register">Créer un compte</Link>

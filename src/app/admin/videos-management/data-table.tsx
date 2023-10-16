@@ -62,7 +62,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="max-w-xs ml-2"
+            className="ml-2 max-w-xs"
           />
         </div>
       </section>
@@ -78,7 +78,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -92,13 +92,13 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="[&>*:last-child]:text-right [&>*:last-child]:flex [&>*:last-child]:gap-2 [&>*:last-child]:justify-end"
+                  className="[&>*:last-child]:flex [&>*:last-child]:justify-end [&>*:last-child]:gap-2 [&>*:last-child]:text-right"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-3">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

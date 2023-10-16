@@ -45,7 +45,7 @@ export default withAuth(
       },
       //authorized: ({ req, token }) => token?.role === "admin",
     },
-  }
+  },
 );
 
 export const config = {

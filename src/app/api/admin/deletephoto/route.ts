@@ -22,7 +22,7 @@ export async function DELETE(request: Request) {
     if (!result) {
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     const { name } = result;
@@ -31,7 +31,7 @@ export async function DELETE(request: Request) {
     console.log(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

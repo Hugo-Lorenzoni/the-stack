@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   if (!search) {
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
   const session = await getNextAuthSession();
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     if (!results) {
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     // console.log(results);
@@ -84,7 +84,7 @@ export async function GET(request: Request) {
     if (!results) {
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     // console.log(results);

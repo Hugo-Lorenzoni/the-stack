@@ -54,14 +54,14 @@ export function DataTable<TData, TValue>({
     <>
       <section className="max-w-lg pb-4">
         <div className="flex items-center justify-between py-1">
-          <h3>Code d'activation</h3>
+          <h3>Code d&apos;activation</h3>
           <Input
             placeholder="Search by code"
             value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("id")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -72,7 +72,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -96,7 +96,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("surname")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
       </section>
@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -125,14 +125,14 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="[&>*:last-child]:p-2 [&>*:last-child]:flex [&>*:last-child]:justify-end"
+                  className="[&>*:last-child]:flex [&>*:last-child]:justify-end [&>*:last-child]:p-2"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-3">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

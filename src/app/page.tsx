@@ -36,9 +36,9 @@ export default async function Home() {
 
   return (
     <main>
-      <section className="h-[calc(100vh_-_10rem)] overflow-hidden relative">
+      <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden">
         <Image
-          className="object-cover w-full h-full -z-10"
+          className="-z-10 h-full w-full object-cover"
           src="/statue-houdain.jpg"
           width={4000}
           height={2667}
@@ -46,14 +46,14 @@ export default async function Home() {
           quality={50}
           priority
         />
-        <h1 className="absolute bottom-12 left-[15%] right-[15%] pr-[15%] text-white text-4xl font-bold drop-shadow-title">
+        <h1 className="absolute bottom-12 left-[15%] right-[15%] pr-[15%] text-4xl font-bold text-white drop-shadow-title">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté
           Polytechnique de Mons !
         </h1>
       </section>
       <section className="container py-4">
-        <div className="px-6 py-4 border-orange-600 border-4 rounded-2xl shadow-lg">
-          <h2 className="font-semibold text-2xl mb-4 w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
+        <div className="rounded-2xl border-4 border-orange-600 px-6 py-4 shadow-lg">
+          <h2 className="relative mb-4 w-fit text-2xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
             {textintro.title}
           </h2>
           {textintro.text.map((p, i) => (
@@ -63,10 +63,10 @@ export default async function Home() {
           <p className="text-end italic">{textintro.date}</p>
         </div>
       </section>
-      <section className="container py-4 flex">
+      <section className="container flex py-4">
         <Info className="text-orange-600" />
         <a
-          className="underline text-orange-600 ml-2"
+          className="ml-2 text-orange-600 underline"
           href="https://cerclephotovideofpms.wordpress.com/"
         >
           Retrouver nos précédentes photos sur notre ancien site.

@@ -6,14 +6,14 @@ import { encrypt } from "@/utils/encryption";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const id = params.id;
     if (!id) {
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     const body: { password: string } = await request.json();
@@ -24,7 +24,7 @@ export async function POST(
       if (!res) {
         return NextResponse.json(
           { message: "Something went wrong !" },
-          { status: 500 }
+          { status: 500 },
         );
       }
       if (password != res.password) {
@@ -34,7 +34,7 @@ export async function POST(
       if (!results) {
         return NextResponse.json(
           { message: "Something went wrong !" },
-          { status: 500 }
+          { status: 500 },
         );
       }
       const secret = encrypt(id);
@@ -50,7 +50,7 @@ export async function POST(
 
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

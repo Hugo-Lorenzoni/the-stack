@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     if (!video) {
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     console.log(video);
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     console.log(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

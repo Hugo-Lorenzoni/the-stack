@@ -6,7 +6,7 @@ export const getNewComite = async () => {
   //Read the json data file data.json
   const fileContents = await fs.readFile(
     jsonDirectory + "/comite.json",
-    "utf8"
+    "utf8",
   );
   // console.log(fileContents);
 

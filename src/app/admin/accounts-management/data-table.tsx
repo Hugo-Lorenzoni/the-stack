@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("surname")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm ml-2"
+            className="ml-2 max-w-sm"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -129,7 +129,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -143,13 +143,13 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="[&>*:last-child]:p-2 [&>*:last-child]:flex [&>*:last-child]:justify-end"
+                  className="[&>*:last-child]:flex [&>*:last-child]:justify-end [&>*:last-child]:p-2"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-3">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

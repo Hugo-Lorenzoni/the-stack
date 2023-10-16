@@ -118,10 +118,10 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
   // console.log(event);
 
   return (
-    <main className="container min-h-[calc(100vh_-_10rem)] my-8">
+    <main className="container my-8 min-h-[calc(100vh_-_10rem)]">
       {event ? (
         <>
-          <h1 className="font-semibold text-3xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
+          <h1 className="relative w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
             {event.title}
           </h1>
           <p className="mt-4 text-right italic">{event.photos.length} photos</p>
@@ -131,18 +131,18 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
       ) : (
         <>
           {info && (
-            <section className="h-[calc(100vh_-_10rem)] overflow-hidden rounded-2xl relative">
+            <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden rounded-2xl">
               <Image
-                className="w-full h-full object-cover brightness-75 blur-[1px] "
+                className="h-full w-full object-cover blur-[1px] brightness-75 "
                 src={info.coverUrl}
                 width={info.coverWidth}
                 height={info.coverHeight}
                 alt={info.coverName}
                 priority
               />
-              <div className="absolute bottom-0 right-0 left-0 max-w-xl  h-fit m-4 mx-auto ">
-                <div className="bg-white rounded-xl px-8 py-6 mx-4 shadow-2xl">
-                  <h1 className="font-semibold text-3xl w-fit mb-4 relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
+              <div className="absolute bottom-0 left-0 right-0 m-4  mx-auto h-fit max-w-xl ">
+                <div className="mx-4 rounded-xl bg-white px-8 py-6 shadow-2xl">
+                  <h1 className="relative mb-4 w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
                     {info.title}
                   </h1>
                   <Form {...form}>
@@ -169,23 +169,23 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="absolute right-0 bottom-0"
+                                  className="absolute bottom-0 right-0"
                                   onClick={() =>
                                     setShowPassword((prev) =>
-                                      prev == "password" ? "text" : "password"
+                                      prev == "password" ? "text" : "password",
                                     )
                                   }
                                 >
                                   {showPassword == "password" ? (
                                     <>
-                                      <span className="mr-2 sr-only">
+                                      <span className="sr-only mr-2">
                                         Show password
                                       </span>
                                       <Eye />
                                     </>
                                   ) : (
                                     <>
-                                      <span className="mr-2 sr-only">
+                                      <span className="sr-only mr-2">
                                         Hide password
                                       </span>
                                       <EyeOff />

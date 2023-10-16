@@ -113,7 +113,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
 
   async function deleteUser(
     e: React.MouseEvent<HTMLButtonElement>,
-    user: User
+    user: User,
   ) {
     e.preventDefault();
     setLoading(true);
@@ -158,7 +158,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
             <DialogTrigger asChild>
               <Button>
                 <span className="pr-2">Edit</span>
-                <Pencil className="w-4 h-4" />
+                <Pencil className="h-4 w-4" />
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -208,7 +208,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
                         <>
                           <Loader2
                             color="#ffffff"
-                            className="h-4 w-4 animate-spin mr-2 text-white"
+                            className="mr-2 h-4 w-4 animate-spin text-white"
                           />
                           En cours
                         </>
@@ -227,7 +227,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
                 className="ml-2 bg-red-600 text-red-100 hover:bg-red-800"
                 disabled={isLoading}
               >
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </Button>
             </AlertDialogTrigger>
@@ -254,7 +254,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
                     <>
                       <Loader2
                         color="#ffffff"
-                        className="h-4 w-4 animate-spin mr-2 text-white"
+                        className="mr-2 h-4 w-4 animate-spin text-white"
                       />
                       En cours
                     </>
@@ -268,7 +268,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
         </>
       ) : (
         <Button disabled className="bg-red-100 text-red-600">
-          <X className="w-4 h-4 mr-2" />
+          <X className="mr-2 h-4 w-4" />
           Deleted
         </Button>
       )}

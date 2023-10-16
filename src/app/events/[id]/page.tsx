@@ -10,10 +10,10 @@ export default async function EventPage({
   // console.log(event);
 
   return (
-    <main className="container min-h-[calc(100vh_-_10rem)] my-8">
+    <main className="container my-8 min-h-[calc(100vh_-_10rem)]">
       {event ? (
         <>
-          <h1 className="font-semibold text-3xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
+          <h1 className="relative w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
             {event.title}
           </h1>
           <p className="mt-4 text-right italic">{event.photos.length} photos</p>

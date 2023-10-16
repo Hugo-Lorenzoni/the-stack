@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     if (!parsedlogo) {
       return NextResponse.json(
         { error: "Something went wrong." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     console.log(error);
     return NextResponse.json(
       { error: "Something went wrong." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,17 +89,17 @@ const saveFile = async (file: File, name: string) => {
     } else {
       console.error(
         "Error while trying to create directory when uploading a file\n",
-        e
+        e,
       );
       return NextResponse.json(
         { error: "Something went wrong." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }
   try {
     const filename = `${file.name.replace(/\.[^/.]+$/, "")}.${mime.getExtension(
-      file.type
+      file.type,
     )}`;
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
@@ -107,7 +107,7 @@ const saveFile = async (file: File, name: string) => {
     console.error("Error while trying to upload a file\n", e);
     return NextResponse.json(
       { error: "Something went wrong." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

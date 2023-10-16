@@ -34,26 +34,26 @@ export default async function EventsManagementPage() {
     <>
       {events ? (
         <>
-          <h3 className="mt-4 font-semibold text-xl w-fit relative after:absolute after:bg-orange-600 after:w-full after:h-1 after:-bottom-1.5 after:left-2 after:rounded-full">
+          <h3 className="relative mt-4 w-fit text-xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
             Dernières publications :
           </h3>
-          <ul className="mt-4 grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          <ul className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {events.map((event: Event) => (
               <li
                 key={event.id}
-                className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"
+                className="group overflow-hidden rounded-2xl shadow-lg duration-200 hover:shadow-xl"
               >
                 <Link href={`/admin/events/${event.id}`}>
                   <div className="relative isolate">
-                    <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
+                    <div className="absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white drop-shadow-eventtitle">
                       <h2>{event.title}</h2>
                       <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
                     </div>
                     {event.pinned && (
-                      <Pin className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle rotate-45" />
+                      <Pin className="absolute right-4 top-4 z-10 rotate-45 text-white drop-shadow-eventtitle" />
                     )}
                     <Image
-                      className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 -z-10 relative"
+                      className="relative -z-10 h-full w-full scale-105 object-cover duration-200 group-hover:scale-110"
                       src={event.coverUrl}
                       width={event.coverWidth}
                       height={event.coverHeight}

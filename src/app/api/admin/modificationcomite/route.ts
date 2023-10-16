@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       result.error;
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     } else {
       try {
@@ -39,14 +39,14 @@ export async function POST(request: NextRequest) {
         // Send an error response
         return NextResponse.json(
           { message: "Comité mis à jour !" },
-          { status: 200 }
+          { status: 200 },
         );
       } catch (error) {
         console.log(error);
         // Send an error response
         return NextResponse.json(
           { message: "Something went wrong !" },
-          { status: 500 }
+          { status: 500 },
         );
       }
     }
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     // Send an error response
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

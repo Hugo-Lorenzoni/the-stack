@@ -43,11 +43,11 @@ const formSchema = z.object({
     .refine((files) => files.length == 1, "Image is required.")
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
+      ".jpg, .jpeg, .png and .webp files are accepted.",
     )
     .refine(
       (files) => files[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 10MB.`
+      `Max file size is 10MB.`,
     ),
 });
 
@@ -126,7 +126,7 @@ export default function NewSponsorPage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 max-w-lg"
+          className="max-w-lg space-y-4"
         >
           <FormField
             control={form.control}
@@ -167,7 +167,7 @@ export default function NewSponsorPage() {
           />
 
           {image && (
-            <img src={image} alt="logo" className="w-full rounded-xl mt-1" />
+            <img src={image} alt="logo" className="mt-1 w-full rounded-xl" />
           )}
           <SponsorLogoInput
             errors={errors}
@@ -179,7 +179,7 @@ export default function NewSponsorPage() {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="h-4 w-4 animate-spin mr-2 text-white"
+                  className="mr-2 h-4 w-4 animate-spin text-white"
                 />
                 Loading
               </>

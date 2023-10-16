@@ -31,7 +31,7 @@ export default function RowActions(props: { row: Row<User> }) {
   async function handleChange(
     e: React.MouseEvent<HTMLButtonElement>,
     user: User,
-    url: string
+    url: string,
   ) {
     e.preventDefault();
     console.log(user);

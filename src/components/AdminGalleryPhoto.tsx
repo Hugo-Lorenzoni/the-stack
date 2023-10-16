@@ -43,7 +43,7 @@ export default function AdminGalleryPhoto({
 
   async function deletePhoto(
     e: React.MouseEvent<HTMLButtonElement>,
-    photo: Photo
+    photo: Photo,
   ) {
     e.preventDefault();
     setLoading(true);
@@ -73,7 +73,7 @@ export default function AdminGalleryPhoto({
         });
         if (photos !== null) {
           setPhotos((prevPhotos: Photo[]) =>
-            prevPhotos.filter((prevPhoto) => prevPhoto.id !== photo.id)
+            prevPhotos.filter((prevPhoto) => prevPhoto.id !== photo.id),
           );
         }
       }
@@ -85,7 +85,7 @@ export default function AdminGalleryPhoto({
   }
   return (
     <li
-      className={`relative group rounded-md cursor-pointer overflow-hidden ${
+      className={`group relative cursor-pointer overflow-hidden rounded-md ${
         photo.width < photo.height
           ? "row-span-2"
           : index % 7
@@ -95,9 +95,9 @@ export default function AdminGalleryPhoto({
     >
       <AlertDialog onOpenChange={setModalOpen} open={isModalOpen}>
         <AlertDialogTrigger asChild>
-          <Button className="absolute hidden top-4 right-4 p-2 pl-[7px] rounded-lg group-hover:flex bg-red-600 hover:bg-red-500">
+          <Button className="absolute right-4 top-4 hidden rounded-lg bg-red-600 p-2 pl-[7px] hover:bg-red-500 group-hover:flex">
             <Plus className="rotate-45" />
-            <span className="text-lg sr-only">Delete</span>
+            <span className="sr-only text-lg">Delete</span>
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
@@ -121,7 +121,7 @@ export default function AdminGalleryPhoto({
                 <>
                   <Loader2
                     color="#ffffff"
-                    className="h-4 w-4 animate-spin mr-2 text-white"
+                    className="mr-2 h-4 w-4 animate-spin text-white"
                   />
                   En cours
                 </>
@@ -133,7 +133,7 @@ export default function AdminGalleryPhoto({
         </AlertDialogContent>
       </AlertDialog>
       <Image
-        className="w-full h-full object-cover"
+        className="h-full w-full object-cover"
         src={photo.url}
         width={photo.width}
         height={photo.height}

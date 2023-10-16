@@ -20,7 +20,7 @@ export default async function AdminPage() {
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="border-2">
           <CardHeader>
-            <CardTitle className="flex gap-2 justify-between">
+            <CardTitle className="flex justify-between gap-2">
               Photos
               <Image strokeWidth={2.25} />
             </CardTitle>
@@ -31,7 +31,7 @@ export default async function AdminPage() {
         </Card>
         <Card className="border-2">
           <CardHeader>
-            <CardTitle className="flex gap-2 justify-between">
+            <CardTitle className="flex justify-between gap-2">
               Utilisateurs
               <UserCircle strokeWidth={2.25} />
             </CardTitle>
@@ -39,13 +39,13 @@ export default async function AdminPage() {
           <CardContent>
             <p>{infos.countUser} utilisateurs</p>
             <p className="italic text-orange-600">
-              ({infos.countWaitingUser} en attente d'approbation)
+              ({infos.countWaitingUser} en attente d&apos;approbation)
             </p>
           </CardContent>
         </Card>
         <Card className="border-2">
           <CardHeader>
-            <CardTitle className="flex gap-2 justify-between">
+            <CardTitle className="flex justify-between gap-2">
               Événements ouverts
               <Users2 strokeWidth={2.25} />
             </CardTitle>
@@ -56,7 +56,7 @@ export default async function AdminPage() {
         </Card>
         <Card className="border-2">
           <CardHeader>
-            <CardTitle className="flex gap-2 justify-between">
+            <CardTitle className="flex justify-between gap-2">
               Événements baptisés
               <BadgeCheck strokeWidth={2.25} />
             </CardTitle>
@@ -67,7 +67,7 @@ export default async function AdminPage() {
         </Card>
         <Card className="border-2">
           <CardHeader>
-            <CardTitle className="flex gap-2 justify-between">
+            <CardTitle className="flex justify-between gap-2">
               Autres événements
               <Lock strokeWidth={2.25} />
             </CardTitle>
@@ -78,7 +78,7 @@ export default async function AdminPage() {
         </Card>
         <Card className="border-2">
           <CardHeader>
-            <CardTitle className="flex gap-2 justify-between">
+            <CardTitle className="flex justify-between gap-2">
               Vidéos
               <Video strokeWidth={2.25} />
             </CardTitle>

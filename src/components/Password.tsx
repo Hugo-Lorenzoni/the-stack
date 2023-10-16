@@ -13,7 +13,7 @@ export default function Password({ password }: Props) {
   const [showPassword, setShowPassword] = useState("password");
 
   return (
-    <div className="relative max-w-sm mt-4">
+    <div className="relative mt-4 max-w-sm">
       <Input
         className="pr-16"
         type={showPassword}
@@ -24,19 +24,19 @@ export default function Password({ password }: Props) {
       <Button
         type="button"
         variant="outline"
-        className="absolute right-0 bottom-0"
+        className="absolute bottom-0 right-0"
         onClick={() =>
           setShowPassword((prev) => (prev == "password" ? "text" : "password"))
         }
       >
         {showPassword == "password" ? (
           <>
-            <span className="mr-2 sr-only">Show password</span>
+            <span className="sr-only mr-2">Show password</span>
             <Eye />
           </>
         ) : (
           <>
-            <span className="mr-2 sr-only">Hide password</span>
+            <span className="sr-only mr-2">Hide password</span>
             <EyeOff />
           </>
         )}

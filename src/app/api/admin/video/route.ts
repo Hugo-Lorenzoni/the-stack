@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       console.log(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     if (!res) {
       return NextResponse.json(
         { message: "Something went wrong !" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     return new Response(JSON.stringify(res));
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     console.log(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

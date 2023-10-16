@@ -22,7 +22,7 @@ export const columns: ColumnDef<Video>[] = [
         <div className="flex items-center">
           Titre de la vidéo
           <Button
-            className="ml-2 hover:bg-neutral-200 px-3 rounded-lg"
+            className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -39,7 +39,7 @@ export const columns: ColumnDef<Video>[] = [
       const video = row.original;
 
       return (
-        <a className="underline text-blue-600" href={video.url}>
+        <a className="text-blue-600 underline" href={video.url}>
           {video.url}
         </a>
       );
@@ -52,7 +52,7 @@ export const columns: ColumnDef<Video>[] = [
         <div className="flex items-center">
           Date
           <Button
-            className="ml-2 hover:bg-neutral-200 px-3 rounded-lg"
+            className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >

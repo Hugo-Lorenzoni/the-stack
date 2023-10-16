@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     if (!password && type == "AUTRE") {
       return NextResponse.json(
         { error: "Something went wrong." },
-        { status: 500 }
+        { status: 500 },
       );
     }
     const coverFile = data.get("cover") as File;
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     if (!parsedCover) {
       return NextResponse.json(
         { error: "Something went wrong." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -70,13 +70,13 @@ export async function POST(request: NextRequest) {
           width: photoDismensions.width,
           height: photoDismensions.height,
         };
-      })
+      }),
     );
     const parsedPhotos = photosSchema.parse(photos);
     if (!parsedPhotos) {
       return NextResponse.json(
         { error: "Something went wrong." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     console.log(error);
     return NextResponse.json(
       { error: "Something went wrong." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -116,7 +116,7 @@ const saveFile = async (
   title: string,
   date: string,
   type: Type,
-  cover: boolean
+  cover: boolean,
 ) => {
   const fileArray = await file.arrayBuffer();
   const buffer = Buffer.from(fileArray);
@@ -138,18 +138,18 @@ const saveFile = async (
     } else {
       console.error(
         "Error while trying to create directory when uploading a file\n",
-        e
+        e,
       );
       return NextResponse.json(
         { error: "Something went wrong." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }
   try {
     const filename = `${cover ? "cover-" : ""}${file.name.replace(
       /\.[^/.]+$/,
-      ""
+      "",
     )}.${mime.getExtension(file.type)}`;
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
@@ -157,7 +157,7 @@ const saveFile = async (
     console.error("Error while trying to upload a file\n", e);
     return NextResponse.json(
       { error: "Something went wrong." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 };

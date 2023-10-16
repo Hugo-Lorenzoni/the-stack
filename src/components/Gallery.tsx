@@ -68,12 +68,12 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
 
   return (
     <>
-      <ul className="mt-4 grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row-dense">
+      <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {props.photos.map((photo, index) => {
           return (
             <Image
               key={index}
-              className={`w-full h-full object-cover rounded-md cursor-pointer
+              className={`h-full w-full cursor-pointer rounded-md object-cover
                 ${
                   photo.width < photo.height
                     ? "row-span-2"
@@ -94,9 +94,9 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
       {isOpen ? (
         <section
           {...swipeHandlers}
-          className="fixed inset-0 bg-black text-white py-8 z-20"
+          className="fixed inset-0 z-20 bg-black py-8 text-white"
         >
-          <div className="flex items-center justify-between mb-4 max-w-[calc(100%_-_4rem)] mx-auto flex-col sm:flex-row gap-2">
+          <div className="mx-auto mb-4 flex max-w-[calc(100%_-_4rem)] flex-col items-center justify-between gap-2 sm:flex-row">
             {currentPhoto?.name}
             <div>
               {currentPhoto ? (
@@ -118,7 +118,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           </div>
           {currentPhoto ? (
             <Image
-              className="w-[calc(100%_-_2rem)] sm:w-[calc(100%_-_8rem)] mx-auto h-[calc(100%_-_4rem)] object-contain"
+              className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
               src={currentPhoto.url}
               width={currentPhoto.width}
               height={currentPhoto.height}
@@ -131,19 +131,19 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           )}
 
           <Button
-            className="absolute left-8 bottom-4 sm:top-1/2 rounded-full p-2 w-16 h-16"
+            className="absolute bottom-4 left-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
             disabled={currentPhotoId ? false : true}
             onClick={() => prevPhoto()}
           >
-            <ChevronLeftCircle className="w-16 h-16" />{" "}
+            <ChevronLeftCircle className="h-16 w-16" />{" "}
             <span className="sr-only">Précédent</span>
           </Button>
           <Button
-            className="absolute right-8 bottom-4 sm:top-1/2 rounded-full p-2 w-16 h-16"
+            className="absolute bottom-4 right-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
             disabled={currentPhotoId == props.photos.length - 1}
             onClick={() => nextPhoto()}
           >
-            <ChevronRightCircle className="w-16 h-16" />
+            <ChevronRightCircle className="h-16 w-16" />
             <span className="sr-only">Suivant</span>
           </Button>
         </section>

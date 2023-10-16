@@ -128,7 +128,7 @@ export default function VideosRowActions({ row }: Props) {
 
   async function deleteVideo(
     e: React.MouseEvent<HTMLButtonElement>,
-    id: string
+    id: string,
   ) {
     e.preventDefault();
     setLoading(true);
@@ -173,7 +173,7 @@ export default function VideosRowActions({ row }: Props) {
           <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Pencil className="w-4 h-4" />
+                <Pencil className="h-4 w-4" />
                 <span className="pl-2">Edit</span>
               </Button>
             </DialogTrigger>
@@ -184,7 +184,7 @@ export default function VideosRowActions({ row }: Props) {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4 max-w-lg"
+                  className="max-w-lg space-y-4"
                 >
                   <FormField
                     control={form.control}
@@ -235,7 +235,7 @@ export default function VideosRowActions({ row }: Props) {
                                 variant={"outline"}
                                 className={cn(
                                   "w-[240px] pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
+                                  !field.value && "text-muted-foreground",
                                 )}
                               >
                                 {field.value ? (
@@ -270,7 +270,7 @@ export default function VideosRowActions({ row }: Props) {
                         <>
                           <Loader2
                             color="#ffffff"
-                            className="h-4 w-4 animate-spin mr-2 text-white"
+                            className="mr-2 h-4 w-4 animate-spin text-white"
                           />
                           En cours
                         </>
@@ -289,7 +289,7 @@ export default function VideosRowActions({ row }: Props) {
                 className="bg-red-600 text-red-100 hover:bg-red-800"
                 disabled={isLoading}
               >
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </Button>
             </AlertDialogTrigger>
@@ -316,7 +316,7 @@ export default function VideosRowActions({ row }: Props) {
                     <>
                       <Loader2
                         color="#ffffff"
-                        className="h-4 w-4 animate-spin mr-2 text-white"
+                        className="mr-2 h-4 w-4 animate-spin text-white"
                       />
                       En cours
                     </>
@@ -330,7 +330,7 @@ export default function VideosRowActions({ row }: Props) {
         </>
       ) : (
         <Button disabled className="bg-red-100 text-red-600">
-          <X className="w-4 h-4 mr-2" />
+          <X className="mr-2 h-4 w-4" />
           Deleted
         </Button>
       )}

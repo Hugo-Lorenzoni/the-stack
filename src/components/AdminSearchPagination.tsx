@@ -37,8 +37,8 @@ export default function AdminSearchPagination(props: {
   if (!events || !events.length) {
     return (
       <>
-        <SearchX className="w-20 h-20 mt-24 mx-auto" />
-        <p className="mt-2 mx-auto w-fit">Aucun résultat...</p>
+        <SearchX className="mx-auto mt-24 h-20 w-20" />
+        <p className="mx-auto mt-2 w-fit">Aucun résultat...</p>
       </>
     );
   }
@@ -57,24 +57,24 @@ export default function AdminSearchPagination(props: {
 
   return (
     <>
-      <ul className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {results.map((event) => {
           const date = new Date(event.date);
           return (
             <li
               key={event.id}
-              className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl duration-200"
+              className="group overflow-hidden rounded-2xl shadow-lg duration-200 hover:shadow-xl"
             >
               <Link href={`/admin/events/${event.id}`}>
                 <div className="relative isolate">
-                  <div className="absolute text-white bottom-4 left-5 font-semibold text-lg drop-shadow-eventtitle z-10 mr-5">
+                  <div className="absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white drop-shadow-eventtitle">
                     <h2>{event.title}</h2>
                     <p>{date.toLocaleDateString("fr-BE", options)}</p>
                   </div>
                   {event.published == false && (
-                    <TextSelect className="absolute top-4 left-4 text-white z-10 drop-shadow-eventtitle" />
+                    <TextSelect className="absolute left-4 top-4 z-10 text-white drop-shadow-eventtitle" />
                   )}
-                  <div className="absolute top-4 right-4 text-white z-10 drop-shadow-eventtitle flex gap-2">
+                  <div className="absolute right-4 top-4 z-10 flex gap-2 text-white drop-shadow-eventtitle">
                     {event.type == "AUTRE" && <Lock />}
                     {event.type == "OUVERT" && <Users2 />}
                     {event.type == "BAPTISE" && <BadgeCheck />}
@@ -82,7 +82,7 @@ export default function AdminSearchPagination(props: {
                   </div>
 
                   <Image
-                    className="w-full h-full object-cover scale-105 group-hover:scale-110 duration-200 "
+                    className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110 "
                     src={event.coverUrl}
                     width={event.coverWidth}
                     height={event.coverHeight}
@@ -95,7 +95,7 @@ export default function AdminSearchPagination(props: {
           );
         })}
       </ul>
-      <div className="flex gap-2 justify-between items-center mt-4">
+      <div className="mt-4 flex items-center justify-between gap-2">
         <Button
           disabled={currentPage == 1}
           onClick={() => setCurrentPage((page) => page - 1)}

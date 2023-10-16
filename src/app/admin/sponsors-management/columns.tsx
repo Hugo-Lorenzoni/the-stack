@@ -24,7 +24,7 @@ export const columns: ColumnDef<Sponsor>[] = [
         <div className="flex items-center">
           Nom du sponsor
           <Button
-            className="ml-2 hover:bg-neutral-200 px-3 rounded-lg"
+            className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -41,7 +41,7 @@ export const columns: ColumnDef<Sponsor>[] = [
       const sponsor = row.original;
 
       return (
-        <a className="underline text-blue-600" href={sponsor.url}>
+        <a className="text-blue-600 underline" href={sponsor.url}>
           {sponsor.url}
         </a>
       );
@@ -55,7 +55,7 @@ export const columns: ColumnDef<Sponsor>[] = [
 
       return (
         <Image
-          className="object-contain h-16 w-fit"
+          className="h-16 w-fit object-contain"
           src={sponsor.logoUrl}
           width={sponsor.logoWidth}
           height={sponsor.logoHeight}
@@ -72,7 +72,7 @@ export const columns: ColumnDef<Sponsor>[] = [
       return (
         <Button>
           <span className="pr-2">Edit</span>
-          <Pencil className="w-4 h-4" />
+          <Pencil className="h-4 w-4" />
         </Button>
       );
     },

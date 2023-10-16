@@ -9,7 +9,7 @@ export async function GET() {
     //Read the json data file data.json
     const fileContents = await fs.readFile(
       jsonDirectory + "/comite.json",
-      "utf8"
+      "utf8",
     );
     // console.log(fileContents);
     // const comite = JSON.parse(fileContents);
@@ -22,7 +22,7 @@ export async function GET() {
 
     return NextResponse.json(
       { message: "Something went wrong !" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
