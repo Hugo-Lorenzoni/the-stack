@@ -18,6 +18,11 @@ export const getInfos = cache(async () => {
     },
   });
   const countUser = await prisma.user.count();
+  const countWaitingUser = await prisma.user.count({
+    where: {
+      role: "WAITING",
+    },
+  });
   const countPhoto = await prisma.photo.count();
   const countVideo = await prisma.video.count();
 
@@ -26,6 +31,7 @@ export const getInfos = cache(async () => {
     countEventFpms,
     countEventAutre,
     countUser,
+    countWaitingUser,
     countPhoto,
     countVideo,
   };

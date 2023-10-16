@@ -54,6 +54,17 @@ export function DataTable<TData, TValue>({
     <>
       <section className="max-w-lg pb-4">
         <div className="flex items-center justify-between py-1">
+          <h3>Code d'activation</h3>
+          <Input
+            placeholder="Search by code"
+            value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("id")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm ml-2"
+          />
+        </div>
+        <div className="flex items-center justify-between py-1">
           <h3>Email</h3>
           <Input
             placeholder="Filter emails..."
@@ -61,7 +72,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm ml-2"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -72,7 +83,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm ml-2"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -85,7 +96,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("surname")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm ml-2"
           />
         </div>
       </section>

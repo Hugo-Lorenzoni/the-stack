@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm ml-2"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm ml-2"
           />
         </div>
         <div className="flex items-center justify-between py-1">
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn("surname")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-sm ml-2"
           />
         </div>
         <div className="flex items-center justify-between py-1">

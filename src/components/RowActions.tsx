@@ -66,34 +66,20 @@ export default function RowActions(props: { row: Row<User> }) {
   }
   if (user) {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="h-8 w-8 p-0">
-            <span className="sr-only">Approuver ?</span>
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="space-y-1">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Button
-              className="w-full cursor-pointer bg-green-600 text-white hover:bg-green-100 hover:text-green-600"
-              onClick={(e) => handleChange(e, user, "acceptuser")}
-            >
-              Accepter
-            </Button>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Button
-              className="w-full cursor-pointer bg-red-600 text-white hover:bg-red-100 hover:text-red-600"
-              onClick={(e) => handleChange(e, user, "rejectuser")}
-            >
-              Refuser
-            </Button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <>
+        <Button
+          className="w-full cursor-pointer bg-green-600 text-white hover:bg-green-100 hover:text-green-600"
+          onClick={(e) => handleChange(e, user, "acceptuser")}
+        >
+          Accepter
+        </Button>
+        <Button
+          className="ml-2 w-full cursor-pointer bg-red-600 text-white hover:bg-red-100 hover:text-red-600"
+          onClick={(e) => handleChange(e, user, "rejectuser")}
+        >
+          Refuser
+        </Button>
+      </>
     );
   }
 }

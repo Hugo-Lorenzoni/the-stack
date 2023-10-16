@@ -38,6 +38,9 @@ export default async function AdminPage() {
           </CardHeader>
           <CardContent>
             <p>{infos.countUser} utilisateurs</p>
+            <p className="italic text-orange-600">
+              ({infos.countWaitingUser} en attente d'approbation)
+            </p>
           </CardContent>
         </Card>
         <Card className="border-2">

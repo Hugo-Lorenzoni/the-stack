@@ -13,19 +13,20 @@ export default function AdminLayout({
     /* Get the current route */
   }
   const currentRoute = usePathname();
-  const linkStyle = "hover:bg-neutral-100 py-2 px-4 rounded-md duration-150";
+  const linkStyle =
+    "hover:bg-neutral-100 py-2 px-4 rounded-md duration-150 snap-start";
   const activeStyle = "bg-neutral-200" + " " + linkStyle;
 
   return (
-    <div className="flex min-h-[calc(100vh_-_10rem)]">
-      <aside className="p-4 font-semibold flex flex-col gap-2 shadow-2xl">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh_-_10rem)]">
+      <aside className="p-2 lg:p-4 lg:min-w-fit lg:w-fit w-full font-semibold flex flex-row lg:flex-col whitespace-nowrap overflow-x-scroll lg:overflow-auto gap-2 lg:shadow-2xl scroll-ml-0 snap-x snap-mandatory scroll-px-2">
         <Link
           className={currentRoute === "/admin" ? activeStyle : linkStyle}
           href="/admin"
         >
           Tableau de bord
         </Link>
-        <Separator />
+        <ResponsiveSeparator />
         <Link
           className={
             currentRoute === "/admin/new-event" ? activeStyle : linkStyle
@@ -52,7 +53,7 @@ export default function AdminLayout({
         >
           Gestion des événements
         </Link>
-        <Separator />
+        <ResponsiveSeparator />
         <Link
           className={
             currentRoute === "/admin/accounts-approval"
@@ -73,7 +74,7 @@ export default function AdminLayout({
         >
           Gestion des comptes
         </Link>
-        <Separator />
+        <ResponsiveSeparator />
         <Link
           className={
             currentRoute === "/admin/new-sponsor" ? activeStyle : linkStyle
@@ -92,7 +93,7 @@ export default function AdminLayout({
         >
           Gestion des sponsors
         </Link>
-        <Separator />
+        <ResponsiveSeparator />
         <Link
           className={
             currentRoute === "/admin/new-video" ? activeStyle : linkStyle
@@ -111,7 +112,7 @@ export default function AdminLayout({
         >
           Gestion des vidéos
         </Link>
-        <Separator />
+        <ResponsiveSeparator />
         <Link
           className={currentRoute === "/admin/comite" ? activeStyle : linkStyle}
           href="/admin/comite"
@@ -127,10 +128,19 @@ export default function AdminLayout({
           Texte d&apos;introduction
         </Link>
       </aside>
-      <main className="my-8 mx-14 flex-1 flex flex-col">
+      <main className="my-8 md:px-14 px-4 grow flex flex-col overflow-x-auto">
         <h1 className="font-semibold text-2xl">Admin Dashboard</h1>
         {children}
       </main>
     </div>
+  );
+}
+
+function ResponsiveSeparator() {
+  return (
+    <>
+      <Separator className="hidden lg:block" />
+      <Separator orientation="vertical" className="lg:hidden h-auto" />
+    </>
   );
 }

@@ -46,7 +46,7 @@ export default async function Home() {
           quality={50}
           priority
         />
-        <h1 className="absolute bottom-12 left-[15%] right-[15%] pr-[15%] text-white text-4xl font-bold drop-shadow-title z-10">
+        <h1 className="absolute bottom-12 left-[15%] right-[15%] pr-[15%] text-white text-4xl font-bold drop-shadow-title">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté
           Polytechnique de Mons !
         </h1>
