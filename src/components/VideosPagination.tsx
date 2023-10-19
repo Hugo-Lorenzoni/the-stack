@@ -11,10 +11,10 @@ type PropsType = {
 export default function VideosPagination({ videos }: PropsType) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const eventPerPage = 12;
+  const videosPerPage = 6;
 
-  const start = (Number(currentPage) - 1) * Number(eventPerPage); // 0, 5, 10 ...
-  const end = start + Number(eventPerPage); // 5, 10, 15 ...
+  const start = (Number(currentPage) - 1) * Number(videosPerPage); // 0, 5, 10 ...
+  const end = start + Number(videosPerPage); // 5, 10, 15 ...
   const results = videos.slice(start, end);
 
   return (
@@ -40,11 +40,11 @@ export default function VideosPagination({ videos }: PropsType) {
         </Button>
 
         <div>
-          {currentPage} / {Math.ceil(videos.length / eventPerPage)}
+          {currentPage} / {Math.ceil(videos.length / videosPerPage)}
         </div>
 
         <Button
-          disabled={currentPage >= Math.ceil(videos.length / eventPerPage)}
+          disabled={currentPage >= Math.ceil(videos.length / videosPerPage)}
           onClick={() => {
             setCurrentPage((page) => page + 1);
           }}
