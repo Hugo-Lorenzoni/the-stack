@@ -198,6 +198,14 @@ export default function NewEventPage() {
           message: "La photo de couverture doit être au format paysage !",
         });
       }
+      if (response.status == 504) {
+        toast({
+          variant: "destructive",
+          title: `${response.status.toString()} - ${response.statusText}`,
+          description:
+            "L'upload a pris trop de temps - L'événement ne s'est peut-être pas uploadé correctement",
+        });
+      }
       if (response.status == 200) {
         toast({
           variant: "default",
