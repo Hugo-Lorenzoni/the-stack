@@ -1,5 +1,5 @@
+import VideosPagination from "@/components/VideosPagination";
 import { getVideos } from "@/utils/getVideos";
-import { Video } from "@prisma/client";
 import { SearchX } from "lucide-react";
 
 export default async function VideosPage() {
@@ -12,20 +12,7 @@ export default async function VideosPage() {
       </h1>
       <section className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
         {videos ? (
-          <>
-            {videos.map((video: Video) => (
-              <div key={video.id}>
-                <h2 className="mb-2 font-semibold">{video.name}</h2>
-                <iframe
-                  className="aspect-video w-full rounded-2xl"
-                  src={`https://www.youtube-nocookie.com/embed/${video.id}`}
-                  title={video.name}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            ))}
-          </>
+          <VideosPagination videos={videos} />
         ) : (
           <>
             <SearchX className="mx-auto mt-24 h-20 w-20" />
