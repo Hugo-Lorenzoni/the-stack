@@ -145,6 +145,8 @@ export default function NewEventPage() {
     formState: { errors },
     register,
     reset,
+    resetField,
+    setError,
   } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -181,6 +183,19 @@ export default function NewEventPage() {
           variant: "destructive",
           title: response.status.toString(),
           description: response.statusText,
+        });
+      }
+      if (response.status == 415) {
+        toast({
+          variant: "destructive",
+          title: `${response.status.toString()} - ${response.statusText}`,
+          description: "La photo de couverture doit être au format paysage !",
+        });
+        setImage(null);
+        resetField("cover");
+        setError("cover", {
+          type: "string",
+          message: "La photo de couverture doit être au format paysage !",
         });
       }
       if (response.status == 200) {

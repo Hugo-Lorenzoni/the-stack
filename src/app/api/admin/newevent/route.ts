@@ -42,9 +42,20 @@ export async function POST(request: NextRequest) {
       );
     }
     const coverFile = data.get("cover") as File;
-    const coverUrl = await saveFile(coverFile, title, date, type, true);
     const coverArray = await coverFile.arrayBuffer();
     const coverDismensions = sizeOf(Buffer.from(coverArray));
+    if (
+      coverDismensions.height &&
+      coverDismensions.width &&
+      coverDismensions.height >= coverDismensions.width
+    ) {
+      return NextResponse.json(
+        { error: "Unsupported Media Type" },
+        { status: 415 },
+      );
+    }
+    const coverUrl = await saveFile(coverFile, title, date, type, true);
+
     const parsedCover = photoSchema.parse({
       name: coverFile.name,
       url: coverUrl,
