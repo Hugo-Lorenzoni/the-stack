@@ -38,7 +38,7 @@ export default async function Home() {
     <main>
       <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden">
         <Image
-          className="-z-10 h-full w-full object-cover"
+          className="relative -z-10 h-full w-full object-cover"
           src="/statue-houdain.jpg"
           width={4000}
           height={2667}
@@ -46,7 +46,7 @@ export default async function Home() {
           quality={50}
           priority
         />
-        <h1 className="absolute bottom-12 left-[15%] right-[15%] pr-[15%] text-4xl font-bold text-white drop-shadow-title">
+        <h1 className="absolute bottom-12 left-[15%] right-[15%] z-0 pr-[15%] text-4xl font-bold text-white drop-shadow-title">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté
           Polytechnique de Mons !
         </h1>

@@ -31,7 +31,7 @@ export default async function Footer() {
   // };
 
   return (
-    <footer className="bg-orange-600 py-4 text-white">
+    <footer className="relative z-10 bg-orange-600 py-4 text-white">
       <div className="container flex flex-col gap-4">
         <Link
           href="/"
