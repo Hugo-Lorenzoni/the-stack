@@ -157,45 +157,57 @@ export default function AdminGallery(props: {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    const formData = new FormData();
-    for (let index = 0; index < values.photos.length; index++) {
+    const files = Array.from(values.photos).map(async (photo) => {
+      const formData = new FormData();
+
       // formData.append(`file-${index}`, values.photos[index]);
-      formData.append("file", values.photos[index]);
-    }
+      formData.append("file", photo);
 
-    formData.append("id", JSON.stringify(props.eventId));
-    console.log(formData);
+      formData.append("id", JSON.stringify(props.eventId));
+      console.log(formData);
 
-    try {
-      const apiUrlEndpoint = `/api/admin/addphotos`;
-      const postData = {
-        method: "POST",
-        body: formData,
-      };
-      const response = await fetch(apiUrlEndpoint, postData);
-      console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
-      if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Photo(s) successfully added !",
-        });
-        const res = await response.json();
-        console.log(res);
-        if (res.event.photos) {
-          setPhotos(res.event.photos);
+      try {
+        const apiUrlEndpoint = `/api/admin/addphotos`;
+        const postData = {
+          method: "POST",
+          body: formData,
+        };
+        const response = await fetch(apiUrlEndpoint, postData);
+        console.log(response);
+        if (response.status == 500) {
+          toast({
+            variant: "destructive",
+            title: response.status.toString(),
+            description: response.statusText,
+          });
         }
-        reset();
+        if (response.status == 504) {
+          toast({
+            duration: 20000,
+            variant: "destructive",
+            title: `${response.status.toString()} - ${response.statusText}`,
+            description:
+              "L'upload a pris trop de temps - Les photos ne se sont peut-être pas uploadés correctement",
+          });
+        }
+        if (response.status == 200) {
+          const res = await response.json();
+          console.log(res);
+          toast({
+            variant: "default",
+            title: `${res.photo} successfully added !`,
+          });
+
+          if (res.event.photos) {
+            setPhotos(res.event.photos);
+          }
+          reset();
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    });
+
     setLoading(false);
   }
 

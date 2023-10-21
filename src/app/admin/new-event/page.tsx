@@ -200,6 +200,7 @@ export default function NewEventPage() {
       }
       if (response.status == 504) {
         toast({
+          duration: 20000,
           variant: "destructive",
           title: `${response.status.toString()} - ${response.statusText}`,
           description:
