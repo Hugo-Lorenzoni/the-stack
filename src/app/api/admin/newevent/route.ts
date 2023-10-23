@@ -12,7 +12,7 @@ type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
   title: string;
   notes?: string | undefined;
-  date: string;
+  date: Date;
   pinned: boolean;
   password?: string | undefined;
 };
@@ -125,13 +125,16 @@ export async function POST(request: NextRequest) {
 const saveFile = async (
   file: File,
   title: string,
-  date: string,
+  date: Date,
   type: Type,
   cover: boolean,
 ) => {
   const fileArray = await file.arrayBuffer();
   const buffer = Buffer.from(fileArray);
-  const relativeUploadDir = `/${type}/${date.substring(0, 10)}-${title
+  const relativeUploadDir = `/${type}/${(date.getDate() + 1)
+    .toString()
+    .substring(0, 10)}-${title
+    .toLocaleLowerCase()
     .replace(/\.[^/.]+$/, "")
     .replace(/\s+/g, "-")
     .replace(/é/g, "e")
@@ -158,10 +161,15 @@ const saveFile = async (
     }
   }
   try {
-    const filename = `${cover ? "cover-" : ""}${file.name.replace(
-      /\.[^/.]+$/,
-      "",
-    )}.${mime.getExtension(file.type)}`;
+    const filename = `${cover ? "cover-" : ""}${file.name
+      .toLocaleLowerCase()
+      .replace(/\.[^/.]+$/, "")
+      .replace(/\s+/g, "-")
+      .replace(/é/g, "e")
+      .replace(/è/g, "e")
+      .replace(/ê/g, "e")
+      .replace(/à/g, "a")
+      .replace(/â/g, "a")}.${mime.getExtension(file.type)}`;
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {
