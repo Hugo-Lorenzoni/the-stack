@@ -35,15 +35,15 @@ export async function POST(request: NextRequest) {
     }
     const { title, date, notes, pinned, type, password }: Values =
       JSON.parse(values);
-    console.log(date);
+    // console.log(date);
 
     const dateFormat = new Date(date);
-    console.log(dateFormat);
+    // console.log(dateFormat);
 
     const dateString = new Date(dateFormat.setDate(dateFormat.getDate() + 1))
       .toISOString()
       .substring(0, 10);
-    console.log(dateString);
+    // console.log(dateString);
 
     if (!password && type == "AUTRE") {
       return NextResponse.json(

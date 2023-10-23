@@ -56,12 +56,12 @@ export async function POST(request: NextRequest) {
     }
 
     const dateFormat = new Date(currentEvent.date);
-    console.log(dateFormat);
+    // console.log(dateFormat);
 
     const dateString = new Date(dateFormat.setDate(dateFormat.getDate() + 1))
       .toISOString()
       .substring(0, 10);
-    console.log(dateString);
+    // console.log(dateString);
 
     const photosFiles = data.getAll("file") as Array<File>;
     const photos = await Promise.all(
