@@ -98,9 +98,15 @@ const saveFile = async (file: File, name: string) => {
     }
   }
   try {
-    const filename = `${file.name.replace(/\.[^/.]+$/, "")}.${mime.getExtension(
-      file.type,
-    )}`;
+    const filename = `${file.name
+      .toLocaleLowerCase()
+      .replace(/\.[^/.]+$/, "")
+      .replace(/\s+/g, "-")
+      .replace(/é/g, "e")
+      .replace(/è/g, "e")
+      .replace(/ê/g, "e")
+      .replace(/à/g, "a")
+      .replace(/â/g, "a")}.${mime.getExtension(file.type)}`;
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {

@@ -12,7 +12,7 @@ type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
   title: string;
   notes?: string | undefined;
-  date: Date;
+  date: string;
   pinned: boolean;
   password?: string | undefined;
 };
@@ -35,6 +35,16 @@ export async function POST(request: NextRequest) {
     }
     const { title, date, notes, pinned, type, password }: Values =
       JSON.parse(values);
+    console.log(date);
+
+    const dateFormat = new Date(date);
+    console.log(dateFormat);
+
+    const dateString = new Date(dateFormat.setDate(dateFormat.getDate() + 1))
+      .toISOString()
+      .substring(0, 10);
+    console.log(dateString);
+
     if (!password && type == "AUTRE") {
       return NextResponse.json(
         { error: "Something went wrong." },
@@ -54,7 +64,7 @@ export async function POST(request: NextRequest) {
         { status: 415 },
       );
     }
-    const coverUrl = await saveFile(coverFile, title, date, type, true);
+    const coverUrl = await saveFile(coverFile, title, dateString, type, true);
 
     const parsedCover = photoSchema.parse({
       name: coverFile.name,
@@ -72,7 +82,7 @@ export async function POST(request: NextRequest) {
     const photosFiles = data.getAll("file") as Array<File>;
     const photos = await Promise.all(
       photosFiles.map(async (photo) => {
-        const photoURL = await saveFile(photo, title, date, type, false);
+        const photoURL = await saveFile(photo, title, dateString, type, false);
         const photoArray = await photo.arrayBuffer();
         const photoDismensions = sizeOf(Buffer.from(photoArray));
         return {
@@ -125,16 +135,15 @@ export async function POST(request: NextRequest) {
 const saveFile = async (
   file: File,
   title: string,
-  date: Date,
+  date: string,
   type: Type,
   cover: boolean,
 ) => {
   const fileArray = await file.arrayBuffer();
   const buffer = Buffer.from(fileArray);
-  const relativeUploadDir = `/${type}/${(date.getDate() + 1)
-    .toString()
-    .substring(0, 10)}-${title
-    .toLocaleLowerCase()
+
+  //!Formatting du nom du dossier
+  const relativeUploadDir = `/${type}/${date}-${title
     .replace(/\.[^/.]+$/, "")
     .replace(/\s+/g, "-")
     .replace(/é/g, "e")
@@ -148,6 +157,7 @@ const saveFile = async (
     await stat(uploadDir);
   } catch (e: any) {
     if (e.code === "ENOENT") {
+      //!Création du dossier
       await mkdir(uploadDir, { recursive: true });
     } else {
       console.error(
@@ -161,6 +171,7 @@ const saveFile = async (
     }
   }
   try {
+    //!Formatting du nom du fichier
     const filename = `${cover ? "cover-" : ""}${file.name
       .toLocaleLowerCase()
       .replace(/\.[^/.]+$/, "")
@@ -170,6 +181,7 @@ const saveFile = async (
       .replace(/ê/g, "e")
       .replace(/à/g, "a")
       .replace(/â/g, "a")}.${mime.getExtension(file.type)}`;
+
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {

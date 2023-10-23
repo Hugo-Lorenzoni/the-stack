@@ -39,9 +39,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const folder = `/${event.type}/${event.date
+    const dateString = new Date(event.date.setDate(event.date.getDate() + 1))
       .toISOString()
-      .substring(0, 10)}-${event.title
+      .substring(0, 10);
+
+    const folder = `/${event.type}/${dateString}-${event.title
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
       .replace(/é/g, "e")
