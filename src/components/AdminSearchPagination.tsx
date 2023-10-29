@@ -25,7 +25,7 @@ type Event = {
   coverHeight: number;
   type: Type;
   password: string | null;
-  publishedAt: Date;
+  publishedAt: Date | null;
 };
 
 export default function AdminSearchPagination(props: {
