@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     const event = await prisma.event.create({
       data: {
         title: title,
-        date: date,
+        date: dateFormat,
         notes: notes,
         pinned: pinned,
         type: type,
