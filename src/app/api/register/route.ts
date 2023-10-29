@@ -28,7 +28,7 @@ export async function POST(request: Request) {
           role: "WAITING",
           cercle: body?.cercle,
           cercleVille: body?.cercleVille,
-          autreCercle: body?.autreCercle,
+          autreCercle: body?.autreCercle?.toLocaleUpperCase(),
           promo: body?.promo,
         },
       });
