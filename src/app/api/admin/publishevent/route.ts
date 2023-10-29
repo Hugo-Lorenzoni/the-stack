@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       },
       data: {
         published: true,
+        publishedAt: new Date(),
       },
       select: {
         id: true,
