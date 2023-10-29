@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const dateString = new Date(event.date.setDate(event.date.getDate() + 1))
+    const dateString = new Date(event.date.toISOString().substring(0, 10))
       .toISOString()
       .substring(0, 10);
 
