@@ -14,7 +14,7 @@ export const getAdminEvents = cache(async () => {
       coverWidth: true,
       coverHeight: true,
     },
-    orderBy: [{ publishDate: "desc" }],
+    orderBy: [{ publishedAt: "desc" }],
   });
   return res;
 });
