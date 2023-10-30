@@ -12,9 +12,28 @@ type PropsType = {
 
 export default function VideosPagination({ videos }: PropsType) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [filteredVideos, setFilteredVideos] = useState(videos);
+  const [searchField, setSearchField] = useState("");
 
   const videosPerPage = 6;
+
+  const filteredVideos = videos.filter((video) =>
+    video.name
+      .toLowerCase()
+      .replace(/é/g, "e")
+      .replace(/è/g, "e")
+      .replace(/ê/g, "e")
+      .replace(/à/g, "a")
+      .replace(/â/g, "a")
+      .includes(
+        searchField
+          .toLowerCase()
+          .replace(/é/g, "e")
+          .replace(/è/g, "e")
+          .replace(/ê/g, "e")
+          .replace(/à/g, "a")
+          .replace(/â/g, "a"),
+      ),
+  );
 
   const start = (Number(currentPage) - 1) * Number(videosPerPage); // 0, 5, 10 ...
   const end = start + Number(videosPerPage); // 5, 10, 15 ...
@@ -25,11 +44,7 @@ export default function VideosPagination({ videos }: PropsType) {
       <div className="relative max-w-md lg:col-span-2">
         <Input
           className="pr-12"
-          onChange={(e) =>
-            setFilteredVideos(
-              videos.filter((videos) => videos.name.includes(e.target.value)),
-            )
-          }
+          onChange={(e) => setSearchField(e.target.value)}
           placeholder="Search"
         />
         <div className="pointer-events-none absolute bottom-0 right-0 top-0 flex items-center rounded-lg px-4">
@@ -57,11 +72,13 @@ export default function VideosPagination({ videos }: PropsType) {
         </Button>
 
         <div>
-          {currentPage} / {Math.ceil(videos.length / videosPerPage)}
+          {currentPage} / {Math.ceil(filteredVideos.length / videosPerPage)}
         </div>
 
         <Button
-          disabled={currentPage >= Math.ceil(videos.length / videosPerPage)}
+          disabled={
+            currentPage >= Math.ceil(filteredVideos.length / videosPerPage)
+          }
           onClick={() => {
             setCurrentPage((page) => page + 1);
           }}
