@@ -44,7 +44,7 @@ export default function VideosPagination({ videos }: PropsType) {
       <div className="relative max-w-md lg:col-span-2">
         <Input
           className="pr-12"
-          onChange={(e) => setSearchField(e.target.value)}
+          onChange={(e) => (setSearchField(e.target.value), setCurrentPage(1))}
           placeholder="Search"
         />
         <div className="pointer-events-none absolute bottom-0 right-0 top-0 flex items-center rounded-lg px-4">
