@@ -22,7 +22,9 @@ export default async function EventPage({
           {event.password && <Password password={event.password} />}
           <AdminGallery
             eventId={event.id}
-            eventName={event.title}
+            eventTitle={event.title}
+            eventDate={event.date}
+            eventType={event.type}
             photos={event.photos}
           />
         </>

@@ -7,17 +7,6 @@ import { getEvents } from "@/utils/getEvents";
 import { AlertCircle, Pin } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-type Event = {
-  id: string;
-  title: string;
-  date: Date;
-  pinned: boolean;
-  coverName: string;
-  coverUrl: string;
-  coverWidth: number;
-  coverHeight: number;
-};
-
 export default async function EventsPage({
   searchParams,
 }: {
@@ -62,7 +51,7 @@ export default async function EventsPage({
       {events ? (
         <>
           <ul className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-            {events.map((event: Event) => (
+            {events.map((event) => (
               <li
                 key={event.id}
                 className="group overflow-hidden rounded-2xl shadow-lg duration-200 hover:shadow-xl"

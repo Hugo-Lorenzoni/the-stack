@@ -69,7 +69,7 @@ export default async function Home() {
           className="ml-2 text-orange-600 underline"
           href="https://cerclephotovideofpms.wordpress.com/"
         >
-          Retrouver nos précédentes photos sur notre ancien site.
+          Retrouvez nos précédentes photos sur notre ancien site.
         </a>
       </section>
     </main>

@@ -10,6 +10,7 @@ export const getAdminEvent = cache(async (id: string) => {
       id: true,
       title: true,
       date: true,
+      type: true,
       notes: true,
       pinned: true,
       coverName: true,

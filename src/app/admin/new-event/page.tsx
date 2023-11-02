@@ -19,6 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -115,6 +116,8 @@ export default function NewEventPage() {
 
   const [image, setImage] = useState<string | null>();
 
+  const [progress, setProgress] = useState(0);
+
   const { toast } = useToast();
 
   function handleChange(field: {
@@ -151,32 +154,29 @@ export default function NewEventPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    console.log(values.cover.length);
-    console.log(values.cover?.[0].size);
 
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-
-    const formData = new FormData();
-    formData.append("cover", values.cover[0]);
-    for (let index = 0; index < values.photos.length; index++) {
-      // formData.append(`file-${index}`, values.photos[index]);
-      formData.append("file", values.photos[index]);
-    }
     const { cover, photos, ...data } = values;
 
-    formData.append("values", JSON.stringify(data));
-    console.log(formData);
+    const eventData = new FormData();
+    // for (let index = 0; index < values.photos.length; index++) {
+    //   // formData.append(`file-${index}`, values.photos[index]);
+    //   formData.append("file", values.photos[index]);
+    // }
+    eventData.append("cover", cover[0]);
+    eventData.append("values", JSON.stringify(data));
+    // console.log(eventData);
 
     try {
-      const apiUrlEndpoint = `/api/admin/newevent`;
+      const apiUrlEndpoint = "/api/admin/event";
       const postData = {
         method: "POST",
-        body: formData,
+        body: eventData,
       };
       const response = await fetch(apiUrlEndpoint, postData);
-      console.log(response);
+      // console.log(response);
       if (response.status == 500) {
         toast({
           variant: "destructive",
@@ -206,14 +206,89 @@ export default function NewEventPage() {
         });
       }
       if (response.status == 200) {
+        setProgress(10);
         toast({
           variant: "default",
           title: "Enregistrement de l'événement réussi",
-          description: "N'oubliez pas de le publier !",
+          description: "En attente de l'upload des photos",
         });
-        setImage(null);
-        reset();
-        // router.push("/connexion");
+        const res = await response.json();
+
+        const files = Array.from(values.photos).map(async (photo, index) => {
+          const photoData = new FormData();
+
+          // formData.append(`file-${index}`, values.photos[index]);
+          photoData.append("file", photo);
+
+          photoData.append("values", JSON.stringify(res.event));
+          // console.log(photoData);
+
+          try {
+            const apiUrlEndpoint = "/api/admin/event/photo";
+            const postData = {
+              method: "POST",
+              body: photoData,
+            };
+            const response = await fetch(apiUrlEndpoint, postData);
+            // console.log(response);
+            if (response.status == 500) {
+              toast({
+                variant: "destructive",
+                title: response.status.toString(),
+                description: response.statusText,
+              });
+            }
+            if (response.status == 504) {
+              toast({
+                duration: 20000,
+                variant: "destructive",
+                title: `${response.status.toString()} - ${response.statusText}`,
+                description:
+                  "L'upload a pris trop de temps - Les photos ne se sont peut-être pas uploadés correctement",
+              });
+            }
+            if (response.status == 200) {
+              const res = await response.json();
+              // console.log(res);
+              setProgress((value) => value + (1 / values.photos.length) * 90);
+              toast({
+                variant: "default",
+                title: `${res.photo.name} successfully added !`,
+              });
+              return index;
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        });
+
+        let index = 0;
+        for (let i = 0; i < files.length; i++) {
+          const file = await files[i];
+          if (typeof file === "number") {
+            index++;
+          }
+        }
+        if (index == values.photos.length) {
+          toast({
+            variant: "default",
+            title: `${index} photos were successfully added !`,
+          });
+          setImage(null);
+          reset();
+          toast({
+            variant: "default",
+            title: "Enregistrement de l'événement et des photos réussi",
+            description: "N'oubliez pas de le publier !",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: `${
+              values.photos.length - index
+            } photos failed to be uploaded`,
+          });
+        }
       }
     } catch (error) {
       console.log(error);
@@ -400,6 +475,7 @@ export default function NewEventPage() {
             <></>
           )}
           <PhotosInput errors={errors} register={register} />
+          {isLoading ? <Progress value={progress} /> : ""}
           <Button disabled={isLoading} type="submit">
             {isLoading ? (
               <>

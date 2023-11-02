@@ -1,5 +1,5 @@
 "use client";
-import { Photo } from "@prisma/client";
+import { Photo, Type } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -31,6 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPhotosInput } from "./AddPhotosInput";
 import AdminGalleryPhoto from "./AdminGalleryPhoto";
 import { useRouter } from "next/navigation";
+import { Progress } from "./ui/progress";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -74,7 +75,9 @@ const formSchema = z.object({
 
 export default function AdminGallery(props: {
   eventId: string;
-  eventName: string;
+  eventTitle: string;
+  eventDate: Date;
+  eventType: Type;
   photos: Photo[];
 }) {
   const [photos, setPhotos] = useState<Photo[]>(props.photos);
@@ -87,6 +90,8 @@ export default function AdminGallery(props: {
   const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
 
   const [isDeleteEventModalOpen, setDeleteEventModalOpen] = useState(false);
+
+  const [progress, setProgress] = useState(0);
 
   const router = useRouter();
 
@@ -157,46 +162,85 @@ export default function AdminGallery(props: {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
-    const formData = new FormData();
-    for (let index = 0; index < values.photos.length; index++) {
+    const files = Array.from(values.photos).map(async (photo, index) => {
+      const photoData = new FormData();
+
       // formData.append(`file-${index}`, values.photos[index]);
-      formData.append("file", values.photos[index]);
-    }
+      photoData.append("file", photo);
+      photoData.append(
+        "values",
+        JSON.stringify({
+          id: props.eventId,
+          title: props.eventTitle,
+          date: props.eventDate,
+          type: props.eventType,
+        }),
+      );
+      // console.log(photoData);
 
-    formData.append("id", JSON.stringify(props.eventId));
-    console.log(formData);
-
-    try {
-      const apiUrlEndpoint = `/api/admin/addphotos`;
-      const postData = {
-        method: "POST",
-        body: formData,
-      };
-      const response = await fetch(apiUrlEndpoint, postData);
-      console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
-      if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Photo(s) successfully added !",
-        });
-        const res = await response.json();
-        console.log(res);
-        if (res.event.photos) {
-          setPhotos(res.event.photos);
+      try {
+        const apiUrlEndpoint = "/api/admin/event/photo";
+        const postData = {
+          method: "POST",
+          body: photoData,
+        };
+        const response = await fetch(apiUrlEndpoint, postData);
+        // console.log(response);
+        if (response.status == 500) {
+          toast({
+            variant: "destructive",
+            title: response.status.toString(),
+            description: response.statusText,
+          });
         }
-        reset();
+        if (response.status == 504) {
+          toast({
+            duration: 20000,
+            variant: "destructive",
+            title: `${response.status.toString()} - ${response.statusText}`,
+            description:
+              "L'upload a pris trop de temps - Les photos ne se sont peut-être pas uploadés correctement",
+          });
+        }
+        if (response.status == 200) {
+          const res = await response.json();
+          setProgress((value) => value + (1 / values.photos.length) * 100);
+          // console.log(res);
+          toast({
+            variant: "default",
+            title: `${res.photo.name} successfully added !`,
+          });
+          if (res.photo) {
+            setPhotos(res.event.photos);
+          }
+          return index;
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    });
+
+    let index = 0;
+    for (let i = 0; i < values.photos.length; i++) {
+      const file = await files[i];
+      if (typeof file === "number") {
+        index++;
+      }
+    }
+    if (index == values.photos.length) {
+      toast({
+        variant: "default",
+        title: `${index} photos were successfully added !`,
+      });
+      reset();
+    } else {
+      toast({
+        variant: "destructive",
+        title: `${values.photos.length - index} photos failed to be uploaded`,
+      });
     }
     setLoading(false);
+    setProgress(0);
   }
 
   async function deleteEvent(e: React.MouseEvent<HTMLButtonElement>) {
@@ -241,6 +285,7 @@ export default function AdminGallery(props: {
           className="max-w-lg space-y-4"
         >
           <AddPhotosInput errors={errors} register={register} />
+          {isLoading ? <Progress value={progress} /> : ""}
           <Button disabled={isLoading} type="submit">
             {isLoading ? (
               <>
@@ -319,7 +364,7 @@ export default function AdminGallery(props: {
             photos={photos}
             setPhotos={setPhotos}
             openLightbox={openLightbox}
-            eventName={props.eventName}
+            eventName={props.eventTitle}
           />
         ))}
       </ul>
