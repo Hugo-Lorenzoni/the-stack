@@ -5,14 +5,6 @@ import { Type } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
-type Event = {
-  title: string;
-  id: string;
-  type: Type;
-  date: Date;
-  pinned: boolean;
-};
-
 type Data = {
   id: string;
   title: string;
@@ -30,7 +22,7 @@ export default async function AccountsApprovalPage() {
     day: "numeric",
   };
 
-  const data: Data[] = events.map((event: Event) => {
+  const data: Data[] = events.map((event) => {
     const date = new Date(event.date);
     return {
       ...event,

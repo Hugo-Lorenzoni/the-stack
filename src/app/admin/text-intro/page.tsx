@@ -1,5 +1,5 @@
 import { TextIntro } from "@/app/page";
-import TextIntroForm from "@/components/TextIntroForm";
+import TextIntroForm from "@/app/admin/text-intro/TextIntroForm";
 import { getNewTextIntro } from "@/utils/getNewTextIntro";
 
 export const dynamic = "force-dynamic";

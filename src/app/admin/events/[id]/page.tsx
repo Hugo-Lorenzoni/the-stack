@@ -1,5 +1,5 @@
-import AdminGallery from "@/components/AdminGallery";
-import Password from "@/components/Password";
+import AdminGallery from "@/app/admin/events/[id]/AdminGallery";
+import Password from "@/app/admin/events/[id]/Password";
 import { getAdminEvent } from "@/utils/getAdminEvent";
 
 export default async function EventPage({

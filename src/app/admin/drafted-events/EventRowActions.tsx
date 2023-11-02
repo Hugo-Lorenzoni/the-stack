@@ -7,7 +7,7 @@ import { Event } from "@/app/admin/drafted-events/columns";
 import { Check, Eye, Send } from "lucide-react";
 import Link from "next/link";
 
-export default function RowActions(props: { row: Row<Event> }) {
+export default function EventRowActions(props: { row: Row<Event> }) {
   const { toast } = useToast();
   const [event, setEvent] = useState<Event | null>(props.row.original);
 

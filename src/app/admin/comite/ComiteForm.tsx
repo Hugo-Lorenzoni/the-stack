@@ -14,62 +14,64 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Comite } from "@/app/admin/comite/page";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useToast } from "./ui/use-toast";
-import { TextIntro } from "@/app/page";
-import { Textarea } from "./ui/textarea";
+import { useToast } from "../../../components/ui/use-toast";
 
-const textFormSchema = z.object({
-  title: z
+const comiteFormSchema = z.object({
+  president: z
     .string()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(30, { message: "Must be 30 or fewer characters long" }),
-  text: z
-    .string()
-    .min(2, { message: "Must be 2 or more characters long" })
-    .max(750, { message: "Must be 750 or fewer characters long" }),
-  signature: z
+  responsableVideo: z
     .string()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(30, { message: "Must be 30 or fewer characters long" }),
-  date: z
+  responsablePhoto: z
+    .string()
+    .min(2, { message: "Must be 2 or more characters long" })
+    .max(30, { message: "Must be 30 or fewer characters long" }),
+  delegueVideo: z
+    .string()
+    .min(2, { message: "Must be 2 or more characters long" })
+    .max(30, { message: "Must be 30 or fewer characters long" }),
+  deleguePhoto: z
     .string()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(30, { message: "Must be 30 or fewer characters long" }),
 });
 
-export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
+export default function ComiteForm({ comite }: { comite: Comite }) {
   const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   // 1. Define your form.
-  const form = useForm<z.infer<typeof textFormSchema>>({
-    resolver: zodResolver(textFormSchema),
+  const form = useForm<z.infer<typeof comiteFormSchema>>({
+    resolver: zodResolver(comiteFormSchema),
     defaultValues: {
-      title: textintro.title,
-      text: textintro.text.join("\n"),
-      signature: textintro.signature,
-      date: textintro.date,
+      president: comite.president,
+      responsableVideo: comite.responsableVideo,
+      responsablePhoto: comite.responsablePhoto,
+      delegueVideo: comite.delegueVideo,
+      deleguePhoto: comite.deleguePhoto,
     },
   });
 
   const { reset } = form;
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof textFormSchema>) {
+  async function onSubmit(values: z.infer<typeof comiteFormSchema>) {
     setLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-    console.log(values.text.split("\n"));
-
     try {
-      const response = await fetch("/api/admin/modificationtextintro", {
+      const response = await fetch("/api/admin/modificationcomite", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...values, text: values.text.split("\n") }),
+        body: JSON.stringify(values),
       });
       if (response.status == 500) {
         toast({
@@ -81,7 +83,7 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
       if (response.status == 200) {
         toast({
           variant: "default",
-          title: "Modification du texte d'introduction réussie",
+          title: "Modification du comité réussie",
         });
       }
     } catch (error) {
@@ -98,16 +100,16 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-4 flex max-w-xl flex-1 flex-col space-y-2"
+        className="mt-4 max-w-xl space-y-2"
       >
         <FormField
           control={form.control}
-          name="title"
+          name="president"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Titre</FormLabel>
+              <FormLabel>Président</FormLabel>
               <FormControl>
-                <Input placeholder="Exemple : À propos" {...field} />
+                <Input placeholder="Président" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,16 +117,12 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
         />
         <FormField
           control={form.control}
-          name="text"
+          name="responsableVideo"
           render={({ field }) => (
-            <FormItem className="flex flex-1 flex-col">
-              <FormLabel className="my-1">Texte d&apos;introduction</FormLabel>
+            <FormItem>
+              <FormLabel>Responsable Vidéo</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Texte d'introduction ..."
-                  className="flex-1"
-                  {...field}
-                />
+                <Input placeholder="Responsable Vidéo" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -132,12 +130,12 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
         />
         <FormField
           control={form.control}
-          name="signature"
+          name="responsablePhoto"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Signature</FormLabel>
+              <FormLabel>Responsable Photo</FormLabel>
               <FormControl>
-                <Input placeholder="Le Cercle Photo-Vidéo (CPV)" {...field} />
+                <Input placeholder="Responsable Photo" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,12 +143,25 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
         />
         <FormField
           control={form.control}
-          name="date"
+          name="delegueVideo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>Délégué Vidéo</FormLabel>
               <FormControl>
-                <Input placeholder="Mars 2023" {...field} />
+                <Input placeholder="Délégué Vidéo" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="deleguePhoto"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Délégué Photo</FormLabel>
+              <FormControl>
+                <Input placeholder="Délégué Photo" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -172,6 +183,7 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
         <Button
           variant="outline"
           type="reset"
+          className="ml-4"
           onClick={() => {
             reset();
           }}

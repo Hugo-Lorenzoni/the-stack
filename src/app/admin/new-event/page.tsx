@@ -1,7 +1,7 @@
 "use client";
 
-import { CoverInput } from "@/components/CoverInput";
-import { PhotosInput } from "@/components/PhotosInput";
+import { CoverInput } from "@/app/admin/new-event/CoverInput";
+import { PhotosInput } from "@/app/admin/new-event/PhotosInput";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {

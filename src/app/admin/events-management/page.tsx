@@ -22,13 +22,6 @@ export default async function EventsManagementPage() {
   };
 
   const events = await getAdminEvents();
-  // console.log(events.length);
-
-  // console.log(events);
-  // console.log(searchParams);
-  // console.log(events.length);
-  // console.log(count);
-  // console.log(Number(page) * eventPerPage);
 
   return (
     <>

@@ -8,7 +8,7 @@ import Image from "next/image";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,9 +16,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { useToast } from "./ui/use-toast";
+} from "../../../components/ui/form";
+import { Input } from "../../../components/ui/input";
+import { useToast } from "../../../components/ui/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z

@@ -1,4 +1,4 @@
-import AutreEvent from "@/components/AutreEvent";
+import AutreEvent from "@/app/autresevents/[id]/AutreEvent";
 import { getAutreEvent } from "@/utils/getAutreEvent";
 import { getInfoAutreEvent } from "@/utils/getInfoAutreEvent";
 import { decrypt } from "@/utils/encryption";

@@ -14,64 +14,62 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Comite } from "@/app/admin/comite/page";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "../../../components/ui/use-toast";
+import { TextIntro } from "@/app/page";
+import { Textarea } from "../../../components/ui/textarea";
 
-const comiteFormSchema = z.object({
-  president: z
+const textFormSchema = z.object({
+  title: z
     .string()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(30, { message: "Must be 30 or fewer characters long" }),
-  responsableVideo: z
+  text: z
+    .string()
+    .min(2, { message: "Must be 2 or more characters long" })
+    .max(750, { message: "Must be 750 or fewer characters long" }),
+  signature: z
     .string()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(30, { message: "Must be 30 or fewer characters long" }),
-  responsablePhoto: z
-    .string()
-    .min(2, { message: "Must be 2 or more characters long" })
-    .max(30, { message: "Must be 30 or fewer characters long" }),
-  delegueVideo: z
-    .string()
-    .min(2, { message: "Must be 2 or more characters long" })
-    .max(30, { message: "Must be 30 or fewer characters long" }),
-  deleguePhoto: z
+  date: z
     .string()
     .min(2, { message: "Must be 2 or more characters long" })
     .max(30, { message: "Must be 30 or fewer characters long" }),
 });
 
-export default function ComiteForm({ comite }: { comite: Comite }) {
+export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
   const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   // 1. Define your form.
-  const form = useForm<z.infer<typeof comiteFormSchema>>({
-    resolver: zodResolver(comiteFormSchema),
+  const form = useForm<z.infer<typeof textFormSchema>>({
+    resolver: zodResolver(textFormSchema),
     defaultValues: {
-      president: comite.president,
-      responsableVideo: comite.responsableVideo,
-      responsablePhoto: comite.responsablePhoto,
-      delegueVideo: comite.delegueVideo,
-      deleguePhoto: comite.deleguePhoto,
+      title: textintro.title,
+      text: textintro.text.join("\n"),
+      signature: textintro.signature,
+      date: textintro.date,
     },
   });
 
   const { reset } = form;
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof comiteFormSchema>) {
+  async function onSubmit(values: z.infer<typeof textFormSchema>) {
     setLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    console.log(values.text.split("\n"));
+
     try {
-      const response = await fetch("/api/admin/modificationcomite", {
+      const response = await fetch("/api/admin/modificationtextintro", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, text: values.text.split("\n") }),
       });
       if (response.status == 500) {
         toast({
@@ -83,7 +81,7 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
       if (response.status == 200) {
         toast({
           variant: "default",
-          title: "Modification du comité réussie",
+          title: "Modification du texte d'introduction réussie",
         });
       }
     } catch (error) {
@@ -100,16 +98,16 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-4 max-w-xl space-y-2"
+        className="mt-4 flex max-w-xl flex-1 flex-col space-y-2"
       >
         <FormField
           control={form.control}
-          name="president"
+          name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Président</FormLabel>
+              <FormLabel>Titre</FormLabel>
               <FormControl>
-                <Input placeholder="Président" {...field} />
+                <Input placeholder="Exemple : À propos" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -117,12 +115,16 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
         />
         <FormField
           control={form.control}
-          name="responsableVideo"
+          name="text"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Responsable Vidéo</FormLabel>
+            <FormItem className="flex flex-1 flex-col">
+              <FormLabel className="my-1">Texte d&apos;introduction</FormLabel>
               <FormControl>
-                <Input placeholder="Responsable Vidéo" {...field} />
+                <Textarea
+                  placeholder="Texte d'introduction ..."
+                  className="flex-1"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -130,12 +132,12 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
         />
         <FormField
           control={form.control}
-          name="responsablePhoto"
+          name="signature"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Responsable Photo</FormLabel>
+              <FormLabel>Signature</FormLabel>
               <FormControl>
-                <Input placeholder="Responsable Photo" {...field} />
+                <Input placeholder="Le Cercle Photo-Vidéo (CPV)" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -143,25 +145,12 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
         />
         <FormField
           control={form.control}
-          name="delegueVideo"
+          name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Délégué Vidéo</FormLabel>
+              <FormLabel>Date</FormLabel>
               <FormControl>
-                <Input placeholder="Délégué Vidéo" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="deleguePhoto"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Délégué Photo</FormLabel>
-              <FormControl>
-                <Input placeholder="Délégué Photo" {...field} />
+                <Input placeholder="Mars 2023" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -183,7 +172,6 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
         <Button
           variant="outline"
           type="reset"
-          className="ml-4"
           onClick={() => {
             reset();
           }}

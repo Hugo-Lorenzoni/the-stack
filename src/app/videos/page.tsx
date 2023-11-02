@@ -1,4 +1,4 @@
-import VideosPagination from "@/components/VideosPagination";
+import VideosPagination from "@/app/videos/VideosPagination";
 import { getVideos } from "@/utils/getVideos";
 import { SearchX } from "lucide-react";
 

@@ -1,4 +1,4 @@
-import SearchPagination from "@/components/SearchPagination";
+import SearchPagination from "@/app/search/SearchPagination";
 import { getSearchedEvents } from "@/utils/getSearchedEvents";
 
 export default async function SearchPage({

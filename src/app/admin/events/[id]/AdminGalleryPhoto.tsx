@@ -14,9 +14,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "../../../../components/ui/use-toast";
 import Image from "next/image";
-import { Button } from "./ui/button";
+import { Button } from "../../../../components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 
 type Props = {

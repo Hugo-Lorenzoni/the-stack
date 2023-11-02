@@ -2,7 +2,7 @@
 import { Photo, Type } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../../../../components/ui/button";
 import {
   ChevronLeftCircle,
   ChevronRightCircle,
@@ -10,9 +10,9 @@ import {
   Loader2,
   XCircle,
 } from "lucide-react";
-import useSwipe from "../hooks/useSwipe";
+import useSwipe from "../../../../hooks/useSwipe";
 import useKeypress from "react-use-keypress";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "../../../../components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,14 +24,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Form } from "./ui/form";
+import { Form } from "../../../../components/ui/form";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPhotosInput } from "./AddPhotosInput";
 import AdminGalleryPhoto from "./AdminGalleryPhoto";
 import { useRouter } from "next/navigation";
-import { Progress } from "./ui/progress";
+import { Progress } from "../../../../components/ui/progress";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [

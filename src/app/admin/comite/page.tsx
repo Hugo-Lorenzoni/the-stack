@@ -1,4 +1,4 @@
-import ComiteForm from "@/components/ComiteForm";
+import ComiteForm from "@/app/admin/comite/ComiteForm";
 import { getNewComite } from "@/utils/getNewComite";
 
 export const dynamic = "force-dynamic";

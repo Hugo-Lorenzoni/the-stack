@@ -1,4 +1,4 @@
-import AdminSearchBar from "@/components/AdminSearchBar";
+import AdminSearchBar from "@/app/admin/events-management/AdminSearchBar";
 
 export default function AdminSearchLayout({
   children,

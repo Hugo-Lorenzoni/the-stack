@@ -1,6 +1,6 @@
 "use client";
 
-import { SponsorLogoInput } from "@/components/SponsorLogoInput";
+import { SponsorLogoInput } from "@/app/admin/new-sponsor/SponsorLogoInput";
 import { Button } from "@/components/ui/button";
 import {
   Form,

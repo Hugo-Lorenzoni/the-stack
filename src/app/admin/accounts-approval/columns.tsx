@@ -5,7 +5,7 @@ import { Cercle } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
-import RowActions from "@/components/RowActions";
+import ApprovalRowActions from "@/app/admin/accounts-approval/ApprovalRowActions";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type User = {
@@ -62,6 +62,6 @@ export const columns: ColumnDef<User>[] = [
   },
   {
     id: "actions",
-    cell: (props) => <RowActions row={props.row} />,
+    cell: (props) => <ApprovalRowActions row={props.row} />,
   },
 ];

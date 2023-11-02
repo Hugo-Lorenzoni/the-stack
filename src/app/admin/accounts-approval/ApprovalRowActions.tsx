@@ -1,18 +1,9 @@
 "use client";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Cercle } from "@prisma/client";
 import { Row } from "@tanstack/react-table";
 import { Button } from "@/components//ui/button";
-import { HelpCircle } from "lucide-react";
 
 export type User = {
   id: string;
@@ -24,7 +15,7 @@ export type User = {
   promo: number | null;
 };
 
-export default function RowActions(props: { row: Row<User> }) {
+export default function ApprovalRowActions(props: { row: Row<User> }) {
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(props.row.original);
 

@@ -3,15 +3,6 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { getAllUsers } from "@/utils/getAllUsers";
 
-type User = {
-  role: Role;
-  name: string;
-  email: string;
-  surname: string;
-  cercle: Cercle | null;
-  autreCercle: string | null;
-};
-
 type Data = {
   email: string;
   name: string;
@@ -22,7 +13,7 @@ type Data = {
 
 export default async function AccountsManagementPage() {
   const users = await getAllUsers();
-  const data: Data[] = users.map((user: User) => {
+  const data: Data[] = users.map((user) => {
     const { cercle, autreCercle, ...result } = user;
     if (cercle == "AUTRE") {
       return {

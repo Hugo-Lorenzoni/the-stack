@@ -1,8 +1,15 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { Button } from "./ui/button";
-import { Lock, SearchX } from "lucide-react";
+import { Button } from "../../../../components/ui/button";
+import {
+  BadgeCheck,
+  Lock,
+  Pin,
+  SearchX,
+  TextSelect,
+  Users2,
+} from "lucide-react";
 import Link from "next/link";
 import { Type } from "@prisma/client";
 
@@ -10,15 +17,18 @@ type Event = {
   id: string;
   title: string;
   date: Date;
+  published: boolean;
   pinned: boolean;
-  type: Type;
   coverName: string;
   coverUrl: string;
   coverWidth: number;
   coverHeight: number;
+  type: Type;
+  password: string | null;
+  publishedAt: Date | null;
 };
 
-export default function SearchPagination(props: {
+export default function AdminSearchPagination(props: {
   events: Event[] | undefined;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,28 +60,27 @@ export default function SearchPagination(props: {
       <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {results.map((event) => {
           const date = new Date(event.date);
-          const path =
-            event.type == "AUTRE"
-              ? "autresevents"
-              : event.type == "OUVERT"
-              ? "events"
-              : event.type == "BAPTISE"
-              ? "fpmsevents"
-              : "";
           return (
             <li
               key={event.id}
               className="group overflow-hidden rounded-2xl shadow-lg duration-200 hover:shadow-xl"
             >
-              <Link href={`/${path}/${event.id}`}>
+              <Link href={`/admin/events/${event.id}`}>
                 <div className="relative isolate">
                   <div className="absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white drop-shadow-eventtitle">
                     <h2>{event.title}</h2>
                     <p>{date.toLocaleDateString("fr-BE", options)}</p>
                   </div>
-                  {event.type == "AUTRE" && (
-                    <Lock className="absolute right-4 top-4 z-10 text-white drop-shadow-eventtitle" />
+                  {event.published == false && (
+                    <TextSelect className="absolute left-4 top-4 z-10 text-white drop-shadow-eventtitle" />
                   )}
+                  <div className="absolute right-4 top-4 z-10 flex gap-2 text-white drop-shadow-eventtitle">
+                    {event.type == "AUTRE" && <Lock />}
+                    {event.type == "OUVERT" && <Users2 />}
+                    {event.type == "BAPTISE" && <BadgeCheck />}
+                    {event.pinned && <Pin className="rotate-45" />}
+                  </div>
+
                   <Image
                     className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110 "
                     src={event.coverUrl}

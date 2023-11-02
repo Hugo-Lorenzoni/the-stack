@@ -1,11 +1,13 @@
 "use client";
+import { ChangeEvent, Dispatch, SetStateAction, useCallback } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 
-export function PhotosInput({
+export function CoverInput({
   errors,
   register,
+  setImage,
 }: {
   errors: FieldErrors<{
     title: string;
@@ -27,38 +29,40 @@ export function PhotosInput({
     password?: string | undefined;
     photos: FileList;
   }>;
+  setImage: Dispatch<SetStateAction<string | null | undefined>>;
 }) {
-  const name = "photos";
+  const name = "cover";
   const { onChange, ref } = register(name);
-  // const [image, setImage] = useState<string | null>();
 
-  // const onAvatarChange = useCallback(
-  //   async (event: ChangeEvent<HTMLInputElement>) => {
-  //     if (event.target.files?.[0]) {
-  //       // const base64 = await getBase64(event.target.files[0]);
-  //       // if (typeof base64 == "string") {
-  //       //   setImage(base64);
-  //       // }
-  //       console.log(event.target.files?.[0]);
+  const onAvatarChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files?.[0]) {
+        const base64 = await getBase64(event.target.files[0]);
+        if (typeof base64 == "string") {
+          setImage(base64);
+        }
+        console.log(event.target.files?.[0]);
 
-  //       onChange(event);
-  //     }
-  //   },
-  //   []
-  // );
+        onChange(event);
+      } else {
+        setImage(null);
+        // reset();
+      }
+    },
+    [onChange, setImage],
+  );
 
   return (
     <div>
-      <Label>Photos de l&apos;événement</Label>
-      {/* {image && <img src={image} className="w-full rounded-xl mt-1" />} */}
+      <Label>Photo de couverture</Label>
+
       <Input
         className="file:border-1 mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
-        multiple
         name={name}
         ref={ref}
-        onChange={onChange}
+        onChange={onAvatarChange}
       />
       {errors[name]?.message && (
         <p className="mt-2 rounded-md border-2 border-red-600 bg-red-100 p-2 text-red-600">
@@ -69,12 +73,12 @@ export function PhotosInput({
   );
 }
 
-// function getBase64(file: File) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
+function getBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
-//     reader.readAsDataURL(file);
-//     reader.onload = () => resolve(reader.result);
-//     reader.onerror = (error) => reject(error);
-//   });
-// }
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}

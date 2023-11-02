@@ -55,11 +55,7 @@ export default function NewVideoPage() {
       url: "",
     },
   });
-  const {
-    formState: { errors },
-    register,
-    reset,
-  } = form;
+  const { reset } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);

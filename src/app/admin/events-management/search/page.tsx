@@ -1,4 +1,4 @@
-import AdminSearchPagination from "@/components/AdminSearchPagination";
+import AdminSearchPagination from "@/app/admin/events-management/search/AdminSearchPagination";
 import { getAdminSearchedEvents } from "@/utils/getAdminSearchedEvents";
 
 export default async function AdminSearchPage({
