@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -11,20 +9,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { CalendarIcon, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   name: z
@@ -45,8 +47,6 @@ export type Video = z.infer<typeof formSchema>;
 
 export default function NewVideoPage() {
   const [isLoading, setLoading] = useState<boolean>(false);
-
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,21 +73,16 @@ export default function NewVideoPage() {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
       if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Enregistrement de la vidéo réussi",
+        toast.success("Enregistrement de la vidéo réussi", {
           description:
             "Vous pouvez maintenant la retrouver dans l'onglet vidéo.",
         });
         reset();
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

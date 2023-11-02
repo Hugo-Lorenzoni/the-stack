@@ -1,7 +1,9 @@
 "use client";
+import { useState } from "react";
 import { Noop, RefCallBack, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+
 import {
   Form,
   FormControl,
@@ -14,11 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useToast } from "@/components/ui/use-toast";
+
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 
 const CercleList = [
@@ -95,7 +98,6 @@ export default function RegisterPage() {
   const [cercle, setCercle] = useState(undefined);
   const [showPassword, setShowPassword] = useState("password");
 
-  const { toast } = useToast();
   const router = useRouter();
 
   function handleCheck(field: {
@@ -152,20 +154,17 @@ export default function RegisterPage() {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
+
       if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Enregistrement du compte réussie",
+        toast.info("Enregistrement du compte réussie", {
           description: "Vous pouvez maintenant vous connecter",
+          duration: 20000,
         });
         router.push("/connexion");
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

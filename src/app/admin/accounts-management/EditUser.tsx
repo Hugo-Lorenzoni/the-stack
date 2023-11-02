@@ -34,16 +34,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
+import { toast } from "sonner";
+
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { User } from "./columns";
-import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+
 import { Loader2, Pencil, Trash2, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 
 type EditUserProps = {
   rowUser: User;
@@ -57,7 +60,6 @@ const formSchema = z.object({
 });
 
 export default function EditUser({ rowUser }: EditUserProps) {
-  const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(rowUser);
@@ -87,21 +89,16 @@ export default function EditUser({ rowUser }: EditUserProps) {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
       if (response.status == 200) {
         const result = await response.json();
         console.log(result);
         router.refresh();
-        toast({
-          variant: "default",
-          title: "Modification du rôle réussie",
+        toast.success("Modification du rôle réussie", {
           description: `${result.email} a été changé en ${result.role}`,
+        });
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
         });
       }
     } catch (error) {
@@ -127,21 +124,17 @@ export default function EditUser({ rowUser }: EditUserProps) {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
+
       if (response.status == 200) {
         const result = await response.json();
-        toast({
-          variant: "default",
-          title: "Suppression de l'utilisateur réussie",
+        toast.success("Suppression de l'utilisateur réussie", {
           description: `${result.surname} ${result.name} a été supprimé !`,
         });
         setUser(null);
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

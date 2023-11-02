@@ -1,8 +1,13 @@
 "use client";
-import { useToast } from "@/components/ui/use-toast";
+
+import { toast } from "sonner";
+
 import { useState } from "react";
+
 import { Cercle } from "@prisma/client";
+
 import { Row } from "@tanstack/react-table";
+
 import { Button } from "@/components//ui/button";
 
 export type User = {
@@ -16,7 +21,6 @@ export type User = {
 };
 
 export default function ApprovalRowActions(props: { row: Row<User> }) {
-  const { toast } = useToast();
   const [user, setUser] = useState<User | null>(props.row.original);
 
   async function handleChange(
@@ -35,21 +39,16 @@ export default function ApprovalRowActions(props: { row: Row<User> }) {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
       if (response.status == 200) {
         const role = await response.json();
-        toast({
-          variant: "default",
-          title: "Modification du compte réussie",
+        toast.success("Modification du compte réussie", {
           description: `Il est maintenant ${role}`,
         });
         setUser(null);
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

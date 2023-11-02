@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import Gallery from "@/components/Gallery";
 import { Photo, Sponsor } from "@prisma/client";
 import Image from "next/image";
+import { toast } from "sonner";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "../../../components/ui/button";
+
 import {
   Form,
   FormControl,
@@ -16,9 +16,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../../components/ui/form";
-import { Input } from "../../../components/ui/input";
-import { useToast } from "../../../components/ui/use-toast";
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+import Gallery from "@/components/Gallery";
+
 import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z
@@ -56,8 +59,6 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
   const [isForbidden, setForbidden] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState("password");
 
-  const { toast } = useToast();
-
   const info = props.info;
 
   // 1. Define your form.
@@ -83,32 +84,23 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       // console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-        setForbidden(false);
-      }
-      if (response.status == 403) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-        setForbidden(true);
-      }
+
       if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Mot de passe correct",
+        toast.success("Mot de passe correct", {
           description:
             "Vous pouvez maintenant acceder aux photos de l'événement",
         });
         const res = await response.json();
         setForbidden(false);
         setEvent(res);
+      } else if (response.status == 403) {
+        toast.error("Mot de passe incorrect");
+        setForbidden(true);
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
+        setForbidden(false);
       }
     } catch (error) {
       console.log(error);

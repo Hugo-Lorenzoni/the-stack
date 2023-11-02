@@ -3,7 +3,7 @@ import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Input } from "../../../../components/ui/input";
 import { Label } from "../../../../components/ui/label";
 
-export function AddPhotosInput({
+export default function AddPhotosInput({
   errors,
   register,
 }: {

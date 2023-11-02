@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -13,12 +16,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
+
+import { toast } from "sonner";
+
 import { Loader2 } from "lucide-react";
-import { useToast } from "../../../components/ui/use-toast";
+
 import { TextIntro } from "@/app/page";
-import { Textarea } from "../../../components/ui/textarea";
 
 const textFormSchema = z.object({
   title: z
@@ -40,7 +43,6 @@ const textFormSchema = z.object({
 });
 
 export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
-  const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   // 1. Define your form.
   const form = useForm<z.infer<typeof textFormSchema>>({
@@ -71,24 +73,16 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
         },
         body: JSON.stringify({ ...values, text: values.text.split("\n") }),
       });
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
+
+      if (response.status == 200) {
+        toast.success("Modification du texte d'introduction réussie");
+      } else {
+        toast.error(response.status.toString(), {
           description: response.statusText,
         });
       }
-      if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Modification du texte d'introduction réussie",
-        });
-      }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-      });
+      console.log(error);
     }
 
     setLoading(false);

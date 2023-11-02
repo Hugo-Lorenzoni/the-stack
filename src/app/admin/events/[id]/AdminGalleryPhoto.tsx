@@ -1,6 +1,7 @@
 "use client";
 
 import { Photo } from "@prisma/client";
+
 import { Dispatch, SetStateAction, useState } from "react";
 
 import {
@@ -14,9 +15,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "../../../../components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
-import { Button } from "../../../../components/ui/button";
+
+import { toast } from "sonner";
+
 import { Loader2, Plus } from "lucide-react";
 
 type Props = {
@@ -39,8 +43,6 @@ export default function AdminGalleryPhoto({
   const [isModalOpen, setModalOpen] = useState(false);
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const { toast } = useToast();
-
   async function deletePhoto(
     e: React.MouseEvent<HTMLButtonElement>,
     photo: Photo,
@@ -57,18 +59,9 @@ export default function AdminGalleryPhoto({
       };
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
       if (response.status == 200) {
         const name = await response.json();
-        toast({
-          variant: "default",
-          title: "Suppression de la photo réussie",
+        toast.success("Suppression de la photo réussie", {
           description: `${name} a été supprimé !`,
         });
         if (photos !== null) {
@@ -76,6 +69,10 @@ export default function AdminGalleryPhoto({
             prevPhotos.filter((prevPhoto) => prevPhoto.id !== photo.id),
           );
         }
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

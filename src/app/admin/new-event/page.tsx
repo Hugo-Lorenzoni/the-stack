@@ -2,8 +2,7 @@
 
 import { CoverInput } from "@/app/admin/new-event/CoverInput";
 import { PhotosInput } from "@/app/admin/new-event/PhotosInput";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+
 import {
   Form,
   FormControl,
@@ -13,26 +12,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+
+import { Type } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Type } from "@prisma/client";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { toast } from "sonner";
+
 import { Noop, RefCallBack, useForm } from "react-hook-form";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+
+import { CalendarIcon, Loader2 } from "lucide-react";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
@@ -118,8 +122,6 @@ export default function NewEventPage() {
 
   const [progress, setProgress] = useState(0);
 
-  const { toast } = useToast();
-
   function handleChange(field: {
     onChange: any;
     onBlur?: Noop;
@@ -161,10 +163,7 @@ export default function NewEventPage() {
     const { cover, photos, ...data } = values;
 
     const eventData = new FormData();
-    // for (let index = 0; index < values.photos.length; index++) {
-    //   // formData.append(`file-${index}`, values.photos[index]);
-    //   formData.append("file", values.photos[index]);
-    // }
+
     eventData.append("cover", cover[0]);
     eventData.append("values", JSON.stringify(data));
     // console.log(eventData);
@@ -177,39 +176,9 @@ export default function NewEventPage() {
       };
       const response = await fetch(apiUrlEndpoint, postData);
       // console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
-      if (response.status == 415) {
-        toast({
-          variant: "destructive",
-          title: `${response.status.toString()} - ${response.statusText}`,
-          description: "La photo de couverture doit être au format paysage !",
-        });
-        setImage(null);
-        resetField("cover");
-        setError("cover", {
-          type: "string",
-          message: "La photo de couverture doit être au format paysage !",
-        });
-      }
-      if (response.status == 504) {
-        toast({
-          variant: "destructive",
-          title: `${response.status.toString()} - ${response.statusText}`,
-          description:
-            "L'upload a pris trop de temps - L'événement ne s'est peut-être pas uploadé correctement",
-        });
-      }
       if (response.status == 200) {
         setProgress(10);
-        toast({
-          variant: "default",
-          title: "Enregistrement de l'événement réussi",
+        toast.success("Enregistrement de l'événement réussi", {
           description: "En attente de l'upload des photos",
         });
         const res = await response.json();
@@ -231,31 +200,24 @@ export default function NewEventPage() {
             };
             const response = await fetch(apiUrlEndpoint, postData);
             // console.log(response);
-            if (response.status == 500) {
-              toast({
-                variant: "destructive",
-                title: response.status.toString(),
-                description: response.statusText,
-              });
-            }
-            if (response.status == 504) {
-              toast({
-                duration: 20000,
-                variant: "destructive",
-                title: `${response.status.toString()} - ${response.statusText}`,
-                description:
-                  "L'upload a pris trop de temps - Les photos ne se sont peut-être pas uploadés correctement",
-              });
-            }
             if (response.status == 200) {
               const res = await response.json();
               // console.log(res);
               setProgress((value) => value + (1 / values.photos.length) * 90);
-              toast({
-                variant: "default",
-                title: `${res.photo.name} successfully added !`,
-              });
+              toast(`${res.photo.name} successfully added !`);
               return index;
+            } else if (response.status == 504) {
+              toast.warning(
+                `${response.status.toString()} - ${response.statusText}`,
+                {
+                  description:
+                    "L'upload a pris trop de temps - La photo ne s'est peut-être pas uploadée correctement",
+                },
+              );
+            } else {
+              toast.error(response.status.toString(), {
+                description: response.statusText,
+              });
             }
           } catch (error) {
             console.log(error);
@@ -270,23 +232,43 @@ export default function NewEventPage() {
           }
         }
         if (index == values.photos.length) {
-          toast({
-            variant: "default",
-            title: `${index} photos were successfully added !`,
-          });
+          toast.success(`${index} photos were successfully added !`);
           setImage(null);
           reset();
-          toast({
-            variant: "default",
-            title: "Enregistrement de l'événement et des photos réussi",
+          toast.success("Enregistrement de l'événement et des photos réussi", {
             description: "N'oubliez pas de le publier !",
           });
         } else {
-          toast({
-            variant: "destructive",
-            title: `${
-              values.photos.length - index
-            } photos failed to be uploaded`,
+          toast.error(
+            `${values.photos.length - index} photos failed to be uploaded`,
+          );
+        }
+      } else {
+        if (response.status == 415) {
+          toast.warning(
+            `${response.status.toString()} - ${response.statusText}`,
+            {
+              description:
+                "La photo de couverture doit être au format paysage !",
+            },
+          );
+          setImage(null);
+          resetField("cover");
+          setError("cover", {
+            type: "string",
+            message: "La photo de couverture doit être au format paysage !",
+          });
+        } else if (response.status == 504) {
+          toast.warning(
+            `${response.status.toString()} - ${response.statusText}`,
+            {
+              description:
+                "L'upload a pris trop de temps - L'événement ne s'est peut-être pas uploadé correctement",
+            },
+          );
+        } else {
+          toast.error(response.status.toString(), {
+            description: response.statusText,
           });
         }
       }

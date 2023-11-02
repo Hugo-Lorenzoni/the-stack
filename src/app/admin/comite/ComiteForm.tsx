@@ -3,6 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useState } from "react";
+
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,10 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
 import { Comite } from "@/app/admin/comite/page";
-import { useState } from "react";
+
 import { Loader2 } from "lucide-react";
-import { useToast } from "../../../components/ui/use-toast";
 
 const comiteFormSchema = z.object({
   president: z
@@ -43,7 +46,6 @@ const comiteFormSchema = z.object({
 });
 
 export default function ComiteForm({ comite }: { comite: Comite }) {
-  const { toast } = useToast();
   const [isLoading, setLoading] = useState(false);
   // 1. Define your form.
   const form = useForm<z.infer<typeof comiteFormSchema>>({
@@ -73,24 +75,16 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
         },
         body: JSON.stringify(values),
       });
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
+
+      if (response.status == 200) {
+        toast.success("Modification du comité réussie");
+      } else {
+        toast.error(response.status.toString(), {
           description: response.statusText,
         });
       }
-      if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Modification du comité réussie",
-        });
-      }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-      });
+      console.log(error);
     }
 
     setLoading(false);

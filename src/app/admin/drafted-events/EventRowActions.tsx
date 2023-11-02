@@ -1,14 +1,17 @@
 "use client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+
 import { useState } from "react";
+
 import { Row } from "@tanstack/react-table";
-import { Button } from "@/components//ui/button";
+import { Button } from "@/components/ui/button";
+
 import { Event } from "@/app/admin/drafted-events/columns";
 import { Check, Eye, Send } from "lucide-react";
+
 import Link from "next/link";
 
 export default function EventRowActions(props: { row: Row<Event> }) {
-  const { toast } = useToast();
   const [event, setEvent] = useState<Event | null>(props.row.original);
 
   async function handleChange(
@@ -28,20 +31,15 @@ export default function EventRowActions(props: { row: Row<Event> }) {
       const published = await response.json();
       console.log(published);
 
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
       if (response.status == 200 && published) {
-        toast({
-          variant: "default",
-          title: "Publication réussie",
+        toast.success("Publication réussie", {
           description: `L'événement ${event.title} est maintenant publié`,
         });
         setEvent(null);
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

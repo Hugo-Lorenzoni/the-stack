@@ -1,7 +1,7 @@
 "use client";
 
 import { SponsorLogoInput } from "@/app/admin/new-sponsor/SponsorLogoInput";
-import { Button } from "@/components/ui/button";
+
 import {
   Form,
   FormControl,
@@ -10,14 +10,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { useToast } from "@/components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+
 import { Loader2 } from "lucide-react";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -55,8 +58,6 @@ export default function NewSponsorPage() {
   const [isLoading, setLoading] = useState<boolean>(false);
 
   const [image, setImage] = useState<string | null>();
-
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -97,23 +98,18 @@ export default function NewSponsorPage() {
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
       setLoading(false);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
       if (response.status == 200) {
-        toast({
-          variant: "default",
-          title: "Enregistrement du sponsor réussi",
+        toast.success("Enregistrement du sponsor réussi", {
           description:
             "Vous pouvez maintenant l'ajouter comme sponsor d'un événement",
         });
         setImage(null);
         reset();
         // router.push("/connexion");
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);

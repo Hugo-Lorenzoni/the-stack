@@ -5,7 +5,7 @@ import { Poppins } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "sonner";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -29,7 +29,7 @@ export default function RootLayout({
         <Providers>
           <Nav />
           {children}
-          <Toaster />
+          <Toaster richColors closeButton />
           <Footer />
         </Providers>
       </body>

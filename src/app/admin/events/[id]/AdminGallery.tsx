@@ -1,18 +1,5 @@
 "use client";
-import { Photo, Type } from "@prisma/client";
-import Image from "next/image";
-import { useState } from "react";
-import { Button } from "../../../../components/ui/button";
-import {
-  ChevronLeftCircle,
-  ChevronRightCircle,
-  Download,
-  Loader2,
-  XCircle,
-} from "lucide-react";
-import useSwipe from "../../../../hooks/useSwipe";
-import useKeypress from "react-use-keypress";
-import { useToast } from "../../../../components/ui/use-toast";
+import { Button } from "@/components//ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,14 +11,34 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Form } from "../../../../components/ui/form";
+import { Progress } from "@/components/ui/progress";
+import { Form } from "@/components/ui/form";
+
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddPhotosInput } from "./AddPhotosInput";
-import AdminGalleryPhoto from "./AdminGalleryPhoto";
+import { useState } from "react";
+
+import { toast } from "sonner";
+
+import { Photo, Type } from "@prisma/client";
+
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Progress } from "../../../../components/ui/progress";
+
+import {
+  ChevronLeftCircle,
+  ChevronRightCircle,
+  Download,
+  Loader2,
+  XCircle,
+} from "lucide-react";
+
+import useSwipe from "@/hooks/useSwipe";
+import useKeypress from "react-use-keypress";
+
+import AddPhotosInput from "./AddPhotosInput";
+import AdminGalleryPhoto from "./AdminGalleryPhoto";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -94,8 +101,6 @@ export default function AdminGallery(props: {
   const [progress, setProgress] = useState(0);
 
   const router = useRouter();
-
-  const { toast } = useToast();
 
   function closeLightbox() {
     setCurrentPhoto(null);
@@ -186,34 +191,28 @@ export default function AdminGallery(props: {
         };
         const response = await fetch(apiUrlEndpoint, postData);
         // console.log(response);
-        if (response.status == 500) {
-          toast({
-            variant: "destructive",
-            title: response.status.toString(),
-            description: response.statusText,
-          });
-        }
-        if (response.status == 504) {
-          toast({
-            duration: 20000,
-            variant: "destructive",
-            title: `${response.status.toString()} - ${response.statusText}`,
-            description:
-              "L'upload a pris trop de temps - Les photos ne se sont peut-être pas uploadés correctement",
-          });
-        }
         if (response.status == 200) {
           const res = await response.json();
-          setProgress((value) => value + (1 / values.photos.length) * 100);
           // console.log(res);
-          toast({
-            variant: "default",
-            title: `${res.photo.name} successfully added !`,
-          });
-          if (res.photo) {
-            setPhotos(res.event.photos);
+          if (res.photo && res.event.photos) {
+            setProgress((value) => value + (1 / values.photos.length) * 100);
+            toast(`${res.photo.name} successfully added !`);
+            // setPhotos(res.event.photos);
           }
           return index;
+        } else if (response.status == 504) {
+          toast.warning(
+            `${response.status.toString()} - ${response.statusText}`,
+            {
+              description:
+                "L'upload a pris trop de temps - La photo ne s'est peut-être pas uploadée correctement",
+              duration: 20000,
+            },
+          );
+        } else {
+          toast.error(response.status.toString(), {
+            description: response.statusText,
+          });
         }
       } catch (error) {
         console.log(error);
@@ -228,19 +227,16 @@ export default function AdminGallery(props: {
       }
     }
     if (index == values.photos.length) {
-      toast({
-        variant: "default",
-        title: `${index} photos were successfully added !`,
-      });
+      toast.success(`${index} photos were successfully added !`);
       reset();
     } else {
-      toast({
-        variant: "destructive",
-        title: `${values.photos.length - index} photos failed to be uploaded`,
-      });
+      toast.error(
+        `${values.photos.length - index} photos failed to be uploaded`,
+      );
     }
     setLoading(false);
     setProgress(0);
+    window.location.reload();
   }
 
   async function deleteEvent(e: React.MouseEvent<HTMLButtonElement>) {
@@ -253,21 +249,17 @@ export default function AdminGallery(props: {
         body: JSON.stringify(props.eventId),
       });
       console.log(response);
-      if (response.status == 500) {
-        toast({
-          variant: "destructive",
-          title: response.status.toString(),
-          description: response.statusText,
-        });
-      }
+
       if (response.status == 200) {
         const name = await response.json();
-        toast({
-          variant: "default",
-          title: "Suppression de l'événement réussie",
+        toast.success("Suppression de l'événement réussie", {
           description: `${name} a été supprimé !`,
         });
         router.push("/admin/events-management");
+      } else {
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.log(error);
