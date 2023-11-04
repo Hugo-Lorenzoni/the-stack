@@ -191,7 +191,7 @@ export default function NewEventPage() {
 
           photoData.append("values", JSON.stringify(res.event));
           // console.log(photoData);
-
+          setProgress((value) => value + (1 / values.photos.length) * 90);
           try {
             const apiUrlEndpoint = "/api/admin/event/photo";
             const postData = {
@@ -203,17 +203,7 @@ export default function NewEventPage() {
             if (response.status == 200) {
               const res = await response.json();
               // console.log(res);
-              setProgress((value) => value + (1 / values.photos.length) * 90);
-              toast(`${res.photo.name} successfully added !`);
-              return index;
-            } else if (response.status == 504) {
-              toast.warning(
-                `${response.status.toString()} - ${response.statusText}`,
-                {
-                  description:
-                    "L'upload a pris trop de temps - La photo ne s'est peut-être pas uploadée correctement",
-                },
-              );
+              return res.photo.name;
             } else {
               toast.error(response.status.toString(), {
                 description: response.statusText,
@@ -227,7 +217,7 @@ export default function NewEventPage() {
         let index = 0;
         for (let i = 0; i < files.length; i++) {
           const file = await files[i];
-          if (typeof file === "number") {
+          if (typeof file === "string") {
             index++;
           }
         }

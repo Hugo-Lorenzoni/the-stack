@@ -29,7 +29,7 @@ export default function RootLayout({
         <Providers>
           <Nav />
           {children}
-          <Toaster closeButton />
+          <Toaster closeButton visibleToasts={9} />
           <Footer />
         </Providers>
       </body>
