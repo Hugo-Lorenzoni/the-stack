@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 
     const values = data.get("values") as string;
     if (!values) {
+      console.log("No values");
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
 
@@ -52,7 +53,12 @@ export async function POST(request: NextRequest) {
     // console.log(dateString);
 
     const photoFile = data.get("file") as File;
-
+    // if (Math.random() < 0.1) {
+    //   return NextResponse.json(
+    //     { error: "Something went wrong." },
+    //     { status: 500 },
+    //   );
+    // }
     const photoURL = await saveFile(
       photoFile,
       currentEvent.title,
@@ -73,6 +79,7 @@ export async function POST(request: NextRequest) {
 
     const parsedPhoto = photoSchema.parse(photo);
     if (!parsedPhoto) {
+      console.log("Failed parsing the photo");
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -82,8 +89,8 @@ export async function POST(request: NextRequest) {
       where: { id: currentEvent.id },
       data: {
         photos: {
-          createMany: {
-            data: parsedPhoto,
+          create: {
+            ...parsedPhoto,
           },
         },
       },
@@ -91,10 +98,12 @@ export async function POST(request: NextRequest) {
         id: true,
         title: true,
         date: true,
-        photos: { orderBy: { name: "asc" } },
+        // photos: { orderBy: { name: "asc" } },
       },
     });
     if (!event) {
+      console.log(`${photo.name} - db query failed`);
+
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },

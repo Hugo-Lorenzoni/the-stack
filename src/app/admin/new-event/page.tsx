@@ -25,7 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
-import { Type } from "@prisma/client";
+import { Event, Type } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -120,6 +120,10 @@ export default function NewEventPage() {
 
   const [image, setImage] = useState<string | null>();
 
+  const [failed, setFailed] = useState<File[]>([]);
+  const [event, setEvent] = useState<Event>();
+  const [isRetryLoading, setRetryLoading] = useState<boolean>(false);
+
   const [progress, setProgress] = useState(0);
 
   function handleChange(field: {
@@ -161,6 +165,7 @@ export default function NewEventPage() {
     // ✅ This will be type-safe and validated.
     console.log(values);
     const { cover, photos, ...data } = values;
+    console.log(values.photos.length);
 
     const eventData = new FormData();
 
@@ -182,8 +187,9 @@ export default function NewEventPage() {
           description: "En attente de l'upload des photos",
         });
         const res = await response.json();
+        setEvent(res.event);
 
-        const files = Array.from(values.photos).map(async (photo, index) => {
+        const files = Array.from(values.photos).map(async (photo) => {
           const photoData = new FormData();
 
           // formData.append(`file-${index}`, values.photos[index]);
@@ -191,7 +197,6 @@ export default function NewEventPage() {
 
           photoData.append("values", JSON.stringify(res.event));
           // console.log(photoData);
-          setProgress((value) => value + (1 / values.photos.length) * 90);
           try {
             const apiUrlEndpoint = "/api/admin/event/photo";
             const postData = {
@@ -202,70 +207,128 @@ export default function NewEventPage() {
             // console.log(response);
             if (response.status == 200) {
               const res = await response.json();
-              // console.log(res);
-              return res.photo.name;
+              console.log(res);
+              setProgress((value) => value + (1 / values.photos.length) * 90);
+              // toast(`${res.photo.name} successfully added !`);
+
+              return { photo, status: "OK" };
             } else {
               toast.error(response.status.toString(), {
                 description: response.statusText,
               });
+              setFailed((prev) => [...prev, photo]);
+              return { photo, status: "FAILED" };
             }
           } catch (error) {
             console.log(error);
           }
         });
-
         let index = 0;
         for (let i = 0; i < files.length; i++) {
           const file = await files[i];
-          if (typeof file === "string") {
+          if (file?.status !== "OK" || !file) {
             index++;
           }
         }
-        if (index == values.photos.length) {
-          toast.success(`${index} photos were successfully added !`);
+        if (index == 0) {
+          toast.success(
+            `All photos (${values.photos.length}) were successfully added !`,
+          );
           setImage(null);
           reset();
           toast.success("Enregistrement de l'événement et des photos réussi", {
             description: "N'oubliez pas de le publier !",
           });
         } else {
-          toast.error(
-            `${values.photos.length - index} photos failed to be uploaded`,
+          toast.info(
+            `${values.photos.length - index} photos were successfully added !`,
           );
+          toast.error(`${index} photos failed to be uploaded`);
         }
+      } else if (response.status == 415) {
+        toast.warning(
+          `${response.status.toString()} - ${response.statusText}`,
+          {
+            description: "La photo de couverture doit être au format paysage !",
+          },
+        );
+        setImage(null);
+        resetField("cover");
+        setError("cover", {
+          type: "string",
+          message: "La photo de couverture doit être au format paysage !",
+        });
       } else {
-        if (response.status == 415) {
-          toast.warning(
-            `${response.status.toString()} - ${response.statusText}`,
-            {
-              description:
-                "La photo de couverture doit être au format paysage !",
-            },
-          );
-          setImage(null);
-          resetField("cover");
-          setError("cover", {
-            type: "string",
-            message: "La photo de couverture doit être au format paysage !",
-          });
-        } else if (response.status == 504) {
-          toast.warning(
-            `${response.status.toString()} - ${response.statusText}`,
-            {
-              description:
-                "L'upload a pris trop de temps - L'événement ne s'est peut-être pas uploadé correctement",
-            },
-          );
+        toast.error(response.status.toString(), {
+          description: response.statusText,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(`${error}`);
+    }
+    setLoading(false);
+    setProgress(0);
+  }
+
+  async function handleRetry(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+
+    setRetryLoading(true);
+    const files = failed.map(async (photo) => {
+      const photoData = new FormData();
+
+      // formData.append(`file-${index}`, values.photos[index]);
+      photoData.append("file", photo);
+
+      photoData.append("values", JSON.stringify(event));
+      // console.log(photoData);
+      try {
+        const apiUrlEndpoint = "/api/admin/event/photo";
+        const postData = {
+          method: "POST",
+          body: photoData,
+        };
+        const response = await fetch(apiUrlEndpoint, postData);
+        // console.log(response);
+        if (response.status == 200) {
+          const res = await response.json();
+          console.log(res);
+          setProgress((value) => value + (1 / failed.length) * 100);
+          setFailed((prev) => prev.filter((p) => p.name !== photo.name));
+
+          return { photo, status: "OK" };
         } else {
           toast.error(response.status.toString(), {
             description: response.statusText,
           });
+          return { photo, status: "FAILED" };
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    });
+    let index = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = await files[i];
+      if (file?.status !== "OK" || !file) {
+        index++;
+      }
     }
-    setLoading(false);
+    if (index == 0) {
+      toast.success(`All photos (${files.length}) were successfully added !`);
+      setImage(null);
+      setEvent(undefined);
+      reset();
+      toast.success("Enregistrement de l'événement et des photos réussi", {
+        description: "N'oubliez pas de le publier !",
+      });
+    } else {
+      toast.info(`${files.length - index} photos were successfully added !`);
+      toast.error(`${index} photos failed to be uploaded`);
+    }
+    setProgress(0);
+    setRetryLoading(false);
   }
   return (
     <section>
@@ -447,8 +510,8 @@ export default function NewEventPage() {
             <></>
           )}
           <PhotosInput errors={errors} register={register} />
-          {isLoading ? <Progress value={progress} /> : ""}
-          <Button disabled={isLoading} type="submit">
+          {isLoading || isRetryLoading ? <Progress value={progress} /> : ""}
+          <Button disabled={isLoading || !!failed.length} type="submit">
             {isLoading ? (
               <>
                 <Loader2
@@ -468,11 +531,41 @@ export default function NewEventPage() {
             onClick={() => {
               reset(), setImage(null);
             }}
+            disabled={isLoading || !!failed.length}
           >
             Reset
           </Button>
         </form>
       </Form>
+      {failed.length ? (
+        <div className="mt-4 max-w-lg rounded-lg border-2 border-red-600 bg-red-200 px-4 py-2 text-red-600">
+          <h5 className="mb-2">Ces photos ne se sont pas uploadées :</h5>
+          {failed.map((photo) => (
+            <p key={photo.name}>{photo.name}</p>
+          ))}
+          <Button
+            type="button"
+            onClick={(e) => handleRetry(e)}
+            variant="destructive"
+            className="mt-2"
+            disabled={isRetryLoading}
+          >
+            {isRetryLoading ? (
+              <>
+                <Loader2
+                  color="#ffffff"
+                  className="mr-2 h-4 w-4 animate-spin text-white"
+                />
+                Loading
+              </>
+            ) : (
+              "Réessayer"
+            )}
+          </Button>
+        </div>
+      ) : (
+        ""
+      )}
     </section>
   );
 }
