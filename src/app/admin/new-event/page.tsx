@@ -221,6 +221,7 @@ export default function NewEventPage() {
             }
           } catch (error) {
             console.log(error);
+            setFailed((prev) => [...prev, photo]);
           }
         });
         let index = 0;
@@ -306,6 +307,7 @@ export default function NewEventPage() {
         }
       } catch (error) {
         console.log(error);
+        setFailed((prev) => [...prev, photo]);
       }
     });
     let index = 0;
