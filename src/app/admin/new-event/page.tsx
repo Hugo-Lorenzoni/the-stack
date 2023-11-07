@@ -221,6 +221,7 @@ export default function NewEventPage() {
             }
           } catch (error) {
             console.log(error);
+            toast.error(`${error}`);
             setFailed((prev) => [...prev, photo]);
           }
         });
@@ -307,6 +308,7 @@ export default function NewEventPage() {
         }
       } catch (error) {
         console.log(error);
+        toast.error(`${error}`);
         setFailed((prev) => [...prev, photo]);
       }
     });
