@@ -31,6 +31,15 @@ export default async function NavLinks({ className }: Props) {
       ) : (
         <></>
       )}
+      {session && session.user?.role === "WAITING" ? (
+        <li className="flex items-center">
+          <Link className={linkStyle} href="/register/waiting">
+            Événements baptisés
+          </Link>
+        </li>
+      ) : (
+        <></>
+      )}
       {session &&
       (session.user?.role === "BAPTISE" || session.user?.role === "ADMIN") ? (
         <>
