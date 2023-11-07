@@ -9,6 +9,7 @@ type Data = {
   surname: string;
   role: Role;
   cercle: Cercle | string | null;
+  createdAt: Date;
 };
 
 export default async function AccountsManagementPage() {

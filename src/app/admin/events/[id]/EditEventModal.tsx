@@ -38,7 +38,6 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 

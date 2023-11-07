@@ -10,6 +10,7 @@ export const getAllUsers = cache(async () => {
       role: true,
       cercle: true,
       autreCercle: true,
+      createdAt: true,
     },
   });
   return res;

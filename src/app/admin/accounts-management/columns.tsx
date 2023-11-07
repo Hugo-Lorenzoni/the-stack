@@ -14,6 +14,13 @@ export type User = {
   surname: string;
   role: Role;
   cercle: Cercle | string | null;
+  createdAt: Date;
+};
+
+const options: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
 };
 
 export const columns: ColumnDef<User>[] = [
@@ -49,6 +56,28 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "cercle",
     header: "Cercle",
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <div className="inline-flex items-center">
+          Date de création
+          <Button
+            className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div>{row.original.createdAt.toLocaleDateString("fr-BE", options)}</div>
+      );
+    },
   },
   {
     id: "actions",

@@ -15,6 +15,7 @@ export const getWaitingUsers = cache(async () => {
       autreCercle: true,
       cercleVille: true,
       promo: true,
+      createdAt: true,
     },
   });
   return res;

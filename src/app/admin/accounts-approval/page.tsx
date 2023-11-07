@@ -11,6 +11,7 @@ type Data = {
   cercle: Cercle | string;
   ville: string;
   promo: number | null;
+  createdAt: Date;
 };
 
 export default async function AccountsApprovalPage() {
