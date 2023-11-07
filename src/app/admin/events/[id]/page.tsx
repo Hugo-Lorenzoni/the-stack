@@ -24,8 +24,10 @@ export default async function EventPage({
             eventId={event.id}
             eventTitle={event.title}
             eventDate={event.date}
+            eventPinned={event.pinned}
             eventType={event.type}
-            photos={event.photos}
+            eventPassword={event.password || undefined}
+            eventPhotos={event.photos}
           />
         </>
       ) : (

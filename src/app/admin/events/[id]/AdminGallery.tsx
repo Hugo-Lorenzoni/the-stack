@@ -1,16 +1,5 @@
 "use client";
 import { Button } from "@/components//ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Progress } from "@/components/ui/progress";
 import { Form } from "@/components/ui/form";
 
@@ -24,7 +13,6 @@ import { toast } from "sonner";
 import { Photo, Type } from "@prisma/client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 import {
   ChevronLeftCircle,
@@ -38,7 +26,9 @@ import useSwipe from "@/hooks/useSwipe";
 import useKeypress from "react-use-keypress";
 
 import AddPhotosInput from "./AddPhotosInput";
-import AdminGalleryPhoto from "./AdminGalleryPhoto";
+import DeletePhotoButton from "./DeletePhotoButton";
+import DeleteEventButton from "./DeleteEventButton";
+import EditEventModal from "./EditEventModal";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -80,27 +70,34 @@ const formSchema = z.object({
     .refine((files) => handleFiles(files, "size"), `Max file size is 10MB.`),
 });
 
-export default function AdminGallery(props: {
+type Props = {
   eventId: string;
   eventTitle: string;
   eventDate: Date;
+  eventPinned: boolean;
   eventType: Type;
-  photos: Photo[];
-}) {
-  const [photos, setPhotos] = useState<Photo[]>(props.photos);
+  eventPassword: string | undefined;
+  eventPhotos: Photo[];
+};
+
+export default function AdminGallery({
+  eventId,
+  eventTitle,
+  eventDate,
+  eventPinned,
+  eventType,
+  eventPassword,
+  eventPhotos,
+}: Props) {
+  const [photos, setPhotos] = useState<Photo[]>(eventPhotos);
 
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const [isOpen, setOpen] = useState(false);
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
 
-  const [isDeleteEventModalOpen, setDeleteEventModalOpen] = useState(false);
-
   const [progress, setProgress] = useState(0);
-
-  const router = useRouter();
 
   function closeLightbox() {
     setCurrentPhoto(null);
@@ -116,18 +113,18 @@ export default function AdminGallery(props: {
 
   function prevPhoto() {
     if (currentPhotoId) {
-      setCurrentPhoto(props.photos[currentPhotoId - 1]);
+      setCurrentPhoto(eventPhotos[currentPhotoId - 1]);
       setCurrentPhotoId(currentPhotoId - 1);
     }
   }
   function nextPhoto() {
-    setCurrentPhoto(props.photos[(currentPhotoId ? currentPhotoId : 0) + 1]);
+    setCurrentPhoto(eventPhotos[(currentPhotoId ? currentPhotoId : 0) + 1]);
     setCurrentPhotoId((currentPhotoId ? currentPhotoId : 0) + 1);
   }
 
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {
-      if (currentPhotoId != props.photos.length - 1) {
+      if (currentPhotoId != eventPhotos.length - 1) {
         nextPhoto();
       }
     },
@@ -143,7 +140,7 @@ export default function AdminGallery(props: {
       closeLightbox();
     } else if (
       e.key == "ArrowRight" &&
-      currentPhotoId != props.photos.length - 1
+      currentPhotoId != eventPhotos.length - 1
     ) {
       nextPhoto();
     } else if (e.key == "ArrowLeft" && currentPhotoId != 0) {
@@ -175,10 +172,10 @@ export default function AdminGallery(props: {
       photoData.append(
         "values",
         JSON.stringify({
-          id: props.eventId,
-          title: props.eventTitle,
-          date: props.eventDate,
-          type: props.eventType,
+          id: eventId,
+          title: eventTitle,
+          date: eventDate,
+          type: eventType,
         }),
       );
       // console.log(photoData);
@@ -239,42 +236,12 @@ export default function AdminGallery(props: {
     window.location.reload();
   }
 
-  async function deleteEvent(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    setDeleteLoading(true);
-    try {
-      const response = await fetch("/api/admin/deleteevent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(props.eventId),
-      });
-      console.log(response);
-
-      if (response.status == 200) {
-        const name = await response.json();
-        toast.success("Suppression de l'événement réussie", {
-          description: `${name} a été supprimé !`,
-        });
-        router.push("/admin/events-management");
-      } else {
-        toast.error(response.status.toString(), {
-          description: response.statusText,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
-    setDeleteEventModalOpen(false);
-    setDeleteLoading(false);
-  }
-
   return (
     <>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-lg space-y-4"
+          className="max-w-lg space-y-2"
         >
           <AddPhotosInput errors={errors} register={register} />
           {isLoading ? <Progress value={progress} /> : ""}
@@ -303,61 +270,46 @@ export default function AdminGallery(props: {
           </Button>
         </form>
       </Form>
-      <AlertDialog
-        onOpenChange={setDeleteEventModalOpen}
-        open={isDeleteEventModalOpen}
-      >
-        <AlertDialogTrigger asChild>
-          <Button className="mt-6 w-full bg-red-600 hover:bg-red-500">
-            Supprimer l&apos;événement
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Êtes-vous sûr de vouloir supprimer cet événement ?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Cette suppression est irréversible. Cet événement et
-              l&apos;entièreté des photos associés à celui-ci seront supprimés
-              de manière permanente !
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteLoading}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 hover:bg-red-500"
-              onClick={(e) => deleteEvent(e)}
-              disabled={deleteLoading}
-            >
-              {deleteLoading ? (
-                <>
-                  <Loader2
-                    color="#ffffff"
-                    className="mr-2 h-4 w-4 animate-spin text-white"
-                  />
-                  En cours
-                </>
-              ) : (
-                "Delete"
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <div className="mt-4 flex justify-end gap-2">
+        <EditEventModal
+          {...{
+            eventId,
+            eventTitle,
+            eventDate,
+            eventPinned,
+            eventType,
+            eventPassword,
+          }}
+        />
+        <DeleteEventButton eventId={eventId} />
+      </div>
       <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {photos?.map((photo, index) => (
-          <AdminGalleryPhoto
+          <li
+            className={`group relative cursor-pointer overflow-hidden rounded-md ${
+              photo.width < photo.height
+                ? "row-span-2"
+                : index % 7
+                ? ""
+                : "row-span-2 md:col-span-2"
+            }`}
             key={index}
-            photo={photo}
-            index={index}
-            photos={photos}
-            setPhotos={setPhotos}
-            openLightbox={openLightbox}
-            eventName={props.eventTitle}
-          />
+          >
+            <DeletePhotoButton
+              photo={photo}
+              photos={photos}
+              setPhotos={setPhotos}
+            />
+            <Image
+              className="h-full w-full object-cover"
+              src={photo.url}
+              width={photo.width}
+              height={photo.height}
+              alt={eventTitle}
+              quality={10}
+              onClick={() => openLightbox(photo, index)}
+            />
+          </li>
         ))}
       </ul>
 
@@ -410,7 +362,7 @@ export default function AdminGallery(props: {
           </Button>
           <Button
             className="absolute bottom-4 right-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
-            disabled={currentPhotoId == props.photos.length - 1}
+            disabled={currentPhotoId == eventPhotos.length - 1}
             onClick={() => nextPhoto()}
           >
             <ChevronRightCircle className="h-16 w-16" />
