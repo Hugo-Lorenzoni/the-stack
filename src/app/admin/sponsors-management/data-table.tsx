@@ -125,6 +125,9 @@ export function DataTable<TData, TValue>({
         >
           Précédent
         </Button>
+        <div>
+          {table.getState().pagination.pageIndex + 1}/{table.getPageCount()}
+        </div>
         <Button
           variant="outline"
           size="sm"
