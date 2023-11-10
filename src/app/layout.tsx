@@ -18,6 +18,8 @@ export const metadata: Metadata = {
     "Photos des événements de la Faculté Polytechnique de Mons (FPMs)",
 };
 
+const toastOptions = { duration: 10000 };
+
 export default function RootLayout({
   children,
 }: {
@@ -29,7 +31,7 @@ export default function RootLayout({
         <Providers>
           <Nav />
           {children}
-          <Toaster closeButton visibleToasts={9} />
+          <Toaster closeButton visibleToasts={9} toastOptions={toastOptions} />
           <Footer />
         </Providers>
       </body>
