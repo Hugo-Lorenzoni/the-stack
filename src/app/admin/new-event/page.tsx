@@ -13,6 +13,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -117,6 +127,7 @@ export default function NewEventPage() {
   const [type, setType] = useState<Type>("OUVERT");
 
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const [image, setImage] = useState<string | null>();
 
@@ -160,7 +171,7 @@ export default function NewEventPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-
+    setDialogOpen(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -335,174 +346,25 @@ export default function NewEventPage() {
     setRetryLoading(false);
   }
   return (
-    <section>
-      <h2>New Event Page</h2>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-lg space-y-4"
-        >
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="mt-4">
-                <FormLabel>Nom de l&apos;événement</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    required
-                    placeholder="Crasino"
-                    {...field}
-                  />
-                </FormControl>
-                {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date de l&apos;événement</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground",
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Notes{" "}
-                  <span className="italic text-neutral-400">
-                    (facultatives)
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Notes..."
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Ces notes seront affichées avant les photos de
-                  l&apos;événement.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="pinned"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">
-                    Mettre en évidence
-                  </FormLabel>
-                  <FormDescription>
-                    Ce post sera affiché en tout premier parmi les événements
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    defaultChecked={field.value}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {image && (
-            <img src={image} alt="cover" className="mt-1 w-full rounded-xl" />
-          )}
-          <CoverInput errors={errors} register={register} setImage={setImage} />
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Type</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={handleChange(field)}
-                    defaultValue={field.value}
-                    className="flex flex-col space-y-1"
-                  >
-                    {TypeList.map((key) => {
-                      return (
-                        <FormItem
-                          key={key}
-                          className="flex items-center space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <RadioGroupItem value={key} />
-                          </FormControl>
-                          <FormLabel className="font-normal hover:cursor-pointer">
-                            {key}
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    })}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {type === "AUTRE" ? (
+    <>
+      <section>
+        <h2>New Event Page</h2>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="max-w-lg space-y-4"
+          >
             <FormField
               control={form.control}
-              name="password"
+              name="title"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mot de passe</FormLabel>
+                <FormItem className="mt-4">
+                  <FormLabel>Nom de l&apos;événement</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
                       required
-                      placeholder="merciCPV"
+                      placeholder="Crasino"
                       {...field}
                     />
                   </FormControl>
@@ -510,66 +372,245 @@ export default function NewEventPage() {
                 </FormItem>
               )}
             />
-          ) : (
-            <></>
-          )}
-          <PhotosInput errors={errors} register={register} />
-          {isLoading || isRetryLoading ? <Progress value={progress} /> : ""}
-          <Button disabled={isLoading || !!failed.length} type="submit">
-            {isLoading ? (
-              <>
-                <Loader2
-                  color="#ffffff"
-                  className="mr-2 h-4 w-4 animate-spin text-white"
-                />
-                Loading
-              </>
-            ) : (
-              "Submit"
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date de l&apos;événement</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Notes{" "}
+                    <span className="italic text-neutral-400">
+                      (facultatives)
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Notes..."
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Ces notes seront affichées avant les photos de
+                    l&apos;événement.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="pinned"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Mettre en évidence
+                    </FormLabel>
+                    <FormDescription>
+                      Ce post sera affiché en tout premier parmi les événements
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      defaultChecked={field.value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {image && (
+              <img src={image} alt="cover" className="mt-1 w-full rounded-xl" />
             )}
-          </Button>
-          <Button
-            variant="outline"
-            type="reset"
-            className="ml-4"
-            onClick={() => {
-              reset(), setImage(null);
-            }}
-            disabled={isLoading || !!failed.length}
-          >
-            Reset
-          </Button>
-        </form>
-      </Form>
-      {failed.length ? (
-        <div className="mt-4 max-w-lg rounded-lg border-2 border-red-600 bg-red-200 px-4 py-2 text-red-600">
-          <h5 className="mb-2">Ces photos ne se sont pas uploadées :</h5>
-          {failed.map((photo) => (
-            <p key={photo.name}>{photo.name}</p>
-          ))}
-          <Button
-            type="button"
-            onClick={(e) => handleRetry(e)}
-            variant="destructive"
-            className="mt-2"
-            disabled={isRetryLoading}
-          >
-            {isRetryLoading ? (
-              <>
-                <Loader2
-                  color="#ffffff"
-                  className="mr-2 h-4 w-4 animate-spin text-white"
-                />
-                Loading
-              </>
+            <CoverInput
+              errors={errors}
+              register={register}
+              setImage={setImage}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={handleChange(field)}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      {TypeList.map((key) => {
+                        return (
+                          <FormItem
+                            key={key}
+                            className="flex items-center space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <RadioGroupItem value={key} />
+                            </FormControl>
+                            <FormLabel className="font-normal hover:cursor-pointer">
+                              {key}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      })}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {type === "AUTRE" ? (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mot de passe</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        required
+                        placeholder="merciCPV"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             ) : (
-              "Réessayer"
+              <></>
             )}
-          </Button>
-        </div>
-      ) : (
-        ""
-      )}
-    </section>
+            <PhotosInput errors={errors} register={register} />
+            <Button disabled={isLoading || !!failed.length} type="submit">
+              {isLoading ? (
+                <>
+                  <Loader2
+                    color="#ffffff"
+                    className="mr-2 h-4 w-4 animate-spin text-white"
+                  />
+                  Loading
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              type="reset"
+              className="ml-4"
+              onClick={() => {
+                reset(), setImage(null);
+              }}
+              disabled={isLoading || !!failed.length}
+            >
+              Reset
+            </Button>
+          </form>
+        </Form>
+      </section>
+      <AlertDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {isLoading || isRetryLoading || failed.length
+                ? "Upload de l'événement en cours..."
+                : "Enregistrement de l'événement et des photos réussi !"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isLoading || isRetryLoading ? (
+                <Progress color="red" value={progress} />
+              ) : (
+                ""
+              )}
+              {failed.length ? (
+                <div className="mt-4 max-w-lg rounded-lg border-2 border-red-600 bg-red-200 px-4 py-2 text-red-600">
+                  <h5 className="mb-2">
+                    Ces photos ne se sont pas uploadées :
+                  </h5>
+                  {failed.map((photo) => (
+                    <p key={photo.name}>{photo.name}</p>
+                  ))}
+                  <Button
+                    type="button"
+                    onClick={(e) => handleRetry(e)}
+                    variant="destructive"
+                    className="mt-2"
+                    disabled={isLoading || isRetryLoading}
+                  >
+                    {isRetryLoading ? (
+                      <>
+                        <Loader2
+                          color="#ffffff"
+                          className="mr-2 h-4 w-4 animate-spin text-white"
+                        />
+                        Loading
+                      </>
+                    ) : (
+                      "Réessayer"
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                ""
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
+            {isLoading || isRetryLoading || failed.length ? (
+              ""
+            ) : (
+              <AlertDialogAction>Terminé</AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
