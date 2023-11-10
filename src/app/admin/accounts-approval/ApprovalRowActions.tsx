@@ -4,21 +4,11 @@ import { toast } from "sonner";
 
 import { useState } from "react";
 
-import { Cercle } from "@prisma/client";
+import { User } from "@/app/admin/accounts-approval/columns";
 
 import { Row } from "@tanstack/react-table";
 
-import { Button } from "@/components//ui/button";
-
-export type User = {
-  id: string;
-  email: string;
-  name: string;
-  surname: string;
-  cercle: Cercle | string;
-  ville: string;
-  promo: number | null;
-};
+import { Button } from "@/components/ui/button";
 
 export default function ApprovalRowActions(props: { row: Row<User> }) {
   const [user, setUser] = useState<User | null>(props.row.original);
