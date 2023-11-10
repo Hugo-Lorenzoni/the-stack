@@ -28,6 +28,7 @@ export default async function EventPage({
             eventType={event.type}
             eventPassword={event.password || undefined}
             eventPhotos={event.photos}
+            eventNotes={event.notes || undefined}
           />
         </>
       ) : (

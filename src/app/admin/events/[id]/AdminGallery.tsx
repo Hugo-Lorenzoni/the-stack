@@ -78,6 +78,7 @@ type Props = {
   eventType: Type;
   eventPassword: string | undefined;
   eventPhotos: Photo[];
+  eventNotes: string | undefined;
 };
 
 export default function AdminGallery({
@@ -88,6 +89,7 @@ export default function AdminGallery({
   eventType,
   eventPassword,
   eventPhotos,
+  eventNotes,
 }: Props) {
   const [photos, setPhotos] = useState<Photo[]>(eventPhotos);
 
@@ -279,6 +281,7 @@ export default function AdminGallery({
             eventPinned,
             eventType,
             eventPassword,
+            eventNotes,
           }}
         />
         <DeleteEventButton eventId={eventId} />

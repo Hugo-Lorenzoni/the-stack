@@ -15,6 +15,7 @@ const valuesSchema = z
     pinned: z.boolean(),
     type: z.enum(TypeList),
     password: z.string().optional(),
+    notes: z.string().max(750).optional(),
   })
   .refine((data) => data.type != "AUTRE" || data.password, {
     message: "Un mot de passe est requis pour les événement de type AUTRE",
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
       );
     }
     // console.log(result.data);
-    const { id, title, date, pinned, type, password } = result.data;
+    const { id, title, date, pinned, type, password, notes } = result.data;
     // console.log({ id, title, date, type, password });
     if (!password && type == "AUTRE") {
       return NextResponse.json(
@@ -134,6 +135,7 @@ export async function POST(request: NextRequest) {
           pinned: pinned,
           type: type,
           password: type === "AUTRE" ? password : null,
+          notes: notes,
         },
       });
       // console.log(event);
@@ -160,6 +162,7 @@ export async function POST(request: NextRequest) {
           pinned: pinned,
           type: type,
           password: type === "AUTRE" ? password : null,
+          notes: notes,
         },
       }),
       ...photos.map((photo) =>

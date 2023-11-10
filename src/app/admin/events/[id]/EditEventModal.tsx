@@ -22,6 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -52,6 +53,11 @@ const formSchema = z
     pinned: z.boolean(),
     type: z.enum(TypeList),
     password: z.string().optional(),
+    notes: z
+      .string()
+      .max(750, { message: "Must be 750 or fewer characters long" })
+      .trim()
+      .optional(),
   })
   .refine((data) => data.type != "AUTRE" || data.password, {
     message: "Un mot de passe est requis pour les événement de type AUTRE",
@@ -65,6 +71,7 @@ type Props = {
   eventPinned: boolean;
   eventType: Type;
   eventPassword: string | undefined;
+  eventNotes: string | undefined;
 };
 
 export default function EditEventModal({
@@ -74,6 +81,7 @@ export default function EditEventModal({
   eventDate,
   eventType,
   eventPassword,
+  eventNotes,
 }: Props) {
   const [isLoading, setLoading] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -105,6 +113,7 @@ export default function EditEventModal({
       pinned: eventPinned,
       type: eventType,
       password: eventPassword,
+      notes: eventNotes,
     },
   });
 
@@ -230,6 +239,32 @@ export default function EditEventModal({
                         />
                       </PopoverContent>
                     </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Notes{" "}
+                      <span className="italic text-neutral-400">
+                        (facultatives)
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Notes..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Ces notes seront affichées avant les photos de
+                      l&apos;événement.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
