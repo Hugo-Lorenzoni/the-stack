@@ -199,6 +199,7 @@ export default function NewEventPage() {
         });
         const res = await response.json();
         setEvent(res.event);
+        console.log(res.event.date);
 
         const files = Array.from(values.photos).map(async (photo) => {
           const photoData = new FormData();

@@ -101,6 +101,8 @@ export default function AdminGallery({
 
   const [progress, setProgress] = useState(0);
 
+  const eventDateString = eventDate.toISOString().substring(0, 10);
+
   function closeLightbox() {
     setCurrentPhoto(null);
     setCurrentPhotoId(null);
@@ -168,6 +170,8 @@ export default function AdminGallery({
 
     const files = Array.from(values.photos).map(async (photo, index) => {
       const photoData = new FormData();
+      console.log(eventDate);
+      console.log(eventDateString);
 
       // formData.append(`file-${index}`, values.photos[index]);
       photoData.append("file", photo);
@@ -176,7 +180,7 @@ export default function AdminGallery({
         JSON.stringify({
           id: eventId,
           title: eventTitle,
-          date: eventDate,
+          date: eventDateString,
           type: eventType,
         }),
       );
