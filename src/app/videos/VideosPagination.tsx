@@ -19,19 +19,13 @@ export default function VideosPagination({ videos }: PropsType) {
   const filteredVideos = videos.filter((video) =>
     video.name
       .toLowerCase()
-      .replace(/é/g, "e")
-      .replace(/è/g, "e")
-      .replace(/ê/g, "e")
-      .replace(/à/g, "a")
-      .replace(/â/g, "a")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
       .includes(
         searchField
           .toLowerCase()
-          .replace(/é/g, "e")
-          .replace(/è/g, "e")
-          .replace(/ê/g, "e")
-          .replace(/à/g, "a")
-          .replace(/â/g, "a"),
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, ""),
       ),
   );
 

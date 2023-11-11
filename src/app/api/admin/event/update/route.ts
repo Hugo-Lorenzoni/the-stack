@@ -73,11 +73,8 @@ export async function POST(request: NextRequest) {
     const oldPath = `/${oldEvent.type}/${oldDateString}-${oldEvent.title
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
-      .replace(/é/g, "e")
-      .replace(/è/g, "e")
-      .replace(/ê/g, "e")
-      .replace(/à/g, "a")
-      .replace(/â/g, "a")}`;
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(oldPath);
 
     const src = join(process.cwd(), "public", oldPath);
@@ -91,11 +88,8 @@ export async function POST(request: NextRequest) {
     const newPath = `/${type}/${dateString}-${title
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
-      .replace(/é/g, "e")
-      .replace(/è/g, "e")
-      .replace(/ê/g, "e")
-      .replace(/à/g, "a")
-      .replace(/â/g, "a")}`;
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(newPath);
 
     const dest = join(process.cwd(), "public", newPath);

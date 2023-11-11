@@ -46,11 +46,8 @@ export async function POST(request: Request) {
     const folder = `/${event.type}/${dateString}-${event.title
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
-      .replace(/é/g, "e")
-      .replace(/è/g, "e")
-      .replace(/ê/g, "e")
-      .replace(/à/g, "a")
-      .replace(/â/g, "a")}`;
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(folder);
 
     const path = join(process.cwd(), "public", folder);

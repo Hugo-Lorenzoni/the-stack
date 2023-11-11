@@ -118,11 +118,8 @@ const saveFile = async (
     .replace(/\.[^/.]+$/, "")
     .replace(/\s+/g, "-")
     .replace(/[/.]/g, "-")
-    .replace(/é/g, "e")
-    .replace(/è/g, "e")
-    .replace(/ê/g, "e")
-    .replace(/à/g, "a")
-    .replace(/â/g, "a")}`;
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")}`;
   const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
   try {
@@ -149,11 +146,8 @@ const saveFile = async (
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
       .replace(/[/.]/g, "-")
-      .replace(/é/g, "e")
-      .replace(/è/g, "e")
-      .replace(/ê/g, "e")
-      .replace(/à/g, "a")
-      .replace(/â/g, "a")}.${mime.getExtension(file.type)}`;
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")}.${mime.getExtension(file.type)}`;
 
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
