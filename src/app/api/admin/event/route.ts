@@ -117,6 +117,7 @@ const saveFile = async (
   const relativeUploadDir = `/${type}/${date}-${title
     .replace(/\.[^/.]+$/, "")
     .replace(/\s+/g, "-")
+    .replace(/[/.]/g, "-")
     .replace(/é/g, "e")
     .replace(/è/g, "e")
     .replace(/ê/g, "e")
@@ -147,6 +148,7 @@ const saveFile = async (
       .toLocaleLowerCase()
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
+      .replace(/[/.]/g, "-")
       .replace(/é/g, "e")
       .replace(/è/g, "e")
       .replace(/ê/g, "e")

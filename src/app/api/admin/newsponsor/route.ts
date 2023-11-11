@@ -74,6 +74,7 @@ const saveFile = async (file: File, name: string) => {
   const relativeUploadDir = `/SPONSORS/${name
     .replace(/\.[^/.]+$/, "")
     .replace(/\s+/g, "-")
+    .replace(/[/.]/g, "-")
     .replace(/é/g, "e")
     .replace(/è/g, "e")
     .replace(/ê/g, "e")
@@ -102,6 +103,7 @@ const saveFile = async (file: File, name: string) => {
       .toLocaleLowerCase()
       .replace(/\.[^/.]+$/, "")
       .replace(/\s+/g, "-")
+      .replace(/[/.]/g, "-")
       .replace(/é/g, "e")
       .replace(/è/g, "e")
       .replace(/ê/g, "e")
