@@ -30,23 +30,23 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "id",
     header: "Code de validation",
   },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <div className="flex items-center">
-          Email
-          <Button
-            className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <ArrowUpDown className="h-4 w-4" />
-          </Button>
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "email",
+  //   header: ({ column }) => {
+  //     return (
+  //       <div className="flex items-center">
+  //         Email
+  //         <Button
+  //           className="ml-2 rounded-lg px-3 hover:bg-neutral-200"
+  //           variant="ghost"
+  //           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //         >
+  //           <ArrowUpDown className="h-4 w-4" />
+  //         </Button>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: "name",
     header: "Prénom",

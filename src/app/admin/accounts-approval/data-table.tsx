@@ -64,7 +64,7 @@ export function DataTable<TData, TValue>({
             className="ml-2 max-w-sm"
           />
         </div>
-        <div className="flex items-center justify-between py-1">
+        {/* <div className="flex items-center justify-between py-1">
           <h3>Email</h3>
           <Input
             placeholder="Filter emails..."
@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
             }
             className="ml-2 max-w-sm"
           />
-        </div>
+        </div> */}
         <div className="flex items-center justify-between py-1">
           <h3>Prénom</h3>
           <Input

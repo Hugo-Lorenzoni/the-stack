@@ -15,7 +15,6 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -135,6 +134,8 @@ export default function NewEventPage() {
   const [event, setEvent] = useState<Event>();
   const [isRetryLoading, setRetryLoading] = useState<boolean>(false);
 
+  const [currentTotal, setCurrentTotal] = useState<number>(0);
+
   const [progress, setProgress] = useState(0);
 
   function handleChange(field: {
@@ -177,7 +178,7 @@ export default function NewEventPage() {
     console.log(values);
     const { cover, photos, ...data } = values;
     console.log(values.photos.length);
-
+    setCurrentTotal(values.photos.length);
     const eventData = new FormData();
 
     eventData.append("cover", cover[0]);
@@ -289,6 +290,8 @@ export default function NewEventPage() {
     e.preventDefault();
 
     setRetryLoading(true);
+    setCurrentTotal(failed.length);
+
     const files = failed.map(async (photo) => {
       const photoData = new FormData();
 
@@ -565,7 +568,12 @@ export default function NewEventPage() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {isLoading || isRetryLoading ? (
-                <Progress color="red" value={progress} />
+                <>
+                  <Progress color="red" value={progress} />
+                  <div>
+                    {((progress - 10) / 90) * currentTotal}/{currentTotal}
+                  </div>
+                </>
               ) : (
                 ""
               )}
