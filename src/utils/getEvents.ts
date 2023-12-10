@@ -26,6 +26,7 @@ export const getEvents = cache(
           pinned: "desc",
         },
         { date: "desc" },
+        { publishedAt: "desc" },
       ],
     });
     return res;
