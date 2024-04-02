@@ -3,100 +3,98 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgresql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model User {
-  id              String      @id @default(uuid())
-  email           String      @unique
-  name            String
-  surname         String
-  role            Role        @default(USER)
-  cercle          Cercle?
-  cercleVille     String?
-  autreCercle     String?
-  promo           Int?
-  password        String
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt @default(now())
+  id          String       @id(map: "idx_32948_PRIMARY") @default(uuid()) @db.VarChar(191)
+  email       String       @unique(map: "idx_32948_User_email_key") @db.VarChar(191)
+  name        String       @db.VarChar(191)
+  surname     String       @db.VarChar(191)
+  role        User_role    @default(USER)
+  cercle      User_cercle?
+  cercleVille String?      @db.VarChar(191)
+  autreCercle String?      @db.VarChar(191)
+  promo       Int?
+  password    String       @db.VarChar(191)
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
 model Event {
-  id              String      @id @default(uuid())
-  title           String
-  date            DateTime    @db.Date @default(dbgenerated("(curdate())")) 
-  // date            DateTime    @default(now())
-  published       Boolean     @default(false)
-  coverName       String
-  coverUrl        String
-  coverWidth      Int
-  coverHeight     Int
-  type            Type
-  password        String?
-  pinned          Boolean     @default(false)
-  notes           String?     @db.Text
-  publishedAt     DateTime?   
-  photos          Photo[]
-  sponsors        Sponsor[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt @default(now())
+  id          String     @id(map: "idx_32925_PRIMARY") @default(uuid()) @db.VarChar(191)
+  title       String     @db.VarChar(191)
+  date        DateTime   @db.Date
+  published   Boolean    @default(false)
+  coverName   String     @db.VarChar(191)
+  coverUrl    String     @db.VarChar(191)
+  coverWidth  Int
+  coverHeight Int
+  type        Event_type
+  password    String?    @db.VarChar(191)
+  pinned      Boolean    @default(false)
+  notes       String?
+  createdAt   DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  publishedAt DateTime?  @db.Timestamptz(6)
+  photos      Photo[]
+  sponsors    Sponsor[]
 }
 
 model Photo {
-  id              String      @id @default(uuid())
-  name            String
-  url             String
-  width           Int
-  height          Int
-  eventId         String
-  event           Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt @default(now())
+  id        String   @id(map: "idx_32934_PRIMARY") @default(uuid()) @db.VarChar(191)
+  name      String   @db.VarChar(191)
+  url       String   @db.VarChar(191)
+  width     Int
+  height    Int
+  eventId   String   @db.VarChar(191)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@index([eventId])
+  @@index([eventId], map: "idx_32934_Photo_eventId_idx")
 }
 
 model Sponsor {
-  id              String      @id @default(uuid())
-  name            String
-  url             String
-  logoName        String
-  logoUrl         String
-  logoWidth       Int
-  logoHeight      Int
-  event           Event[]
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt @default(now())
+  id         String   @id(map: "idx_32941_PRIMARY") @default(uuid()) @db.VarChar(191)
+  name       String   @db.VarChar(191)
+  url        String   @db.VarChar(191)
+  logoName   String   @db.VarChar(191)
+  logoUrl    String   @db.VarChar(191)
+  logoWidth  Int
+  logoHeight Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  event      Event[]
 }
 
 model Video {
-  id              String       @id
-  url             String
-  name            String
-  date            DateTime
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt @default(now())
+  id        String   @id(map: "idx_32956_PRIMARY") @db.VarChar(191)
+  url       String   @db.VarChar(191)
+  name      String   @db.VarChar(191)
+  date      DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
 model EventToSponsor {
-  A               String
-  B               String
+  A String @db.VarChar(191)
+  B String @db.VarChar(191)
 
-  @@unique([A, B], map: "_EventToSponsor_AB_unique")
-  @@index([B], map: "_EventToSponsor_B_index")
+  @@unique([A, B], map: "idx_32963__EventToSponsor_AB_unique")
+  @@index([B], map: "idx_32963__EventToSponsor_B_index")
   @@map("_EventToSponsor")
 }
 
-enum Role {
-  USER
-  WAITING
+enum Event_type {
   BAPTISE
-  ADMIN
+  OUVERT
+  AUTRE
 }
 
-enum Cercle {
+enum User_cercle {
   FPMS
   WAWA
   FMM
@@ -107,8 +105,9 @@ enum Cercle {
   AUTRE
 }
 
-enum Type {
+enum User_role {
+  USER
+  WAITING
   BAPTISE
-  OUVERT
-  AUTRE
+  ADMIN
 }

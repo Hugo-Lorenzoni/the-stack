@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
 
-const inter = Poppins({
+const font = Poppins({
   subsets: ["latin"],
   weight: ["400", "600"],
 });
@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={inter.className}>
+      <body className={font.className}>
         <Providers>
           <Nav />
           {children}
