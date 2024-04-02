@@ -34,7 +34,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
-import { Event, Type } from "@prisma/client";
+import { Event, Event_type } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -123,7 +123,7 @@ const formSchema = z
   });
 
 export default function NewEventPage() {
-  const [type, setType] = useState<Type>("OUVERT");
+  const [type, setType] = useState<Event_type>("OUVERT");
 
   const [isLoading, setLoading] = useState<boolean>(false);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);

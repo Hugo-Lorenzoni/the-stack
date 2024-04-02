@@ -1,14 +1,14 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { getWaitingUsers } from "@/utils/getWaitingUsers";
-import { Cercle } from "@prisma/client";
+import { User_cercle } from "@prisma/client";
 
 type Data = {
   id: string;
   email: string;
   name: string;
   surname: string;
-  cercle: Cercle | string;
+  cercle: User_cercle | string;
   ville: string;
   promo: number | null;
   createdAt: Date;

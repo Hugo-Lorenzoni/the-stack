@@ -1,4 +1,4 @@
-import { Type } from "@prisma/client";
+import { Event_type } from "@prisma/client";
 
 import {
   Dialog,
@@ -69,7 +69,7 @@ type Props = {
   eventTitle: string;
   eventDate: Date;
   eventPinned: boolean;
-  eventType: Type;
+  eventType: Event_type;
   eventPassword: string | undefined;
   eventNotes: string | undefined;
 };
@@ -86,7 +86,7 @@ export default function EditEventModal({
   const [isLoading, setLoading] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const [type, setType] = useState<Type>(eventType);
+  const [type, setType] = useState<Event_type>(eventType);
 
   const initDate = eventDate.setHours(eventDate.getHours() - 1);
 

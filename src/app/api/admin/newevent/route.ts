@@ -3,7 +3,7 @@ import sizeOf from "image-size";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { mkdir, stat, writeFile } from "fs/promises";
-import { Type } from "@prisma/client";
+import { Event_type } from "@prisma/client";
 import { join } from "path";
 import mime from "mime";
 import * as z from "zod";
@@ -136,7 +136,7 @@ const saveFile = async (
   file: File,
   title: string,
   date: string,
-  type: Type,
+  type: Event_type,
   cover: boolean,
 ) => {
   const fileArray = await file.arrayBuffer();

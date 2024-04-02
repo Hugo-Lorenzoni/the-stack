@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Type } from "@prisma/client";
+import { Event_type } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
@@ -13,7 +13,7 @@ export type Event = {
   title: string;
   date: string;
   pinned: boolean;
-  type: Type;
+  type: Event_type;
 };
 
 export const columns: ColumnDef<Event>[] = [

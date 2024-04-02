@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Cercle, Role } from "@prisma/client";
+import { User_cercle, User_role } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import EditUser from "./EditUser";
@@ -12,8 +12,8 @@ export type User = {
   email: string;
   name: string;
   surname: string;
-  role: Role;
-  cercle: Cercle | string | null;
+  role: User_role;
+  cercle: User_cercle | string | null;
   createdAt: Date;
 };
 

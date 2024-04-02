@@ -1,4 +1,4 @@
-import { Cercle, Role } from "@prisma/client";
+import { User_cercle, User_role } from "@prisma/client";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { getAllUsers } from "@/utils/getAllUsers";
@@ -7,8 +7,8 @@ type Data = {
   email: string;
   name: string;
   surname: string;
-  role: Role;
-  cercle: Cercle | string | null;
+  role: User_role;
+  cercle: User_cercle | string | null;
   createdAt: Date;
 };
 

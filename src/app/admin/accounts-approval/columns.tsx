@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Cercle } from "@prisma/client";
+import { User_cercle } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
@@ -13,7 +13,7 @@ export type User = {
   email: string;
   name: string;
   surname: string;
-  cercle: Cercle | string;
+  cercle: User_cercle | string;
   ville: string;
   promo: number | null;
   createdAt: Date;

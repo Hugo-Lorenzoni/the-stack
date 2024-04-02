@@ -10,7 +10,7 @@ import { useState } from "react";
 
 import { toast } from "sonner";
 
-import { Photo, Type } from "@prisma/client";
+import { Photo, Event_type } from "@prisma/client";
 
 import Image from "next/image";
 
@@ -75,7 +75,7 @@ type Props = {
   eventTitle: string;
   eventDate: Date;
   eventPinned: boolean;
-  eventType: Type;
+  eventType: Event_type;
   eventPassword: string | undefined;
   eventPhotos: Photo[];
   eventNotes: string | undefined;

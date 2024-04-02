@@ -11,7 +11,7 @@ import {
   Users2,
 } from "lucide-react";
 import Link from "next/link";
-import { Type } from "@prisma/client";
+import { Event_type } from "@prisma/client";
 
 type Event = {
   id: string;
@@ -23,7 +23,7 @@ type Event = {
   coverUrl: string;
   coverWidth: number;
   coverHeight: number;
-  type: Type;
+  type: Event_type;
   password: string | null;
   publishedAt: Date | null;
 };

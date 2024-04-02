@@ -4,14 +4,14 @@ import Image from "next/image";
 import { Button } from "../../components/ui/button";
 import { Lock, SearchX } from "lucide-react";
 import Link from "next/link";
-import { Type } from "@prisma/client";
+import { Event_type } from "@prisma/client";
 
 type Event = {
   id: string;
   title: string;
   date: Date;
   pinned: boolean;
-  type: Type;
+  type: Event_type;
   coverName: string;
   coverUrl: string;
   coverWidth: number;

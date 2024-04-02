@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Cercle } from "@prisma/client";
+import { User_cercle } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
@@ -9,7 +9,7 @@ type UserRequest = {
   name: string;
   surname: string;
   check: boolean;
-  cercle?: Cercle;
+  cercle?: User_cercle;
   autreCercle?: string;
   cercleVille?: string;
   promo?: number;

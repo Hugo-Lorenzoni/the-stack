@@ -1,7 +1,7 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { getDraftedEvents } from "@/utils/getDraftedEvents";
-import { Type } from "@prisma/client";
+import { Event_type } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ type Data = {
   title: string;
   date: string;
   pinned: boolean;
-  type: Type;
+  type: Event_type;
 };
 
 export default async function AccountsApprovalPage() {
