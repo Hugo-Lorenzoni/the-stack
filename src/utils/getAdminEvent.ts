@@ -18,7 +18,7 @@ export const getAdminEvent = cache(async (id: string) => {
       coverWidth: true,
       coverHeight: true,
       password: true,
-      photos: { orderBy: { name: "asc" } },
+      photos: true,
       sponsors: true,
     },
   });
