@@ -571,7 +571,8 @@ export default function NewEventPage() {
                 <>
                   <Progress color="red" value={progress} />
                   <div>
-                    {((progress - 10) / 90) * currentTotal}/{currentTotal}
+                    {Math.round((progress - 10) / 90) * currentTotal}/
+                    {currentTotal}
                   </div>
                 </>
               ) : (
