@@ -1,5 +1,6 @@
 import minioClient from "@/lib/minio";
 import prisma from "@/lib/prisma";
+import { encodePath } from "@/utils/encodePath";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 
@@ -96,35 +97,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ event: event }, { status: 200 });
     }
 
-    const oldPath = `/${oldEvent.type}/${oldDateString}-${oldEvent.title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .replace(/[/.]/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
+    const oldPath = encodePath(oldEvent.type, oldDateString, oldEvent.title);
     // console.log(oldPath);
 
-    const newPath = `/${type}/${dateString}-${title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .replace(/[/.]/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
+    const newPath = encodePath(type, dateString, title);
     // console.log(newPath);
 
     const photos = await Promise.all(
       oldEvent.photos.map(async (photo) => {
         const oldUrl = photo.url;
 
-        //! Not working
         // Replace the old path with the new path
-        // const newUrl = oldUrl.replace(oldPath, newPath);
-        // const newUrl = photo.url.replace(oldPath, newPath);
-        const newUrl = photo.url
-          .replace(oldEvent.title, title)
-          .replace(oldDateString, dateString)
-          .replace(oldEvent.type, type);
-        console.log(newUrl);
+        const newUrl = oldUrl.replace(oldPath, newPath);
+        // console.log(newUrl);
 
         const oldObjectPath = `/cpv${oldUrl}`;
         const newObjectPath = newUrl.substring(1);

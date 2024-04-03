@@ -55,6 +55,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "No file" }, { status: 500 });
     }
 
+    const photoArray = await photoFile.arrayBuffer();
+    const photoDismensions = sizeOf(Buffer.from(photoArray));
+
     const photoURL = await saveFileS3(
       photoFile,
       currentEvent.title,
@@ -62,9 +65,6 @@ export async function POST(request: NextRequest) {
       currentEvent.type,
       false,
     );
-
-    const photoArray = await photoFile.arrayBuffer();
-    const photoDismensions = sizeOf(Buffer.from(photoArray));
 
     const photo = {
       name: photoFile.name,

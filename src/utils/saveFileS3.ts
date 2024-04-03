@@ -4,6 +4,8 @@ import mime from "mime";
 import { Event_type } from "@prisma/client";
 
 import { NextResponse } from "next/server";
+import { encodeString } from "@/utils/encodeString";
+import { encodePath } from "@/utils/encodePath";
 
 export const saveFileS3 = async (
   file: File,
@@ -16,21 +18,12 @@ export const saveFileS3 = async (
   const buffer = Buffer.from(fileArray);
 
   //!Formatting du nom du dossier
-  const s3UploadDir = `/${type}/${date}-${title
-    .replace(/\.[^/.]+$/, "")
-    .replace(/\s+/g, "-")
-    .replace(/[/.]/g, "-")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")}`;
+  const s3UploadDir = encodePath(type, date, title);
 
   //!Formatting du nom du fichier
-  const filename = `${cover ? "cover-" : ""}${file.name
-    .toLocaleLowerCase()
-    .replace(/\.[^/.]+$/, "")
-    .replace(/\s+/g, "-")
-    .replace(/[/.]/g, "-")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")}.${mime.getExtension(file.type)}`;
+  const filename = `${cover ? "cover-" : ""}${encodeString(
+    file.name,
+  )}.${mime.getExtension(file.type)}`;
 
   const s3FileName = `${s3UploadDir}/${filename}`;
   console.log(s3FileName);
