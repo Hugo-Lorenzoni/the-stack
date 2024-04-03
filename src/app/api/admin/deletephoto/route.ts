@@ -1,17 +1,18 @@
+import minioClient from "@/lib/minio";
 import prisma from "@/lib/prisma";
 import { Photo } from "@prisma/client";
-import { unlink } from "fs/promises";
 import { NextResponse } from "next/server";
-import { join } from "path";
 
 export async function DELETE(request: Request) {
   try {
     const body: Photo = await request.json();
 
-    const path = join(process.cwd(), "public", body.url);
-    // console.log(await stat(path));
-
-    await unlink(path);
+    await minioClient.removeObject("cpv", body.url, function (e: Error | null) {
+      if (e) {
+        return console.log(e);
+      }
+      console.log(`${body.name} deleted successfully`);
+    });
 
     const result = await prisma.photo.delete({
       where: {

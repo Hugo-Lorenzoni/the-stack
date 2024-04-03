@@ -1,8 +1,6 @@
+import minioClient from "@/lib/minio";
 import prisma from "@/lib/prisma";
-import { move } from "fs-extra";
-import { rename } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
 import * as z from "zod";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
@@ -55,6 +53,7 @@ export async function POST(request: NextRequest) {
         pinned: true,
         type: true,
         password: true,
+        coverUrl: true,
         photos: true,
       },
     });
@@ -70,14 +69,6 @@ export async function POST(request: NextRequest) {
     const oldDateString = new Date(oldEvent.date.toISOString().substring(0, 10))
       .toISOString()
       .substring(0, 10);
-    const oldPath = `/${oldEvent.type}/${oldDateString}-${oldEvent.title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
-    // console.log(oldPath);
-
-    const src = join(process.cwd(), "public", oldPath);
 
     const dateFormat = new Date(date);
     // console.log(dateFormat);
@@ -85,49 +76,18 @@ export async function POST(request: NextRequest) {
       .toISOString()
       .substring(0, 10);
     // console.log(dateString);
-    const newPath = `/${type}/${dateString}-${title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
-    // console.log(newPath);
 
-    const dest = join(process.cwd(), "public", newPath);
-    // console.log(src, dest);
-    if (type !== oldEvent.type) {
-      move(src, dest, (err) => {
-        if (err) {
-          return (
-            console.error(err),
-            NextResponse.json(
-              { error: "Failed to move the files" },
-              { status: 500 },
-            )
-          );
-        }
-        console.log(`${id} - ${title} - Move successful !`);
-      });
-    } else if (title !== oldEvent.title || dateString !== oldDateString) {
-      try {
-        await rename(src, dest);
-        console.log(`${id} - ${title} - Rename successful !`);
-      } catch (error) {
-        console.error(error);
-        return NextResponse.json(
-          { error: "Failed to rename the directory" },
-          { status: 500 },
-        );
-      }
-    } else {
+    if (
+      title === oldEvent.title &&
+      dateString === oldDateString &&
+      type === oldEvent.type
+    ) {
       const event = await prisma.event.update({
         where: {
           id: id,
         },
         data: {
-          title: title,
-          date: dateFormat,
           pinned: pinned,
-          type: type,
           password: type === "AUTRE" ? password : null,
           notes: notes,
         },
@@ -136,14 +96,97 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ event: event }, { status: 200 });
     }
 
-    // console.log(oldEvent.photos);
+    const oldPath = `/${oldEvent.type}/${oldDateString}-${oldEvent.title
+      .replace(/\.[^/.]+$/, "")
+      .replace(/\s+/g, "-")
+      .replace(/[/.]/g, "-")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")}`;
+    // console.log(oldPath);
 
-    const photos = oldEvent.photos.map((photo) => {
-      const url = photo.url.replace(oldPath, newPath);
-      const { createdAt, updatedAt, ...data } = photo;
-      return { ...data, url };
-    });
-    // console.log(photos);
+    const newPath = `/${type}/${dateString}-${title
+      .replace(/\.[^/.]+$/, "")
+      .replace(/\s+/g, "-")
+      .replace(/[/.]/g, "-")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")}`;
+    // console.log(newPath);
+
+    const photos = await Promise.all(
+      oldEvent.photos.map(async (photo) => {
+        const oldUrl = photo.url;
+
+        //! Not working
+        // Replace the old path with the new path
+        // const newUrl = oldUrl.replace(oldPath, newPath);
+        // const newUrl = photo.url.replace(oldPath, newPath);
+        const newUrl = photo.url
+          .replace(oldEvent.title, title)
+          .replace(oldDateString, dateString)
+          .replace(oldEvent.type, type);
+        console.log(newUrl);
+
+        const oldObjectPath = `/cpv${oldUrl}`;
+        const newObjectPath = newUrl.substring(1);
+
+        try {
+          await minioClient.copyObject("cpv", newObjectPath, oldObjectPath),
+            function (e: Error, data: { etag: string; lastModified: Date }) {
+              if (e) {
+                console.log(e);
+                throw e;
+              }
+            };
+        } catch (error) {
+          console.log(error);
+        }
+        return { ...photo, newUrl };
+      }),
+    );
+
+    const newCoverUrl = oldEvent.coverUrl.replace(oldPath, newPath);
+    const oldCoverObjectPath = `/cpv${oldEvent.coverUrl}`;
+    const newCoverObjectPath = newCoverUrl.substring(1);
+
+    try {
+      await minioClient.copyObject(
+        "cpv",
+        newCoverObjectPath,
+        oldCoverObjectPath,
+      ),
+        function (e: Error, data: { etag: string; lastModified: Date }) {
+          if (e) {
+            console.log(e);
+            throw e;
+          }
+        };
+    } catch (error) {
+      console.log(error);
+
+      return NextResponse.json(
+        { error: "Failed to move the photo" },
+        { status: 500 },
+      );
+    }
+
+    try {
+      const objectsList = oldEvent.photos.map((photo) => photo.url); // Extract the photo URLs from the event object
+      objectsList.push(oldEvent.coverUrl); // Add the cover URL to the list of objects to delete
+
+      minioClient.removeObjects("cpv", objectsList, function (e: Error | null) {
+        if (e) {
+          return console.log(e);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(
+        { error: "Failed to move the photo" },
+        { status: 500 },
+      );
+    }
+
+    console.log(photos);
 
     const data = await prisma.$transaction([
       prisma.event.update({
@@ -155,6 +198,7 @@ export async function POST(request: NextRequest) {
           date: dateFormat,
           pinned: pinned,
           type: type,
+          coverUrl: newCoverUrl,
           password: type === "AUTRE" ? password : null,
           notes: notes,
         },
@@ -165,7 +209,7 @@ export async function POST(request: NextRequest) {
             id: photo.id,
           },
           data: {
-            url: photo.url,
+            url: photo.newUrl,
           },
         }),
       ),

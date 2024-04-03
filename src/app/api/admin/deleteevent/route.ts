@@ -1,7 +1,6 @@
+import minioClient from "@/lib/minio";
 import prisma from "@/lib/prisma";
-import { rm } from "fs/promises";
 import { NextResponse } from "next/server";
-import { join } from "path";
 import { z } from "zod";
 
 const idSchema = z.string().min(1);
@@ -29,6 +28,10 @@ export async function POST(request: Request) {
         title: true,
         date: true,
         type: true,
+        coverUrl: true,
+        photos: {
+          select: { url: true },
+        },
       },
     });
     console.log(event);
@@ -39,23 +42,17 @@ export async function POST(request: Request) {
       );
     }
 
-    const dateString = new Date(event.date.toISOString().substring(0, 10))
-      .toISOString()
-      .substring(0, 10);
+    const objectsList = event.photos.map((photo) => photo.url); // Extract the photo URLs from the event object
+    objectsList.push(event.coverUrl); // Add the cover URL to the list of objects to delete
+    console.log(objectsList);
 
-    const folder = `/${event.type}/${dateString}-${event.title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
-    // console.log(folder);
-
-    const path = join(process.cwd(), "public", folder);
-    // console.log(path);
-
-    // console.log(await stat(path));
-
-    await rm(path, { recursive: true, force: true });
+    minioClient.removeObjects("cpv", objectsList, function (e: Error | null) {
+      if (e) {
+        return console.log(e);
+      }
+      console.log("Success");
+    });
+    console.log("Files deleted successfully");
 
     return new Response(JSON.stringify(event.title));
   } catch (error) {

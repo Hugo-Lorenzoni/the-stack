@@ -13,10 +13,8 @@ export default withAuth(
       const url = req.nextUrl.clone();
       url.pathname = `/api/images${req.nextUrl.pathname}`;
       // console.log(url.pathname);
-
       return NextResponse.rewrite(url);
     }
-
     // console.log(req.nextauth.token);
   },
   {
@@ -25,7 +23,6 @@ export default withAuth(
         // `/admin` requires admin role
         // console.log(token?.role);
         // console.log(req.nextUrl.pathname);
-
         if (
           req.nextUrl.pathname.startsWith("/admin") ||
           req.nextUrl.pathname.startsWith("/api/admin")
