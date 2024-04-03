@@ -18,7 +18,7 @@ export const getFPMsEvent = cache(async (id: string) => {
       coverUrl: true,
       coverWidth: true,
       coverHeight: true,
-      photos: { orderBy: { name: "asc" } },
+      photos: true,
       sponsors: true,
     },
   });

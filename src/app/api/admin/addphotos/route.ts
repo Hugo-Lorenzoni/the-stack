@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         id: true,
         title: true,
         date: true,
-        photos: { orderBy: { name: "asc" } },
+        photos: true,
       },
     });
     if (!event) {

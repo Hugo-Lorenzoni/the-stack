@@ -18,7 +18,10 @@ export default async function EventPage({
           </h1>
           <p className="mt-4 text-right italic">{event.photos.length} photos</p>
           {event.notes && <p className="mt-4">{event.notes}</p>}
-          <Gallery eventName={event.title} photos={event.photos} />
+          <Gallery
+            eventName={event.title}
+            photos={event.photos.sort((a, b) => a.name.localeCompare(b.name))}
+          />
         </>
       ) : (
         <></>

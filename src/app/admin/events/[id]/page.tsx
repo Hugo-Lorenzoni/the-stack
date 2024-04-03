@@ -27,7 +27,9 @@ export default async function EventPage({
             eventPinned={event.pinned}
             eventType={event.type}
             eventPassword={event.password || undefined}
-            eventPhotos={event.photos}
+            eventPhotos={event.photos.sort((a, b) =>
+              a.name.localeCompare(b.name),
+            )}
             eventNotes={event.notes || undefined}
           />
         </>
