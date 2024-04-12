@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   BadgeCheck,
   Lock,
@@ -81,13 +80,12 @@ export default function AdminSearchPagination(props: {
                     {event.pinned && <Pin className="rotate-45" />}
                   </div>
 
-                  <Image
+                  <img
                     className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110 "
                     src={event.coverUrl}
                     width={event.coverWidth}
                     height={event.coverHeight}
                     alt={event.coverName}
-                    quality={10}
                   />
                 </div>
               </Link>

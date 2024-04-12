@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const idSchema = z.string().min(1);
+const idSchema = z.string().uuid();
 
 export async function POST(request: Request) {
   try {

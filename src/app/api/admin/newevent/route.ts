@@ -25,6 +25,8 @@ const photoSchema = z.object({
 });
 const photosSchema = z.array(photoSchema).nonempty();
 
+//! OLD API for creating the event and uploading the photos to the server all at once
+//! This API is now deprecated and replaced by the new API in the event folder
 export async function POST(request: NextRequest) {
   try {
     const data = await request.formData();

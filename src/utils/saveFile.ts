@@ -6,6 +6,7 @@ import { Event_type } from "@prisma/client";
 
 import { NextResponse } from "next/server";
 
+//! OLD FUNCTION TO SAVE FILE ON SERVER (NOT USED ANYMORE) - KEEPING IT FOR REFERENCE
 export const saveFile = async (
   file: File,
   title: string,

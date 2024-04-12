@@ -47,6 +47,7 @@ model Photo {
   id        String   @id(map: "idx_32934_PRIMARY") @default(uuid()) @db.VarChar(191)
   name      String   @db.VarChar(191)
   url       String   @db.VarChar(191)
+  urlLow    String   @db.VarChar(191) @default("")
   width     Int
   height    Int
   eventId   String   @db.VarChar(191)

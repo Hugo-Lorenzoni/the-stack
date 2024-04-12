@@ -1,22 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import { z } from "zod";
+import minioClient from "@/lib/minio";
 
-const comiteFormSchema = z.object({
-  president: z.string(),
-  responsableVideo: z.string(),
-  responsablePhoto: z.string(),
-  delegueVideo: z.string(),
-  deleguePhoto: z.string(),
+const textFormSchema = z.object({
+  title: z.string(),
+  text: z.array(z.string()),
+  signature: z.string(),
+  date: z.string(),
 });
 
 export async function POST(request: NextRequest) {
   try {
-    const body: unknown = await request.json();
-    // console.log(body);
+    const body = await request.json();
 
-    const result = comiteFormSchema.safeParse(body);
+    const result = textFormSchema.safeParse(body);
     if (!result.success) {
       // handle error then return
       console.log(result.error);
@@ -28,17 +25,21 @@ export async function POST(request: NextRequest) {
       );
     } else {
       try {
-        const jsonDirectory = path.join(process.cwd(), "src/data");
-
         // Convert the object back to a JSON string
         const updatedData = JSON.stringify(result.data);
 
         // Write the updated data to the JSON file
-        await fs.writeFile(jsonDirectory + "/comite.json", updatedData);
+        const submitFileDataResult = await minioClient
+          .putObject("cpv", "JSON/text-intro.json", updatedData)
+          .catch((e: any) => {
+            console.log("Error while creating object from file data: ", e);
+            throw e;
+          });
+        console.log("File data submitted successfully: ", submitFileDataResult);
 
         // Send an error response
         return NextResponse.json(
-          { message: "Comité mis à jour !" },
+          { message: "Texte d'introduction mis à jour !" },
           { status: 200 },
         );
       } catch (error) {

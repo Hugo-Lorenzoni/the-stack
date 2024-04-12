@@ -1,7 +1,6 @@
 "use client";
 
 import { Photo, Sponsor } from "@prisma/client";
-import Image from "next/image";
 import { toast } from "sonner";
 
 import { useState } from "react";
@@ -127,13 +126,12 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
         <>
           {info && (
             <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden rounded-2xl">
-              <Image
+              <img
                 className="h-full w-full object-cover blur-[1px] brightness-75 "
                 src={info.coverUrl}
                 width={info.coverWidth}
                 height={info.coverHeight}
                 alt={info.coverName}
-                priority
               />
               <div className="absolute bottom-0 left-0 right-0 m-4  mx-auto h-fit max-w-xl ">
                 <div className="mx-4 rounded-xl bg-white px-8 py-6 shadow-2xl">

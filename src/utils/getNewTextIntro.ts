@@ -1,16 +1,22 @@
-import path from "path";
-import { promises as fs } from "fs";
+import minioClient from "@/lib/minio";
 
 export const getNewTextIntro = async () => {
-  const jsonDirectory = path.join(process.cwd(), "src/data");
-  //Read the json data file data.json
-  const fileContents = await fs.readFile(
-    jsonDirectory + "/text-intro.json",
-    "utf8",
-  );
-  // console.log(fileContents);
+  const selectOpts = {
+    expression: "SELECT * FROM s3object",
+    expressionType: "SQL",
+    inputSerialization: {
+      JSON: { Type: "LINES" },
+    },
+    outputSerialization: { JSON: {} },
+    requestProgress: { Enabled: true },
+  };
 
-  //Return the content of the data file in json format
-  const res = new Response(fileContents);
-  return res.json();
+  const response = await minioClient
+    .selectObjectContent("cpv", "JSON/text-intro.json", selectOpts)
+    .catch((err: Error) => {
+      console.log(err);
+    });
+  const comite = JSON.parse(response.records.toString());
+
+  return comite;
 };

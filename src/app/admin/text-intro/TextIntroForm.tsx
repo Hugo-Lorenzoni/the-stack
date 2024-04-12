@@ -66,7 +66,7 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
     console.log(values.text.split("\n"));
 
     try {
-      const response = await fetch("/api/admin/modificationtextintro", {
+      const response = await fetch("/api/admin/text-intro", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

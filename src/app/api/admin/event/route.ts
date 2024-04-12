@@ -6,41 +6,53 @@ import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 import { saveFileS3 } from "@/utils/saveFileS3";
 
-type Values = {
-  type: "BAPTISE" | "OUVERT" | "AUTRE";
-  title: string;
-  notes?: string | undefined;
-  date: string;
-  pinned: boolean;
-  password?: string | undefined;
-};
+const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
-const photoSchema = z.object({
-  name: z.string(),
-  url: z.string(),
-  width: z.number(),
-  height: z.number(),
+const valuesSchema = z.object({
+  title: z.string(),
+  date: z.string(),
+  type: z.enum(TypeList),
+  notes: z.string().optional(),
+  pinned: z.boolean(),
+  password: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.formData();
 
-    const values = data.get("values") as string;
-    if (!values) {
-      return NextResponse.json({ message: "No values" }, { status: 500 });
+    const values = data.get("values");
+    const file = data.get("cover");
+
+    if (
+      !values ||
+      typeof values !== "string" ||
+      !file ||
+      !(file instanceof File)
+    ) {
+      return NextResponse.json(
+        { message: "Invalid request: Missing values or file." },
+        { status: 500 },
+      );
     }
-    const { title, date, notes, pinned, type, password }: Values =
-      JSON.parse(values);
-    // console.log(date);
+
+    const result = valuesSchema.safeParse(JSON.parse(values));
+
+    if (!result.success) {
+      console.log(result.error);
+      return NextResponse.json(
+        { message: "Something went wrong !" },
+        { status: 500 },
+      );
+    }
+
+    const { title, date, notes, pinned, type, password } = result.data;
 
     const dateFormat = new Date(date);
-    // console.log(dateFormat);
 
     const dateString = new Date(dateFormat.setDate(dateFormat.getDate() + 1))
       .toISOString()
       .substring(0, 10);
-    // console.log(dateString);
 
     if (!password && type == "AUTRE") {
       return NextResponse.json(
@@ -48,8 +60,8 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const coverFile = data.get("cover") as File;
-    const coverArray = await coverFile.arrayBuffer();
+
+    const coverArray = await file.arrayBuffer();
     const coverDismensions = sizeOf(Buffer.from(coverArray));
     if (
       coverDismensions.height &&
@@ -61,20 +73,17 @@ export async function POST(request: NextRequest) {
         { status: 415 },
       );
     }
-    const coverUrl = await saveFileS3(coverFile, title, dateString, type, true);
 
-    const parsedCover = photoSchema.parse({
-      name: coverFile.name,
-      url: coverUrl,
-      width: coverDismensions.width,
-      height: coverDismensions.height,
-    });
-    if (!parsedCover) {
+    const cover = await saveFileS3(file, title, dateString, type, true);
+
+    if (!cover) {
+      console.log("Error while saving file to S3");
       return NextResponse.json(
-        { error: "Something went wrong." },
+        { message: "Error while uploading" },
         { status: 500 },
       );
     }
+
     const event = await prisma.event.create({
       data: {
         title: title,
@@ -83,10 +92,10 @@ export async function POST(request: NextRequest) {
         pinned: pinned,
         type: type,
         password: password,
-        coverName: parsedCover.name,
-        coverUrl: parsedCover.url,
-        coverWidth: parsedCover.width,
-        coverHeight: parsedCover.height,
+        coverName: cover.name,
+        coverUrl: cover.urlLow, //! urlLow
+        coverWidth: cover.width,
+        coverHeight: cover.height,
       },
     });
     //   console.log(event);

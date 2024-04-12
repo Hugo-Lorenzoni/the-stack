@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import { Button } from "../../components/ui/button";
 import { Lock, SearchX } from "lucide-react";
 import Link from "next/link";
@@ -72,13 +71,12 @@ export default function SearchPagination(props: {
                   {event.type == "AUTRE" && (
                     <Lock className="absolute right-4 top-4 z-10 text-white drop-shadow-eventtitle" />
                   )}
-                  <Image
+                  <img
                     className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110 "
                     src={event.coverUrl}
                     width={event.coverWidth}
                     height={event.coverHeight}
                     alt={event.coverName}
-                    quality={10}
                   />
                 </div>
               </Link>

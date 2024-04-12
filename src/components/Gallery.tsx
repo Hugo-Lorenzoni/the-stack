@@ -1,6 +1,5 @@
 "use client";
 import { Photo } from "@prisma/client";
-import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import {
@@ -71,7 +70,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
       <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {props.photos.map((photo, index) => {
           return (
-            <Image
+            <img
               key={index}
               className={`h-full w-full cursor-pointer rounded-md object-cover
                 ${
@@ -81,11 +80,11 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
                     ? ""
                     : "row-span-2 md:col-span-2"
                 }`}
-              src={photo.url}
+              src={photo.urlLow}
               width={photo.width}
               height={photo.height}
               alt={props.eventName}
-              quality={10}
+              loading="lazy"
               onClick={() => openModal(photo, index)}
             />
           );
@@ -117,14 +116,12 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
             </div>
           </div>
           {currentPhoto ? (
-            <Image
+            <img
               className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
-              src={currentPhoto.url}
+              src={currentPhoto.urlLow}
               width={currentPhoto.width}
               height={currentPhoto.height}
               alt={currentPhoto.name}
-              quality={10}
-              priority
             />
           ) : (
             ""

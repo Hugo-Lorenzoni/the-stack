@@ -12,8 +12,6 @@ import { toast } from "sonner";
 
 import { Photo, Event_type } from "@prisma/client";
 
-import Image from "next/image";
-
 import {
   ChevronLeftCircle,
   ChevronRightCircle,
@@ -307,13 +305,12 @@ export default function AdminGallery({
               photos={photos}
               setPhotos={setPhotos}
             />
-            <Image
+            <img
               className="h-full w-full object-cover"
-              src={photo.url}
+              src={photo.urlLow}
               width={photo.width}
               height={photo.height}
               alt={eventTitle}
-              quality={10}
               onClick={() => openLightbox(photo, index)}
             />
           </li>
@@ -346,14 +343,12 @@ export default function AdminGallery({
             </div>
           </div>
           {currentPhoto ? (
-            <Image
+            <img
               className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
-              src={currentPhoto.url}
+              src={currentPhoto.urlLow}
               width={currentPhoto.width}
               height={currentPhoto.height}
               alt={currentPhoto.name}
-              quality={10}
-              priority
             />
           ) : (
             ""

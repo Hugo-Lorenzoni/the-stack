@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil } from "lucide-react";
-import Image from "next/image";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -54,7 +53,7 @@ export const columns: ColumnDef<Sponsor>[] = [
       const sponsor = row.original;
 
       return (
-        <Image
+        <img
           className="h-16 w-fit object-contain"
           src={sponsor.logoUrl}
           width={sponsor.logoWidth}
