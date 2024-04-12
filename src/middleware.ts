@@ -2,14 +2,13 @@ import { withAuth } from "next-auth/middleware";
 
 export default withAuth(
   function middleware(req) {
-    // console.log(req.nextauth.token);
+    // console.log(req);
   },
   {
     callbacks: {
       authorized({ req, token }) {
-        // `/admin` requires admin role
-        // console.log(token?.role);
-        // console.log(req.nextUrl.pathname);
+        // console.log(req);
+        // console.log(token);
         if (
           req.nextUrl.pathname.startsWith("/admin") ||
           req.nextUrl.pathname.startsWith("/api/admin")
@@ -27,7 +26,6 @@ export default withAuth(
         // `/events/:path*` only requires the user to be logged in
         return !!token;
       },
-      //authorized: ({ req, token }) => token?.role === "admin",
     },
   },
 );
