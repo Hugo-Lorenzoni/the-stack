@@ -10,15 +10,12 @@ export default withAuth(
         // console.log(req);
         // console.log(token);
         if (
-          req.nextUrl.pathname.startsWith("/admin") ||
-          req.nextUrl.pathname.startsWith("/api/admin")
+          req.nextUrl.pathname.startsWith("/api/admin") ||
+          req.nextUrl.pathname.startsWith("/admin")
         ) {
           return token?.role === "ADMIN";
-        }
-        if (
+        } else if (
           req.nextUrl.pathname.startsWith("/fpmsevents") ||
-          req.nextUrl.pathname.startsWith("/api/fpmsevents") ||
-          req.nextUrl.pathname.startsWith("/BAPTISE") ||
           req.nextUrl.pathname.startsWith("/videos")
         ) {
           return token?.role === "BAPTISE" || token?.role === "ADMIN";
@@ -32,17 +29,12 @@ export default withAuth(
 
 export const config = {
   matcher: [
+    "/api/admin/:path*",
     "/admin/:path*",
     "/fpmsevents/:path*",
-    "/events/:path*",
-    "/api/admin/:path*",
-    "/api/fpmsevents/:path*",
-    "/OUVERT/:path*",
-    "/BAPTISE/:path*",
-    "/AUTRE/:path*",
-    "/SPONSORS/:path*",
-    "/search/:path*",
-    "/api/search/:path*",
     "/videos/:path*",
+    "/events/:path*",
+    "/api/search/:path*",
+    "/search/:path*",
   ],
 };
