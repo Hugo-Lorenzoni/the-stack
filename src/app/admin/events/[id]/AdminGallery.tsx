@@ -27,6 +27,7 @@ import AddPhotosInput from "./AddPhotosInput";
 import DeletePhotoButton from "./DeletePhotoButton";
 import DeleteEventButton from "./DeleteEventButton";
 import EditEventModal from "./EditEventModal";
+import Image from "next/image";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -305,13 +306,14 @@ export default function AdminGallery({
               photos={photos}
               setPhotos={setPhotos}
             />
-            <img
+            <Image
               className="h-full w-full object-cover"
               src={photo.urlLow}
               width={photo.width}
               height={photo.height}
               alt={eventTitle}
               onClick={() => openLightbox(photo, index)}
+              unoptimized
             />
           </li>
         ))}

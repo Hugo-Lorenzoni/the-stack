@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import NavLinks from "./NavLinks";
 import MobileNav from "./MobileNav";
+import logoCPV from "@public/cpv-logo.png";
 
 export default function Nav() {
   return (
@@ -12,7 +13,7 @@ export default function Nav() {
           className="flex items-center gap-2 text-4xl font-bold duration-150 hover:opacity-90"
         >
           <Image
-            src="/cpv-logo.png"
+            src={logoCPV}
             width={50}
             height={50}
             alt="CPV FPMs logo"

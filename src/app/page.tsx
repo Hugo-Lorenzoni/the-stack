@@ -1,6 +1,7 @@
 import { getTextIntro } from "@/utils/getTextIntro";
 import { Info } from "lucide-react";
 import Image from "next/image";
+import statueHoudain from "@public/statue-houdain.jpg";
 
 // export const revalidate = 60 * 60 * 24; // revalidate at most every day
 
@@ -19,9 +20,7 @@ export default async function Home() {
       <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden">
         <Image
           className="relative -z-10 h-full w-full object-cover"
-          src="/statue-houdain.jpg"
-          width={4000}
-          height={2667}
+          src={statueHoudain}
           alt="Statue de Houdain FPMs"
           quality={50}
           priority

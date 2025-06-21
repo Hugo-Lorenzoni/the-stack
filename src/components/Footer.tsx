@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Instagram } from "lucide-react";
 import { getComite } from "@/utils/getComite";
+import logoCPV from "@public/cpv-logo.png";
 
 // export const revalidate = 60 * 60 * 24; // revalidate at most every day
 
@@ -17,7 +18,7 @@ export default async function Footer() {
           className="bold mx-auto flex w-fit items-center gap-2 text-4xl font-semibold"
         >
           <Image
-            src="/cpv-logo.png"
+            src={logoCPV}
             width={50}
             height={50}
             alt="CPV FPMs logo"
