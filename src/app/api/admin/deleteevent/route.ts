@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { rm } from "fs/promises";
 import { NextResponse } from "next/server";
 import { join } from "path";
+import { env } from "process";
 import { z } from "zod";
 
 const idSchema = z.string().min(1);
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
       .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(folder);
 
-    const path = join(process.cwd(), "public", folder);
+    const path = join(process.cwd(), env.UPLOAD_FOLDER, folder);
     // console.log(path);
 
     // console.log(await stat(path));

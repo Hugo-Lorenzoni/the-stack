@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { cache } from "react";
 import getFolderSize from "get-folder-size";
+import { env } from "process";
 
 export const getInfos = cache(async () => {
   const countEventOuvert = await prisma.event.count({
@@ -27,9 +28,9 @@ export const getInfos = cache(async () => {
   const countPhoto = await prisma.photo.count();
   const countVideo = await prisma.video.count();
 
-  const myFolder = "public";
+  const folder = env.UPLOAD_FOLDER;
 
-  const size = await getFolderSize.loose(myFolder);
+  const size = await getFolderSize.loose(folder);
   const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
 
   const res = {

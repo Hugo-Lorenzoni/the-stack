@@ -17,7 +17,6 @@ module.exports = {
       env: {
         NODE_ENV: "production",
       },
-      // node_args: "--max-old-space-size=1024",
     },
   ],
 };

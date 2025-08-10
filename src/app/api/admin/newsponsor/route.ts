@@ -6,6 +6,7 @@ import { mkdir, stat, writeFile } from "fs/promises";
 import { join } from "path";
 import mime from "mime";
 import * as z from "zod";
+import { env } from "process";
 
 type Values = {
   name: string;
@@ -77,7 +78,7 @@ const saveFile = async (file: File, name: string) => {
     .replace(/[/.]/g, "-")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")}`;
-  const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+  const uploadDir = join(process.cwd(), env.UPLOAD_FOLDER, relativeUploadDir);
 
   try {
     await stat(uploadDir);

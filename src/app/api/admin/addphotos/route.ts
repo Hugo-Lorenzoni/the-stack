@@ -7,6 +7,7 @@ import { Type } from "@prisma/client";
 import { join } from "path";
 import mime from "mime";
 import * as z from "zod";
+import { env } from "process";
 
 const photoSchema = z.object({
   name: z.string(),
@@ -139,7 +140,7 @@ const saveFile = async (
     .replace(/[/.]/g, "-")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")}`;
-  const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+  const uploadDir = join(process.cwd(), env.UPLOAD_FOLDER, relativeUploadDir);
 
   try {
     await stat(uploadDir);

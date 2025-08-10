@@ -3,12 +3,13 @@ import { Photo } from "@prisma/client";
 import { unlink } from "fs/promises";
 import { NextResponse } from "next/server";
 import { join } from "path";
+import { env } from "process";
 
 export async function DELETE(request: Request) {
   try {
     const body: Photo = await request.json();
 
-    const path = join(process.cwd(), "public", body.url);
+    const path = join(process.cwd(), env.UPLOAD_FOLDER, body.url);
     // console.log(await stat(path));
 
     await unlink(path);

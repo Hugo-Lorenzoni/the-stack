@@ -3,6 +3,7 @@ import { move } from "fs-extra";
 import { rename } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
+import { env } from "process";
 import * as z from "zod";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
       .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(oldPath);
 
-    const src = join(process.cwd(), "public", oldPath);
+    const src = join(process.cwd(), env.UPLOAD_FOLDER, oldPath);
 
     const dateFormat = new Date(date);
     // console.log(dateFormat);
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
       .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(newPath);
 
-    const dest = join(process.cwd(), "public", newPath);
+    const dest = join(process.cwd(), env.UPLOAD_FOLDER, newPath);
     // console.log(src, dest);
     if (type !== oldEvent.type) {
       move(src, dest, (err) => {
