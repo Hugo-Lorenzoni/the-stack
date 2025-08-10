@@ -37,15 +37,11 @@ jobs:
           echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
           echo "UPLOAD_FOLDER=${{ secrets.UPLOAD_FOLDER }}" >> .env
 
-          cat .env
-
       - name: Deploy database
         run: docker compose -f docker-compose.test.yml up -d --force-recreate
 
       - name: Push changes to the db and generate Prisma client
-        run: |
-          echo ${DATABASE_URL}
-          npx prisma db push
+        run: npx prisma db push
 
       - name: Build project
         run: npm run build
