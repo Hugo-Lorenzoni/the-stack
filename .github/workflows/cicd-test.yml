@@ -13,19 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-
-      - name: Install PM2
-        run: npm install -g pm2
-
       - name: Install dependencies
         run: npm install
-
       - name: Get environment variables
         run: |
           touch .env
@@ -46,7 +35,7 @@ jobs:
       - name: Deploy database
         run: docker compose -f docker-compose.test.yml up -d --force-recreate
 
-      - name: Generate Prisma client
+      - name: Push changes to the db and generate Prisma client
         run: npx prisma db push
 
       - name: Build project
@@ -54,9 +43,6 @@ jobs:
 
       - name: Restart PM2
         run: pm2 restart ecosystem.config.js
-
-      - name: Make sure PM2 starts on boot
-        run: pm2 startup
 
       - name: Save PM2 process list
         run: pm2 save
