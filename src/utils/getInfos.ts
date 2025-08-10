@@ -30,7 +30,7 @@ export const getInfos = cache(async () => {
 
   const folder = env.UPLOAD_FOLDER;
 
-  const size = await getFolderSize.loose(folder);
+  const size = await getFolderSize.strict(folder);
   const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
 
   const res = {

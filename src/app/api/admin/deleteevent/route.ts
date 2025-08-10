@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(folder);
 
-    const path = join(process.cwd(), env.UPLOAD_FOLDER, folder);
+    const path = join(env.UPLOAD_FOLDER, folder);
     // console.log(path);
 
     // console.log(await stat(path));
