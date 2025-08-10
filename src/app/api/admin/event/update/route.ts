@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(oldPath);
 
-    const src = join(env.UPLOAD_FOLDER, oldPath);
+    const src = join(env.DATA_FOLDER, "photos", oldPath);
 
     const dateFormat = new Date(date);
     // console.log(dateFormat);
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       .replace(/[\u0300-\u036f]/g, "")}`;
     // console.log(newPath);
 
-    const dest = join(env.UPLOAD_FOLDER, newPath);
+    const dest = join(env.DATA_FOLDER, "photos", newPath);
     // console.log(src, dest);
     if (type !== oldEvent.type) {
       move(src, dest, (err) => {

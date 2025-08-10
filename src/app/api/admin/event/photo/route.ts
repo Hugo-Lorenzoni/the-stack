@@ -140,7 +140,7 @@ const saveFile = async (
     .replace(/[/.]/g, "-")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")}`;
-  const uploadDir = join(env.UPLOAD_FOLDER, relativeUploadDir);
+  const uploadDir = join(env.DATA_FOLDER, "photos", relativeUploadDir);
 
   try {
     await stat(uploadDir);

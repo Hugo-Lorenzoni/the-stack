@@ -1,8 +1,9 @@
 import path from "path";
 import { promises as fs } from "fs";
+import { env } from "process";
 
 export const getNewTextIntro = async () => {
-  const jsonDirectory = path.join(process.cwd(), "src/data");
+  const jsonDirectory = path.join(env.DATA_FOLDER, "json");
   //Read the json data file data.json
   const fileContents = await fs.readFile(
     jsonDirectory + "/text-intro.json",

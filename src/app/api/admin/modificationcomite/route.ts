@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
+import { env } from "process";
 
 const comiteFormSchema = z.object({
   president: z.string(),
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
       );
     } else {
       try {
-        const jsonDirectory = path.join(process.cwd(), "src/data");
+        const jsonDirectory = path.join(env.DATA_FOLDER, "json");
 
         // Convert the object back to a JSON string
         const updatedData = JSON.stringify(result.data);

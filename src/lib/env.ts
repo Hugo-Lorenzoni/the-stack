@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const EnvSchema = z.object({
-  UPLOAD_FOLDER: z.string().default("public"),
+  DATA_FOLDER: z.string().default("data"),
   MYSQL_ROOT_PASSWORD: z.string(),
   MYSQL_DATABASE: z.string(),
   MYSQL_USER: z.string(),

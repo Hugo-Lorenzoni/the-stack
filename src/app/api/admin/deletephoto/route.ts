@@ -9,7 +9,7 @@ export async function DELETE(request: Request) {
   try {
     const body: Photo = await request.json();
 
-    const path = join(env.UPLOAD_FOLDER, body.url);
+    const path = join(env.DATA_FOLDER, "photos", body.url);
     // console.log(await stat(path));
 
     await unlink(path);

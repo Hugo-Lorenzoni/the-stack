@@ -1,11 +1,12 @@
 import path from "path";
 import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
+import { env } from "process";
 
 export async function GET() {
   try {
     //Find the absolute path of the json directory
-    const jsonDirectory = path.join(process.cwd(), "src/data");
+    const jsonDirectory = path.join(env.DATA_FOLDER, "json");
     //Read the json data file data.json
     const fileContents = await fs.readFile(
       jsonDirectory + "/text-intro.json",

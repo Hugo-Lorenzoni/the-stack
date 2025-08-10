@@ -10,25 +10,6 @@ import { getComite } from "@/utils/getComite";
 
 export default async function Footer() {
   const comite = await getComite();
-  // console.log(comite);
-
-  // const jsonDirectory = path.join(process.cwd(), "src/data");
-  // //Read the json data file data.json
-  // const fileContents = await fs.readFile(
-  //   jsonDirectory + "/comite.json",
-  //   "utf8"
-  // );
-  // // console.log(fileContents);
-  // const comite = JSON.parse(fileContents);
-  // // console.log(comite);
-
-  // const comite = {
-  //   president: "Rodrigue Deghorain",
-  //   responsableVideo: "Marithé Hupin",
-  //   responsablePhoto: "Janelle Merlevede",
-  //   delegueVideo: "Sarah Gilles",
-  //   deleguePhoto: "Guillaume Chamart",
-  // };
 
   return (
     <footer className="relative z-10 bg-orange-600 py-4 text-white">

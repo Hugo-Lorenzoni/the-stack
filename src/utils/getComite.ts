@@ -2,6 +2,7 @@ import { cache } from "react";
 
 import path from "path";
 import { promises as fs } from "fs";
+import { env } from "process";
 
 export const getComite = cache(async () => {
   // const res = await fetch("http://localhost:3000/api/comite", {
@@ -15,7 +16,7 @@ export const getComite = cache(async () => {
   // }
   // return res.json();
 
-  const jsonDirectory = path.join(process.cwd(), "src/data");
+  const jsonDirectory = path.join(env.DATA_FOLDER, "json");
   //Read the json data file data.json
   const fileContents = await fs.readFile(
     jsonDirectory + "/comite.json",
