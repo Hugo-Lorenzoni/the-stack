@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Type } from "@prisma/client";
+import ImageComponent from "@/components/ImageComponent";
 
 type Event = {
   id: string;
@@ -81,13 +82,13 @@ export default function AdminSearchPagination(props: {
                     {event.pinned && <Pin className="rotate-45" />}
                   </div>
 
-                  <Image
+                  <ImageComponent
                     className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110 "
                     src={event.coverUrl}
                     width={event.coverWidth}
                     height={event.coverHeight}
                     alt={event.coverName}
-                    quality={10}
+                    quality="thumbnail"
                   />
                 </div>
               </Link>

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import useSwipe from "../hooks/useSwipe";
 import useKeypress from "react-use-keypress";
+import ImageComponent from "./ImageComponent";
 
 export default function Gallery(props: { eventName: string; photos: Photo[] }) {
   const [isOpen, setOpen] = useState(false);
@@ -71,8 +72,9 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
       <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {props.photos.map((photo, index) => {
           return (
-            <Image
+            <ImageComponent
               key={index}
+              index={index}
               className={`h-full w-full cursor-pointer rounded-md object-cover
                 ${
                   photo.width < photo.height
@@ -85,8 +87,8 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
               width={photo.width}
               height={photo.height}
               alt={props.eventName}
-              quality={10}
               onClick={() => openModal(photo, index)}
+              quality="thumbnail"
             />
           );
         })}
@@ -117,14 +119,13 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
             </div>
           </div>
           {currentPhoto ? (
-            <Image
+            <ImageComponent
               className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
               src={currentPhoto.url}
               width={currentPhoto.width}
               height={currentPhoto.height}
               alt={currentPhoto.name}
-              quality={10}
-              priority
+              quality="preview"
             />
           ) : (
             ""

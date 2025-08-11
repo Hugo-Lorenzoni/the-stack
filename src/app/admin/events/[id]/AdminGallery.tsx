@@ -29,6 +29,7 @@ import AddPhotosInput from "./AddPhotosInput";
 import DeletePhotoButton from "./DeletePhotoButton";
 import DeleteEventButton from "./DeleteEventButton";
 import EditEventModal from "./EditEventModal";
+import ImageComponent from "@/components/ImageComponent";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -307,13 +308,13 @@ export default function AdminGallery({
               photos={photos}
               setPhotos={setPhotos}
             />
-            <Image
+            <ImageComponent
               className="h-full w-full object-cover"
               src={photo.url}
               width={photo.width}
               height={photo.height}
               alt={eventTitle}
-              quality={10}
+              quality="thumbnail"
               onClick={() => openLightbox(photo, index)}
             />
           </li>
@@ -346,14 +347,13 @@ export default function AdminGallery({
             </div>
           </div>
           {currentPhoto ? (
-            <Image
+            <ImageComponent
               className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
               src={currentPhoto.url}
               width={currentPhoto.width}
               height={currentPhoto.height}
               alt={currentPhoto.name}
-              quality={10}
-              priority
+              quality="preview"
             />
           ) : (
             ""

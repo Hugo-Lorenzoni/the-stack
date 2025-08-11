@@ -5,6 +5,7 @@ import PaginationControls from "@/components/PaginationControls";
 import { getEventsCount } from "@/utils/getEventsCount";
 import { getEvents } from "@/utils/getEvents";
 import { Pin } from "lucide-react";
+import ImageComponent from "@/components/ImageComponent";
 
 export default async function AutresEventsPage({
   searchParams,
@@ -52,13 +53,13 @@ export default async function AutresEventsPage({
                     {event.pinned && (
                       <Pin className="absolute right-4 top-4 z-10 rotate-45 text-white drop-shadow-eventtitle" />
                     )}
-                    <Image
+                    <ImageComponent
                       className="relative -z-10 h-full w-full scale-105 object-cover duration-200 group-hover:scale-110"
                       src={event.coverUrl}
                       width={event.coverWidth}
                       height={event.coverHeight}
                       alt={event.coverName}
-                      quality={10}
+                      quality="thumbnail"
                     />
                   </div>
                 </Link>
