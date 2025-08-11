@@ -6,7 +6,7 @@ on:
       - test
 
 jobs:
-  prepare:
+  deploy-test:
     runs-on: [self-hosted, test]
     environment: TEST
 

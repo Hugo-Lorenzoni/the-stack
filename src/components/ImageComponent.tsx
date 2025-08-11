@@ -33,9 +33,7 @@ export default function ImageComponent({
       )} */}
       {!index ? (
         <Image
-          loader={({ src }) =>
-            `http://localhost:3000/api/image${src}?placeholder=true`
-          }
+          loader={({ src }) => `/api/image${src}?placeholder=true`}
           src={src}
           alt={alt}
           width={width}
@@ -45,9 +43,7 @@ export default function ImageComponent({
         />
       ) : index < 10 ? (
         <Image
-          loader={({ src }) =>
-            `http://localhost:3000/api/image${src}?placeholder=true`
-          }
+          loader={({ src }) => `/api/image${src}?placeholder=true`}
           src={src}
           alt={alt}
           width={width}
@@ -58,9 +54,7 @@ export default function ImageComponent({
       ) : (
         <Image
           loading="lazy"
-          loader={({ src }) =>
-            `http://localhost:3000/api/image${src}?placeholder=true`
-          }
+          loader={({ src }) => `/api/image${src}?placeholder=true`}
           src={src}
           alt={alt}
           width={width}
@@ -71,9 +65,7 @@ export default function ImageComponent({
       <Image
         loading="lazy"
         loader={({ src }) =>
-          `http://localhost:3000/api/image${src}${
-            quality ? `?quality=${quality}` : ""
-          }`
+          `/api/image${src}${quality ? `?quality=${quality}` : ""}`
         }
         src={src}
         alt={alt}
