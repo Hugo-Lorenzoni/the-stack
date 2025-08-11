@@ -37,6 +37,22 @@ jobs:
           echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
           echo "DATA_FOLDER=${{ secrets.DATA_FOLDER }}" >> .env
 
+      - name: Create folders
+        run: |
+          mkdir -p ${{ secrets.DATA_FOLDER }}/photos
+          mkdir -p ${{ secrets.DATA_FOLDER }}/json
+      - name: Copy public assets
+        run: cp -r ./public/* ${{ secrets.DATA_FOLDER }}/photos/
+
+      - name: Copy json files if they do not exist
+        run: |
+          if [ ! -f ${{ secrets.DATA_FOLDER }}/json/comite.json ]; then
+            cp ./src/data/comite.json ${{ secrets.DATA_FOLDER }}/json/
+          fi
+          if [ ! -f ${{ secrets.DATA_FOLDER }}/json/text-intro.json ]; then
+            cp ./src/data/text-intro.json ${{ secrets.DATA_FOLDER }}/json/
+          fi
+
       - name: Deploy database
         run: docker compose -f docker-compose.test.yml up -d --force-recreate
 

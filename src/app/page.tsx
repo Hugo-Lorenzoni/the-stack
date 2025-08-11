@@ -1,3 +1,4 @@
+import ImageComponent from "@/components/ImageComponent";
 import { getTextIntro } from "@/utils/getTextIntro";
 import { Info } from "lucide-react";
 import Image from "next/image";
@@ -17,14 +18,12 @@ export default async function Home() {
   return (
     <main>
       <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden">
-        <Image
+        <ImageComponent
           className="relative -z-10 h-full w-full object-cover"
           src="/statue-houdain.jpg"
           width={4000}
           height={2667}
           alt="Statue de Houdain FPMs"
-          quality={50}
-          priority
         />
         <h1 className="absolute bottom-12 left-[15%] right-[15%] z-0 pr-[15%] text-4xl font-bold text-white drop-shadow-title">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté
