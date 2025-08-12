@@ -6,15 +6,16 @@ import path from "path";
 import fs, { existsSync } from "fs";
 import { writeFile } from "fs/promises";
 
-// Define the allowed quality option keys
-type QualityKey = keyof typeof qualityOptions;
-
 // Array of quality options with their corresponding values
 const qualityOptions = {
   thumbnail: { width: 600, qualityValue: 60 },
   preview: { width: 1600, qualityValue: 70 },
   full: { width: 1920, qualityValue: 80 },
-};
+} as const;
+
+function isQualityKey(key: string): key is keyof typeof qualityOptions {
+  return key in qualityOptions;
+}
 
 export async function GET(
   request: NextRequest,
@@ -91,14 +92,17 @@ export async function GET(
     const originalPath = path.join(env.DATA_FOLDER, "photos", ...relativePath);
     let filePath = originalPath;
 
-    if (quality && quality in qualityOptions) {
-      filePath = path.format({
-        ...path.parse(filePath),
-        base: undefined, // so it uses name + ext instead of base
-        ext: "webp",
-      });
+    if (quality && isQualityKey(quality)) {
+      filePath = path
+        .format({
+          ...path.parse(filePath),
+          base: undefined, // so it uses name + ext instead of base
+          ext: "webp",
+        })
+        .replace(/\.(?=[^.]*$)/, `_${quality}.`);
+
       if (!existsSync(filePath)) {
-        const { qualityValue, width } = qualityOptions[quality as QualityKey];
+        const { qualityValue, width } = qualityOptions[quality];
 
         const originalStream = fs.createReadStream(originalPath);
         const originalBuffer = await streamToBuffer(originalStream);
