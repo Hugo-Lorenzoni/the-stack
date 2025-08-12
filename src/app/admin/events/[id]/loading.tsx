@@ -25,7 +25,7 @@ export default function EventLoadingPage() {
           <span className="pl-2">Edit</span>
         </Button>
         <Button className="bg-red-600 hover:bg-red-500" disabled>
-          Supprimer l'événement
+          Supprimer l&apos;événement
         </Button>
       </div>
       <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
