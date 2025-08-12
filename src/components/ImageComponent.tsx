@@ -38,7 +38,10 @@ export default function ImageComponent({
           alt={alt}
           width={width}
           height={height}
-          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          className={cn(
+            "absolute inset-0 -z-10 h-full w-full object-cover",
+            quality === "preview" && "object-contain",
+          )}
           priority
         />
       ) : index < 10 ? (
@@ -48,7 +51,10 @@ export default function ImageComponent({
           alt={alt}
           width={width}
           height={height}
-          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          className={cn(
+            "absolute inset-0 -z-10 h-full w-full object-cover",
+            quality === "preview" && "object-contain",
+          )}
           priority
         />
       ) : (
@@ -59,7 +65,10 @@ export default function ImageComponent({
           alt={alt}
           width={width}
           height={height}
-          className="absolute inset-0 -z-10 h-full w-full object-cover"
+          className={cn(
+            "absolute inset-0 -z-10 h-full w-full object-cover",
+            quality === "preview" && "object-contain",
+          )}
         />
       )}
       <Image
@@ -71,7 +80,10 @@ export default function ImageComponent({
         alt={alt}
         width={width}
         height={height}
-        className="h-full w-full object-cover transition-opacity duration-500 ease-in-out"
+        className={cn(
+          "h-full w-full object-cover",
+          quality === "preview" && "object-contain",
+        )}
         // className={cn(
         //   "h-full w-full object-cover transition-opacity duration-500 ease-in-out",
         //     isLoading ? "opacity-0" : "opacity-100",

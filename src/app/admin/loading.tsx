@@ -13,7 +13,6 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
-  // Or a custom loading skeleton component
   return (
     <section>
       <h2 className="mb-4">

@@ -570,9 +570,7 @@ export default function NewEventPage() {
               {isLoading || isRetryLoading ? (
                 <>
                   <Progress color="red" value={progress} />
-                  <div>
-                    {((progress - 10) / 90) * currentTotal}/{currentTotal}
-                  </div>
+                  <div>{progress < 100 ? progress.toFixed(0) : 100} %</div>
                 </>
               ) : (
                 ""
