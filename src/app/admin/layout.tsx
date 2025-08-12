@@ -75,7 +75,7 @@ export default function AdminLayout({
           >
             Gestion des comptes
           </Link>
-          <ResponsiveSeparator />
+          {/* <ResponsiveSeparator />
           <Link
             className={
               currentRoute === "/admin/new-sponsor" ? activeStyle : linkStyle
@@ -93,7 +93,7 @@ export default function AdminLayout({
             href="/admin/sponsors-management"
           >
             Gestion des sponsors
-          </Link>
+          </Link> */}
           <ResponsiveSeparator />
           <Link
             className={
