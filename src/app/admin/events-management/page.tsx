@@ -16,6 +16,7 @@ type Event = {
 };
 
 export default async function EventsManagementPage() {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long",

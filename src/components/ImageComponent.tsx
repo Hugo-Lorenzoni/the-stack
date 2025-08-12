@@ -10,7 +10,7 @@ interface ImageComponentProps extends HTMLAttributes<HTMLDivElement> {
   height: number;
   alt: string;
   index?: number;
-  quality?: "thumbnail" | "preview";
+  quality: "thumbnail" | "preview" | "full";
 }
 
 export default function ImageComponent({

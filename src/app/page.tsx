@@ -24,6 +24,7 @@ export default async function Home() {
           width={4000}
           height={2667}
           alt="Statue de Houdain FPMs"
+          quality="full"
         />
         <h1 className="absolute bottom-12 left-[15%] right-[15%] z-0 pr-[15%] text-4xl font-bold text-white drop-shadow-title">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté

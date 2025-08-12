@@ -1,16 +1,15 @@
-import { getInfos } from "@/utils/getInfos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BadgeCheck,
-  Image,
-  UserCircle,
-  Users2,
-  Lock,
-  Video,
-  DatabaseBackup,
-} from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  BadgeCheck,
+  DatabaseBackup,
+  Image,
+  Lock,
+  UserCircle,
+  Users2,
+  Video,
+} from "lucide-react";
 
 export default function Loading() {
   return (

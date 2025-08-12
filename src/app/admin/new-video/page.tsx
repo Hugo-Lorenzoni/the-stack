@@ -95,13 +95,13 @@ export default function NewVideoPage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-lg space-y-4"
+          className="mt-4 flex max-w-xl flex-1 flex-col gap-2"
         >
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="mt-4">
+              <FormItem>
                 <FormLabel>Nom du la vidéo</FormLabel>
                 <FormControl>
                   <Input
@@ -119,7 +119,7 @@ export default function NewVideoPage() {
             control={form.control}
             name="url"
             render={({ field }) => (
-              <FormItem className="mt-4">
+              <FormItem>
                 <FormLabel>Lien de la vidéo</FormLabel>
                 <FormControl>
                   <Input
@@ -138,14 +138,14 @@ export default function NewVideoPage() {
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Date de la vidéo</FormLabel>
+                <FormLabel className="py-[5px]">Date de la vidéo</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
+                          "w-[240px] text-left font-normal",
                           !field.value && "text-muted-foreground",
                         )}
                       >
@@ -190,7 +190,6 @@ export default function NewVideoPage() {
           <Button
             variant="outline"
             type="reset"
-            className="ml-4"
             onClick={() => {
               reset();
             }}

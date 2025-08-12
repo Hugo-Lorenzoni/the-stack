@@ -356,13 +356,13 @@ export default function NewEventPage() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="max-w-lg space-y-4"
+            className="mt-4 max-w-lg space-y-2"
           >
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem className="mt-4">
+                <FormItem>
                   <FormLabel>Nom de l&apos;événement</FormLabel>
                   <FormControl>
                     <Input
@@ -381,14 +381,16 @@ export default function NewEventPage() {
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date de l&apos;événement</FormLabel>
+                  <FormLabel className="py-[5px]">
+                    Date de l&apos;événement
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
+                            "w-[240px] text-left font-normal",
                             !field.value && "text-muted-foreground",
                           )}
                         >
@@ -479,13 +481,12 @@ export default function NewEventPage() {
               control={form.control}
               name="type"
               render={({ field }) => (
-                <FormItem className="space-y-3">
+                <FormItem className="space-y-2">
                   <FormLabel>Type</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={handleChange(field)}
                       defaultValue={field.value}
-                      className="flex flex-col space-y-1"
                     >
                       {TypeList.map((key) => {
                         return (

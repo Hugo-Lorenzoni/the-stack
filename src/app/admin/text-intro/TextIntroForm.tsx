@@ -92,7 +92,7 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mt-4 flex max-w-xl flex-1 flex-col space-y-2"
+        className="mt-4 flex max-w-xl flex-1 flex-col gap-2"
       >
         <FormField
           control={form.control}
@@ -111,12 +111,12 @@ export default function TextIntroForm({ textintro }: { textintro: TextIntro }) {
           control={form.control}
           name="text"
           render={({ field }) => (
-            <FormItem className="flex flex-1 flex-col">
-              <FormLabel className="my-1">Texte d&apos;introduction</FormLabel>
+            <FormItem className="flex-1">
+              <FormLabel>Texte d&apos;introduction</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Texte d'introduction ..."
-                  className="flex-1"
+                  className="h-full"
                   {...field}
                 />
               </FormControl>

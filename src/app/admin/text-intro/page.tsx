@@ -4,7 +4,7 @@ import { getNewTextIntro } from "@/utils/getNewTextIntro";
 
 export const dynamic = "force-dynamic";
 
-export default async function ComitePage() {
+export default async function TextIntroPage() {
   const textintro: TextIntro = await getNewTextIntro();
   return (
     <>
