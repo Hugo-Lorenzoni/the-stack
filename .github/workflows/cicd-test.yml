@@ -73,14 +73,14 @@ jobs:
       - name: Create folders for deployment
         run: |
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
-          mkdir -p $HOME/.next/${{ env.DEPLOYMENT_FOLDER }}
-          mkdir -p $HOME/public/${{ env.DEPLOYMENT_FOLDER }}
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
 
       - name: Copy build files to deployment folder
-        run: cp -r ./.next/* $HOME/.next/${{ env.DEPLOYMENT_FOLDER }}
+        run: cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
 
       - name: Copy public assets to deployment folder
-        run: cp -r ./public/* $HOME/public/${{ env.DEPLOYMENT_FOLDER }}
+        run: cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
 
       - name: Copy ecosystem config to deployment folder
         run: cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
