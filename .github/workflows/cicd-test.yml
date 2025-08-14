@@ -6,7 +6,7 @@ on:
       - test
 
 env:
-  DEPLOYEMENT_PATH: "~/deployment"
+  DEPLOYEMENT_FOLDER: "deployment"
 
 jobs:
   deploy-test:
@@ -71,14 +71,29 @@ jobs:
         run: npm run build
 
       - name: Create folder for deployment
-        run: mkdir -p ${{ env.DEPLOYEMENT_PATH }}
+        run: mkdir -p $HOME/${{ env.DEPLOYEMENT_FOLDER }}
 
       - name: Copy build files to deployment folder
-        run: cp -r ./* ${{ env.DEPLOYEMENT_PATH }}
+        run: cp -r ./* $HOME/${{ env.DEPLOYEMENT_FOLDER }}
+
+      - name: Test
+        run: pwd
+
+      - name: Test working directory
+        run: pwd
+        working-directory: ~/${{ env.DEPLOYEMENT_FOLDER }}
+
+      - name: Test working directory 2
+        run: pwd
+        working-directory: $HOME/${{ env.DEPLOYEMENT_FOLDER }}
+
+      - name: Test working directory 3
+        run: pwd
+        working-directory: /home/cpv/${{ env.DEPLOYEMENT_FOLDER }}
 
       - name: Restart PM2
         run: pm2 restart ecosystem.config.js
-        working-directory: ${{ env.DEPLOYEMENT_PATH }}
+        working-directory: ~/${{ env.DEPLOYEMENT_FOLDER }}
 
       - name: Save PM2 process list
         run: pm2 save
