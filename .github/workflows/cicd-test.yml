@@ -70,8 +70,11 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Create folder for deployment
-        run: mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
+      - name: Create folders for deployment
+        run: |
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
+          mkdir -p $HOME/.next/${{ env.DEPLOYMENT_FOLDER }}
+          mkdir -p $HOME/public/${{ env.DEPLOYMENT_FOLDER }}
 
       - name: Copy build files to deployment folder
         run: cp -r ./.next/* $HOME/.next/${{ env.DEPLOYMENT_FOLDER }}
