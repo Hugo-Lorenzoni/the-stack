@@ -337,7 +337,7 @@ export default function NewEventPage() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-4 max-w-lg space-y-2"
+            className="mt-4 max-w-lg space-y-4"
           >
             <FormField
               control={form.control}
@@ -407,7 +407,7 @@ export default function NewEventPage() {
                 <FormItem>
                   <FormLabel>
                     Notes{" "}
-                    <span className="italic text-neutral-400">
+                    <span className="text-neutral-400 italic">
                       (facultatives)
                     </span>
                   </FormLabel>
@@ -462,20 +462,17 @@ export default function NewEventPage() {
               control={form.control}
               name="type"
               render={({ field }) => (
-                <FormItem className="space-y-2">
+                <FormItem>
                   <FormLabel>Type</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      // onValueChange={handleChange(field)}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      className="flex flex-col gap-1.5"
                     >
                       {TypeList.map((key) => {
                         return (
-                          <FormItem
-                            key={key}
-                            className="flex items-center space-x-3 space-y-0"
-                          >
+                          <FormItem key={key} className="flex items-center">
                             <FormControl>
                               <RadioGroupItem value={key} />
                             </FormControl>
@@ -514,30 +511,30 @@ export default function NewEventPage() {
               <></>
             )}
             <PhotosInput errors={errors} register={register} />
-            <Button disabled={isLoading || !!failed.length} type="submit">
-              {isLoading ? (
-                <>
-                  <Loader2
-                    color="#ffffff"
-                    className="mr-2 h-4 w-4 animate-spin text-white"
-                  />
-                  Loading
-                </>
-              ) : (
-                "Submit"
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              type="reset"
-              className="ml-4"
-              onClick={() => {
-                reset(), setImage(null);
-              }}
-              disabled={isLoading || !!failed.length}
-            >
-              Reset
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button disabled={isLoading} type="submit">
+                {isLoading ? (
+                  <>
+                    <Loader2
+                      color="#ffffff"
+                      className="mr-2 size-4 animate-spin text-white"
+                    />
+                    Loading
+                  </>
+                ) : (
+                  "Submit"
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                type="reset"
+                onClick={() => {
+                  reset();
+                }}
+              >
+                Reset
+              </Button>
+            </div>
           </form>
         </Form>
       </section>

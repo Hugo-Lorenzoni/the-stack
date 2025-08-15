@@ -100,15 +100,19 @@ export function DataTable<TData, TValue>({
           <Select
             defaultValue=""
             value={(table.getColumn("role")?.getFilterValue() as string) ?? ""}
-            onValueChange={(event) =>
-              table.getColumn("role")?.setFilterValue(event)
-            }
+            onValueChange={(event) => {
+              if (event === "ALL") {
+                table.getColumn("role")?.setFilterValue("");
+                return;
+              }
+              table.getColumn("role")?.setFilterValue(event);
+            }}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="ALL">ALL</SelectItem>
               <SelectItem value="USER">USER</SelectItem>
               <SelectItem value="WAITING">WAITING</SelectItem>
               <SelectItem value="BAPTISE">BAPTISE</SelectItem>

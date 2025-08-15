@@ -71,8 +71,13 @@ export default function DeletePhotoButton({ photo, photos, setPhotos }: Props) {
   return (
     <AlertDialog onOpenChange={setModalOpen} open={isModalOpen}>
       <AlertDialogTrigger asChild>
-        <Button className="absolute right-4 top-4 z-10 hidden rounded-lg bg-red-600 p-2 pl-[7px] hover:bg-red-500 group-hover:flex">
-          <Plus className="rotate-45" />
+        <Button
+          variant="destructive"
+          className="absolute top-4 right-4 z-10 hidden items-center justify-center bg-red-600 p-2 duration-100 group-hover:flex hover:bg-red-500"
+        >
+          <div className="flex size-5 items-center justify-center">
+            <Plus className="flex rotate-45 items-center justify-center" />
+          </div>
           <span className="sr-only text-lg">Delete</span>
         </Button>
       </AlertDialogTrigger>

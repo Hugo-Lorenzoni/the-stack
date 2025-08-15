@@ -283,7 +283,7 @@ export default function AdminGallery({
           </Button>
         </form>
       </Form>
-      <div className="mt-4 flex justify-end gap-2">
+      <div className="mt-4 flex flex-wrap justify-end gap-2">
         <EditEventModal
           {...{
             eventId,
@@ -313,8 +313,8 @@ export default function AdminGallery({
               photo.width < photo.height
                 ? "row-span-2"
                 : index % 7
-                ? ""
-                : "row-span-2 md:col-span-2"
+                  ? ""
+                  : "row-span-2 md:col-span-2"
             }`}
             key={index}
           >
@@ -383,7 +383,7 @@ export default function AdminGallery({
             <span className="sr-only">Précédent</span>
           </Button>
           <Button
-            className="absolute bottom-4 right-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
+            className="absolute right-8 bottom-4 h-16 w-16 rounded-full p-2 sm:top-1/2"
             disabled={currentPhotoId == eventPhotos.length - 1}
             onClick={() => nextPhoto()}
           >

@@ -23,15 +23,15 @@ export default function MobileNav({ children }: { children: React.ReactNode }) {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger className="xl:hidden ">
+      <SheetTrigger className="xl:hidden">
         <Menu />
         <span className="sr-only">Menu</span>
       </SheetTrigger>
-      <SheetContent className="bg-orange-600 text-white xl:hidden">
+      <SheetContent className="border-orange-600 bg-orange-600 text-white xl:hidden">
         <SheetHeader>
           <SheetTitle className="mb-8 text-white">Menu</SheetTitle>
         </SheetHeader>
-        {children}
+        <div className="px-4">{children}</div>
       </SheetContent>
     </Sheet>
   );

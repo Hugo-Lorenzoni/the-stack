@@ -20,7 +20,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col lg:flex-row">
       <aside className="sticky top-20 z-10 flex lg:shadow-2xl">
-        <ul className="sticky top-20 flex h-max w-full snap-x snap-mandatory scroll-ml-0 scroll-px-2 flex-row gap-2 overflow-x-scroll whitespace-nowrap bg-white p-2 font-semibold lg:w-fit lg:min-w-fit lg:flex-col lg:overflow-auto lg:p-4 ">
+        <ul className="sticky top-20 flex h-max w-full snap-x snap-mandatory scroll-ml-0 scroll-px-2 flex-row gap-2 overflow-x-scroll bg-white p-2 font-semibold whitespace-nowrap lg:w-fit lg:min-w-fit lg:flex-col lg:overflow-auto lg:p-4">
           <Link
             className={currentRoute === "/admin" ? activeStyle : linkStyle}
             href="/admin"
@@ -34,7 +34,7 @@ export default function AdminLayout({
             }
             href="/admin/new-event"
           >
-            Créer un nouvel événement
+            Nouvel événement
           </Link>
           <Link
             className={
@@ -143,8 +143,10 @@ export default function AdminLayout({
 function ResponsiveSeparator() {
   return (
     <>
-      <Separator className="hidden lg:block" />
-      <Separator orientation="vertical" className="h-auto lg:hidden" />
+      <div>
+        <Separator className="hidden lg:block" />
+        <Separator orientation="vertical" className="lg:hidden" />
+      </div>
     </>
   );
 }

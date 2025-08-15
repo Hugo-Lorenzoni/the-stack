@@ -95,7 +95,7 @@ export default function NewVideoPage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-4 flex max-w-xl flex-1 flex-col gap-2"
+          className="mt-4 flex max-w-xl flex-1 flex-col gap-4"
         >
           <FormField
             control={form.control}
@@ -138,7 +138,7 @@ export default function NewVideoPage() {
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="py-[5px]">Date de la vidéo</FormLabel>
+                <FormLabel>Date de la vidéo</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -174,28 +174,30 @@ export default function NewVideoPage() {
               </FormItem>
             )}
           />
-          <Button disabled={isLoading} type="submit">
-            {isLoading ? (
-              <>
-                <Loader2
-                  color="#ffffff"
-                  className="mr-2 h-4 w-4 animate-spin text-white"
-                />
-                Loading
-              </>
-            ) : (
-              "Submit"
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            type="reset"
-            onClick={() => {
-              reset();
-            }}
-          >
-            Reset
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button disabled={isLoading} type="submit">
+              {isLoading ? (
+                <>
+                  <Loader2
+                    color="#ffffff"
+                    className="mr-2 size-4 animate-spin text-white"
+                  />
+                  Loading
+                </>
+              ) : (
+                "Submit"
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              type="reset"
+              onClick={() => {
+                reset();
+              }}
+            >
+              Reset
+            </Button>
+          </div>
         </form>
       </Form>
     </section>

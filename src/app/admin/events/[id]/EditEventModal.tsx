@@ -29,7 +29,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-import { Noop, RefCallBack, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -86,26 +86,9 @@ export default function EditEventModal({
   const [isLoading, setLoading] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const [type, setType] = useState<Type>(eventType);
-
   // Add 12 hours to the event date
   const initDate = new Date(eventDate);
   initDate.setHours(eventDate.getHours() + 12);
-
-  function handleChange(field: {
-    onChange: any;
-    onBlur?: Noop;
-    value: any;
-    name?: "type";
-    ref?: RefCallBack;
-  }) {
-    if (field.onChange) {
-      if (field.value != undefined) {
-        setType(field?.value);
-      }
-    }
-    return field.onChange;
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -114,7 +97,7 @@ export default function EditEventModal({
       date: eventDate,
       pinned: eventPinned,
       type: eventType,
-      password: eventPassword,
+      password: eventPassword || "",
       notes: eventNotes,
     },
   });
@@ -122,14 +105,17 @@ export default function EditEventModal({
   const {
     formState: { isDirty },
     reset,
+    watch,
   } = form;
 
-  useEffect(() => {
+  const typeField = watch("type");
+
+  (useEffect(() => {
     if (!isModalOpen && isDirty) {
       reset();
     }
   }),
-    [isModalOpen];
+    [isModalOpen]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -190,7 +176,7 @@ export default function EditEventModal({
                 control={form.control}
                 name="title"
                 render={({ field }) => (
-                  <FormItem className="mt-4">
+                  <FormItem>
                     <FormLabel>Nom de l&apos;événement</FormLabel>
                     <FormControl>
                       <Input
@@ -252,7 +238,7 @@ export default function EditEventModal({
                   <FormItem>
                     <FormLabel>
                       Notes{" "}
-                      <span className="italic text-neutral-400">
+                      <span className="text-neutral-400 italic">
                         (facultatives)
                       </span>
                     </FormLabel>
@@ -300,20 +286,17 @@ export default function EditEventModal({
                 control={form.control}
                 name="type"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
+                  <FormItem>
                     <FormLabel>Type</FormLabel>
                     <FormControl>
                       <RadioGroup
-                        onValueChange={handleChange(field)}
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="flex flex-col space-y-1"
+                        className="flex flex-col gap-1.5"
                       >
                         {TypeList.map((key) => {
                           return (
-                            <FormItem
-                              key={key}
-                              className="flex items-center space-x-3 space-y-0"
-                            >
+                            <FormItem key={key} className="flex items-center">
                               <FormControl>
                                 <RadioGroupItem value={key} />
                               </FormControl>
@@ -329,7 +312,7 @@ export default function EditEventModal({
                   </FormItem>
                 )}
               />
-              {type === "AUTRE" ? (
+              {typeField === "AUTRE" ? (
                 <FormField
                   control={form.control}
                   name="password"
