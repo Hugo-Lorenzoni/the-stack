@@ -84,7 +84,7 @@ export default function ChangeCoverModal({
       setCover(null);
     }
   }),
-    [isModalOpen];
+    [isModalOpen, isDirty, reset, setCover];
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -170,7 +170,7 @@ export default function ChangeCoverModal({
                 control={form.control}
                 name="id"
                 render={({ field }) => (
-                  <FormItem className="mt-4">
+                  <FormItem className="hidden">
                     <FormControl>
                       <Input
                         type="text"

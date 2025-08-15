@@ -61,7 +61,7 @@ export default function AdminSearchBar() {
           />
           <Button
             type="submit"
-            className="absolute bottom-0 right-0 rounded-lg bg-orange-700 px-4 py-2 text-sm font-medium text-white hover:bg-orange-800 focus:outline-none focus:ring-4 focus:ring-orange-300 "
+            className="absolute bottom-0 right-0 rounded-lg bg-orange-700 px-4 py-2 text-sm font-medium text-white hover:bg-orange-800 focus:outline-hidden focus:ring-4 focus:ring-orange-300 "
           >
             <Search className="h-4 w-4 text-white" />
           </Button>

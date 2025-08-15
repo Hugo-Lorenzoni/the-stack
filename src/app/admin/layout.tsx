@@ -18,7 +18,7 @@ export default function AdminLayout({
   const activeStyle = "bg-neutral-200" + " " + linkStyle;
 
   return (
-    <div className="flex min-h-[calc(100vh_-_10rem)] flex-col lg:flex-row">
+    <div className="flex min-h-[calc(100vh-10rem)] flex-col lg:flex-row">
       <aside className="sticky top-20 z-10 flex lg:shadow-2xl">
         <ul className="sticky top-20 flex h-max w-full snap-x snap-mandatory scroll-ml-0 scroll-px-2 flex-row gap-2 overflow-x-scroll whitespace-nowrap bg-white p-2 font-semibold lg:w-fit lg:min-w-fit lg:flex-col lg:overflow-auto lg:p-4 ">
           <Link

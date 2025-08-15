@@ -111,7 +111,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
   // console.log(event);
 
   return (
-    <main className="container my-8 min-h-[calc(100vh_-_10rem)]">
+    <main className="container my-8 min-h-[calc(100vh-10rem)]">
       {event ? (
         <>
           <h1 className="relative w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
@@ -124,7 +124,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
       ) : (
         <>
           {info && (
-            <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden rounded-2xl">
+            <section className="relative h-[calc(100vh-10rem)] overflow-hidden rounded-2xl">
               <ImageComponent
                 className="h-full w-full object-cover blur-[1px] brightness-75 "
                 src={info.coverUrl}

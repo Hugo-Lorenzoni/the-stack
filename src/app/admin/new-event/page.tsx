@@ -369,7 +369,7 @@ export default function NewEventPage() {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           className={cn(
                             "w-[240px] text-left font-normal",
                             !field.value && "text-muted-foreground",

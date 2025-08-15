@@ -21,7 +21,7 @@ export default function AddPhotosInput({
     <div className="mt-4">
       <Label>Ajouter des photos</Label>
       <Input
-        className="file:border-1 mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
+        className="file:border mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         multiple

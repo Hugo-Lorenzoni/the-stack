@@ -52,7 +52,7 @@ export function PhotosInput({
       <Label>Photos de l&apos;événement</Label>
       {/* {image && <img src={image} className="w-full rounded-xl mt-1" />} */}
       <Input
-        className="file:border-1 mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
+        className="file:border mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         multiple

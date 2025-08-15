@@ -98,7 +98,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           {...swipeHandlers}
           className="fixed inset-0 z-20 bg-black py-8 text-white"
         >
-          <div className="mx-auto mb-4 flex max-w-[calc(100%_-_4rem)] flex-col items-center justify-between gap-2 sm:flex-row">
+          <div className="mx-auto mb-4 flex max-w-[calc(100%-4rem)] flex-col items-center justify-between gap-2 sm:flex-row">
             {currentPhoto?.name}
             <div>
               {currentPhoto ? (
@@ -120,7 +120,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           </div>
           {currentPhoto ? (
             <ImageComponent
-              className="mx-auto h-[calc(100%_-_4rem)] w-[calc(100%_-_2rem)] object-contain sm:w-[calc(100%_-_8rem)]"
+              className="mx-auto h-[calc(100%-4rem)] w-[calc(100%-2rem)] object-contain sm:w-[calc(100%-8rem)]"
               src={currentPhoto.url}
               width={currentPhoto.width}
               height={currentPhoto.height}

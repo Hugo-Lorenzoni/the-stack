@@ -4,7 +4,7 @@ import { Pencil } from "lucide-react";
 
 export default function EventLoadingPage() {
   return (
-    <main className="mt-8 min-h-[calc(100vh_-_10rem)]">
+    <main className="mt-8 min-h-[calc(100vh-10rem)]">
       <h1 className="relative w-fit pb-1 text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
         <Skeleton className="h-8 w-48" />
       </h1>
@@ -32,7 +32,7 @@ export default function EventLoadingPage() {
         {[...Array(10)].map((x, i) => (
           <Skeleton
             key={i}
-            className={`aspect-[3/2] h-full w-full cursor-pointer rounded-md object-cover ${
+            className={`aspect-3/2 h-full w-full cursor-pointer rounded-md object-cover ${
               i % 7 ? "" : "col-span-2 row-span-2"
             }`}
           />

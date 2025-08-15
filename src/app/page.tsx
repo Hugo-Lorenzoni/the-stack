@@ -17,7 +17,7 @@ export default async function Home() {
 
   return (
     <main>
-      <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden">
+      <section className="relative h-[calc(100vh-10rem)] overflow-hidden">
         <ImageComponent
           className="relative -z-10 h-full w-full object-cover"
           src="/statue-houdain.jpg"

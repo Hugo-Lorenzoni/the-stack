@@ -7,14 +7,14 @@ export default function EventsManagementLoadingPage() {
         Dernières publications :
       </h3>
       <ul className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
-        <Skeleton className="aspect-[3/2] rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
+        <Skeleton className="aspect-3/2 rounded-2xl" />
       </ul>
     </>
   );

@@ -86,7 +86,7 @@ export default function ConnectionPage() {
   }
 
   return (
-    <main className="relative mx-auto my-8 min-h-[calc(100vh_-_10rem)] max-w-lg px-6">
+    <main className="relative mx-auto my-8 min-h-[calc(100vh-10rem)] max-w-lg px-6">
       <div className="absolute left-1/2 top-1/3 w-full -translate-x-1/2 -translate-y-1/2 px-3">
         <div className="rounded-2xl border-2 border-orange-600 p-6 shadow-xl">
           <h1 className="text-2xl font-semibold">Connexion</h1>

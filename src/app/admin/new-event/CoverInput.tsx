@@ -56,7 +56,7 @@ export function CoverInput({
       <Label>Photo de couverture</Label>
 
       <Input
-        className="file:border-1 mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
+        className="file:border mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         name={name}

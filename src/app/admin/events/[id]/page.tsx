@@ -10,7 +10,7 @@ export default async function EventPage(props: {
   // console.log(event);
 
   return (
-    <main className="mt-8 min-h-[calc(100vh_-_10rem)]">
+    <main className="mt-8 min-h-[calc(100vh-10rem)]">
       {event ? (
         <>
           <h1 className="relative w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">

@@ -172,7 +172,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="mx-auto my-8 min-h-[calc(100vh_-_10rem)] max-w-md px-6">
+    <main className="mx-auto my-8 min-h-[calc(100vh-10rem)] max-w-md px-6">
       <h1 className="text-2xl font-semibold">Création de compte</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -286,7 +286,7 @@ export default function RegisterPage() {
             control={form.control}
             name="check"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
