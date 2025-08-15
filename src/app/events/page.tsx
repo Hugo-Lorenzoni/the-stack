@@ -7,11 +7,10 @@ import { getEvents } from "@/utils/getEvents";
 import { Pin } from "lucide-react";
 import ImageComponent from "@/components/ImageComponent";
 
-export default async function EventsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
+export default async function EventsPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const searchParams = await props.searchParams;
   const page = searchParams["page"] ?? "1";
   const eventPerPage = 12;
 

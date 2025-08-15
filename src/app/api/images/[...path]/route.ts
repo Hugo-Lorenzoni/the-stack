@@ -4,8 +4,9 @@ import { env } from "process";
 
 export async function GET(
   request: Request,
-  { params }: { params: { path: string[] } },
+  props: { params: Promise<{ path: string[] }> },
 ) {
+  const params = await props.params;
   const filePath = path.join(
     env.DATA_FOLDER,
     "photos",

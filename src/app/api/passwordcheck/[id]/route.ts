@@ -6,8 +6,9 @@ import { encrypt } from "@/utils/encryption";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const params = await props.params;
   try {
     const id = params.id;
     if (!id) {
@@ -38,7 +39,7 @@ export async function POST(
         );
       }
       const secret = encrypt(id);
-      cookies().set(id, secret.toString(), {
+      (await cookies()).set(id, secret.toString(), {
         secure: true,
         sameSite: "lax",
         maxAge: 60 * 60 * 24 * 30, //30j

@@ -4,7 +4,7 @@ import { cache } from "react";
 export const getSearchedEvents = cache(async (search: string) => {
   try {
     // console.log(headers());
-    const headersList = headers();
+    const headersList = await headers();
     const cookie = headersList.get("cookie");
     if (!cookie) {
       return;

@@ -4,12 +4,11 @@ import { getInfoAutreEvent } from "@/utils/getInfoAutreEvent";
 import { decrypt } from "@/utils/encryption";
 import { cookies } from "next/headers";
 
-export default async function AutreEventPage({
-  params,
-}: {
-  params: { id: string };
+export default async function AutreEventPage(props: {
+  params: Promise<{ id: string }>;
 }) {
-  const cookieStore = cookies();
+  const params = await props.params;
+  const cookieStore = await cookies();
   const cookie = cookieStore.get(params.id);
   // console.log(cookie);
 

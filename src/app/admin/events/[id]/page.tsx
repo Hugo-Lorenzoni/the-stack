@@ -2,11 +2,10 @@ import AdminGallery from "@/app/admin/events/[id]/AdminGallery";
 import Password from "@/app/admin/events/[id]/Password";
 import { getAdminEvent } from "@/utils/getAdminEvent";
 
-export default async function EventPage({
-  params,
-}: {
-  params: { id: string };
+export default async function EventPage(props: {
+  params: Promise<{ id: string }>;
 }) {
+  const params = await props.params;
   const event = await getAdminEvent(params.id);
   // console.log(event);
 

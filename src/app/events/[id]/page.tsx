@@ -1,11 +1,10 @@
 import { getEvent } from "@/utils/getEvent";
 import Gallery from "@/components/Gallery";
 
-export default async function EventPage({
-  params,
-}: {
-  params: { id: string };
+export default async function EventPage(props: {
+  params: Promise<{ id: string }>;
 }) {
+  const params = await props.params;
   const event = await getEvent(params.id);
   // console.log(event);
 
