@@ -130,6 +130,16 @@ export default function AdminLayout({
           >
             Texte d&apos;introduction
           </Link>
+          <Link
+            className={
+              currentRoute === "/admin/homepage-picture"
+                ? activeStyle
+                : linkStyle
+            }
+            href="/admin/homepage-picture"
+          >
+            Photo de la page d&apos;accueil
+          </Link>
         </ul>
       </aside>
       <main className="my-8 flex grow flex-col overflow-x-auto px-4 md:px-14">

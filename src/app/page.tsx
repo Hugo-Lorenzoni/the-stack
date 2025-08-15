@@ -20,7 +20,7 @@ export default async function Home() {
       <section className="relative h-[calc(100vh_-_10rem)] overflow-hidden">
         <ImageComponent
           className="relative -z-10 h-full w-full object-cover"
-          src="/statue-houdain.jpg"
+          src="/homepage.jpg"
           width={4000}
           height={2667}
           alt="Statue de Houdain FPMs"
