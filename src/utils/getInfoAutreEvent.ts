@@ -17,5 +17,9 @@ export const getInfoAutreEvent = cache(async (id: string) => {
       coverHeight: true,
     },
   });
+  // Add 12 hours to the event's date
+  if (res) {
+    res.date = new Date(res.date.getTime() + 12 * 60 * 60 * 1000);
+  }
   return res;
 });

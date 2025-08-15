@@ -14,5 +14,9 @@ export const getDraftedEvents = async () => {
     },
     orderBy: [{ date: "asc" }],
   });
+  // Add 12 hours to each event's date
+  res.forEach((event) => {
+    event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
+  });
   return res;
 };

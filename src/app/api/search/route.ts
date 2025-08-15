@@ -46,6 +46,10 @@ export async function GET(request: Request) {
         { status: 500 },
       );
     }
+    // Add 12 hours to each event's date
+    results.forEach((event) => {
+      event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
+    });
     // console.log(results);
     return new Response(JSON.stringify(results));
   } else {
@@ -87,6 +91,10 @@ export async function GET(request: Request) {
         { status: 500 },
       );
     }
+    // Add 12 hours to each event's date
+    results.forEach((event) => {
+      event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
+    });
     // console.log(results);
     return new Response(JSON.stringify(results));
   }
