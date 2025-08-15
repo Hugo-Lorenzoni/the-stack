@@ -8,9 +8,9 @@ export default function EventLoadingPage() {
       <h1 className="relative w-fit pb-1 text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
         <Skeleton className="h-8 w-48" />
       </h1>
-      <p className="mt-4 w-full">
+      <div className="mt-4 w-full">
         <Skeleton className="ml-auto h-6 w-20" />
-      </p>
+      </div>
       <div className="mt-4 max-w-lg space-y-2">
         <div className="py-0.5 text-sm">Ajouter des photos</div>
         <Skeleton className="h-11 border border-input " />
