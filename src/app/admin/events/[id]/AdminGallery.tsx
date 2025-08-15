@@ -6,13 +6,11 @@ import { Form } from "@/components/ui/form";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { toast } from "sonner";
 
 import { Photo, Type } from "@prisma/client";
-
-import Image from "next/image";
 
 import {
   ChevronLeftCircle,
@@ -23,7 +21,6 @@ import {
 } from "lucide-react";
 
 import useSwipe from "@/hooks/useSwipe";
-import useKeypress from "react-use-keypress";
 
 import AddPhotosInput from "./AddPhotosInput";
 import DeletePhotoButton from "./DeletePhotoButton";
@@ -147,18 +144,27 @@ export default function AdminGallery({
     },
   });
 
-  useKeypress(["ArrowLeft", "ArrowRight", "Escape"], (e: KeyboardEvent) => {
-    if (e.key == "Escape") {
-      closeLightbox();
-    } else if (
-      e.key == "ArrowRight" &&
-      currentPhotoId != eventPhotos.length - 1
-    ) {
-      nextPhoto();
-    } else if (e.key == "ArrowLeft" && currentPhotoId != 0) {
-      prevPhoto();
+  const totalPhotos = eventPhotos.length;
+
+  useEffect(() => {
+    function handleKeyPress(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        closeLightbox();
+      } else if (e.key === "ArrowRight" && currentPhotoId !== totalPhotos - 1) {
+        nextPhoto();
+      } else if (e.key === "ArrowLeft" && currentPhotoId !== 0) {
+        prevPhoto();
+      }
     }
-  });
+
+    // Add event listener
+    document.addEventListener("keydown", handleKeyPress);
+
+    // Cleanup function to remove event listener
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [closeModal, nextPhoto, prevPhoto, currentPhotoId, totalPhotos]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

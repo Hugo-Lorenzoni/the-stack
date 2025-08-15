@@ -1,17 +1,15 @@
 "use client";
 import { Photo } from "@prisma/client";
-import Image from "next/image";
-import { useState } from "react";
-import { Button } from "./ui/button";
 import {
   ChevronLeftCircle,
   ChevronRightCircle,
   Download,
   XCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import useSwipe from "../hooks/useSwipe";
-import useKeypress from "react-use-keypress";
 import ImageComponent from "./ImageComponent";
+import { Button } from "./ui/button";
 
 export default function Gallery(props: { eventName: string; photos: Photo[] }) {
   const [isOpen, setOpen] = useState(false);
@@ -54,18 +52,27 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
     },
   });
 
-  useKeypress(["ArrowLeft", "ArrowRight", "Escape"], (e: KeyboardEvent) => {
-    if (e.key == "Escape") {
-      closeModal();
-    } else if (
-      e.key == "ArrowRight" &&
-      currentPhotoId != props.photos.length - 1
-    ) {
-      nextPhoto();
-    } else if (e.key == "ArrowLeft" && currentPhotoId != 0) {
-      prevPhoto();
+  const totalPhotos = props.photos.length;
+
+  useEffect(() => {
+    function handleKeyPress(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        closeModal();
+      } else if (e.key === "ArrowRight" && currentPhotoId !== totalPhotos - 1) {
+        nextPhoto();
+      } else if (e.key === "ArrowLeft" && currentPhotoId !== 0) {
+        prevPhoto();
+      }
     }
-  });
+
+    // Add event listener
+    document.addEventListener("keydown", handleKeyPress);
+
+    // Cleanup function to remove event listener
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [closeModal, nextPhoto, prevPhoto, currentPhotoId, totalPhotos]);
 
   return (
     <>
@@ -75,14 +82,13 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
             <ImageComponent
               key={index}
               index={index}
-              className={`h-full w-full cursor-pointer rounded-md object-cover
-                ${
-                  photo.width < photo.height
-                    ? "row-span-2"
-                    : index % 7
+              className={`h-full w-full cursor-pointer rounded-md object-cover ${
+                photo.width < photo.height
+                  ? "row-span-2"
+                  : index % 7
                     ? ""
                     : "row-span-2 md:col-span-2"
-                }`}
+              }`}
               src={photo.url}
               width={photo.width}
               height={photo.height}
@@ -132,19 +138,21 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
           )}
 
           <Button
-            className="absolute bottom-4 left-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
+            className="absolute bottom-4 left-8 size-16 rounded-full sm:top-1/2"
             disabled={currentPhotoId ? false : true}
             onClick={() => prevPhoto()}
           >
-            <ChevronLeftCircle className="h-16 w-16" />{" "}
+            {/* <div className="flex size-12 items-center justify-center"> */}
+            <ChevronLeftCircle className="size-12" />
+            {/* </div> */}
             <span className="sr-only">Précédent</span>
           </Button>
           <Button
-            className="absolute bottom-4 right-8 h-16 w-16 rounded-full p-2 sm:top-1/2"
+            className="absolute right-8 bottom-4 size-16 rounded-full sm:top-1/2"
             disabled={currentPhotoId == props.photos.length - 1}
             onClick={() => nextPhoto()}
           >
-            <ChevronRightCircle className="h-16 w-16" />
+            <ChevronRightCircle className="size-12" />
             <span className="sr-only">Suivant</span>
           </Button>
         </section>
