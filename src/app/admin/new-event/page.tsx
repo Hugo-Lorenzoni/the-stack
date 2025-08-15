@@ -123,8 +123,6 @@ const formSchema = z
   });
 
 export default function NewEventPage() {
-  const [type, setType] = useState<Type>("OUVERT");
-
   const [isLoading, setLoading] = useState<boolean>(false);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -134,24 +132,7 @@ export default function NewEventPage() {
   const [event, setEvent] = useState<Event>();
   const [isRetryLoading, setRetryLoading] = useState<boolean>(false);
 
-  const [currentTotal, setCurrentTotal] = useState<number>(0);
-
   const [progress, setProgress] = useState(0);
-
-  function handleChange(field: {
-    onChange: any;
-    onBlur?: Noop;
-    value: any;
-    name?: "type";
-    ref?: RefCallBack;
-  }) {
-    if (field.onChange) {
-      if (field.value != undefined) {
-        setType(field?.value);
-      }
-    }
-    return field.onChange;
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -168,7 +149,9 @@ export default function NewEventPage() {
     reset,
     resetField,
     setError,
+    watch,
   } = form;
+  const autreType = watch("type");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -178,7 +161,6 @@ export default function NewEventPage() {
     console.log(values);
     const { cover, photos, ...data } = values;
     console.log(values.photos.length);
-    setCurrentTotal(values.photos.length);
     const eventData = new FormData();
 
     eventData.append("cover", cover[0]);
@@ -290,7 +272,6 @@ export default function NewEventPage() {
     e.preventDefault();
 
     setRetryLoading(true);
-    setCurrentTotal(failed.length);
 
     const files = failed.map(async (photo) => {
       const photoData = new FormData();
@@ -485,7 +466,8 @@ export default function NewEventPage() {
                   <FormLabel>Type</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={handleChange(field)}
+                      // onValueChange={handleChange(field)}
+                      onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       {TypeList.map((key) => {
@@ -509,7 +491,7 @@ export default function NewEventPage() {
                 </FormItem>
               )}
             />
-            {type === "AUTRE" ? (
+            {autreType === "AUTRE" ? (
               <FormField
                 control={form.control}
                 name="password"
