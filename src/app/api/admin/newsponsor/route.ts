@@ -1,12 +1,12 @@
 import sizeOf from "image-size";
 
+import { getFileName, getFormattedString } from "@/lib/path";
 import prisma from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
 import { mkdir, stat, writeFile } from "fs/promises";
+import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
-import mime from "mime";
-import * as z from "zod";
 import { env } from "process";
+import * as z from "zod";
 
 type Values = {
   name: string;
@@ -69,15 +69,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Specific version of saveFile for sponsors
 const saveFile = async (file: File, name: string) => {
   const fileArray = await file.arrayBuffer();
   const buffer = Buffer.from(fileArray);
-  const relativeUploadDir = `/SPONSORS/${name
-    .replace(/\.[^/.]+$/, "")
-    .replace(/\s+/g, "-")
-    .replace(/[/.]/g, "-")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")}`;
+  const relativeUploadDir = `/SPONSORS/${getFormattedString(name)}`;
   const uploadDir = join(env.DATA_FOLDER, "photos", relativeUploadDir);
 
   try {
@@ -97,13 +93,7 @@ const saveFile = async (file: File, name: string) => {
     }
   }
   try {
-    const filename = `${file.name
-      .toLocaleLowerCase()
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .replace(/[/.]/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}.${mime.getExtension(file.type)}`;
+    const filename = getFileName(file, false);
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {

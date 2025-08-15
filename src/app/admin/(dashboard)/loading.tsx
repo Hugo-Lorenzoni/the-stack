@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   BadgeCheck,
   DatabaseBackup,
-  Image,
+  Image as Picture,
   Lock,
   UserCircle,
   Users2,
@@ -23,7 +23,7 @@ export default function Loading() {
           <CardHeader>
             <CardTitle className="flex justify-between gap-2">
               Photos
-              <Image strokeWidth={2.25} />
+              <Picture strokeWidth={2.25} />
             </CardTitle>
           </CardHeader>
           <CardContent>

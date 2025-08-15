@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -43,6 +43,7 @@ export default function DeleteEventButton({ eventId }: Props) {
           description: `${name} a été supprimé !`,
         });
         router.push("/admin/events-management");
+        router.refresh();
       } else {
         toast.error(response.status.toString(), {
           description: response.statusText,
@@ -63,7 +64,7 @@ export default function DeleteEventButton({ eventId }: Props) {
     >
       <AlertDialogTrigger asChild>
         <Button className="bg-red-600 hover:bg-red-500">
-          Supprimer l&apos;événement
+          <Trash className="mr-2 h-4 w-4" /> Supprimer l&apos;événement
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

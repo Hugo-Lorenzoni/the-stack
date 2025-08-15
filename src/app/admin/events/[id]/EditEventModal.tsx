@@ -88,7 +88,9 @@ export default function EditEventModal({
 
   const [type, setType] = useState<Type>(eventType);
 
-  const initDate = eventDate.setHours(eventDate.getHours() - 1);
+  // Add 12 hours to the event date
+  const initDate = new Date(eventDate);
+  initDate.setHours(eventDate.getHours() + 12);
 
   function handleChange(field: {
     onChange: any;
@@ -109,7 +111,7 @@ export default function EditEventModal({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: eventTitle,
-      date: new Date(initDate),
+      date: eventDate,
       pinned: eventPinned,
       type: eventType,
       password: eventPassword,
@@ -175,7 +177,7 @@ export default function EditEventModal({
             <span className="pl-2">Edit</span>
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit event</DialogTitle>
           </DialogHeader>

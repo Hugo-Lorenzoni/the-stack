@@ -29,6 +29,10 @@ export default async function EventPage({
             eventPassword={event.password || undefined}
             eventPhotos={event.photos}
             eventNotes={event.notes || undefined}
+            eventCoverUrl={event.coverUrl}
+            eventCoverName={event.coverName}
+            eventCoverWidth={event.coverWidth}
+            eventCoverHeight={event.coverHeight}
           />
         </>
       ) : (

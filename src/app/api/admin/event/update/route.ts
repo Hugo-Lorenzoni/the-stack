@@ -1,8 +1,10 @@
+import { getDirectoryPath } from "@/lib/path";
 import prisma from "@/lib/prisma";
+import { getNearestMidnight } from "@/lib/time";
 import { move } from "fs-extra";
 import { rename } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import { join } from "path";
+import { basename, join } from "path";
 import { env } from "process";
 import * as z from "zod";
 
@@ -18,9 +20,9 @@ const valuesSchema = z
     password: z.string().optional(),
     notes: z.string().max(750).optional(),
   })
-  .refine((data) => data.type != "AUTRE" || data.password, {
+  .refine((data) => data.type !== "AUTRE" || data.password, {
     message: "Un mot de passe est requis pour les événement de type AUTRE",
-    path: ["password"], // path of error
+    path: ["password"],
   });
 
 export async function POST(request: NextRequest) {
@@ -31,7 +33,6 @@ export async function POST(request: NextRequest) {
     const result = valuesSchema.safeParse(body);
 
     if (!result.success) {
-      // handle error then return
       console.log(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
@@ -40,13 +41,6 @@ export async function POST(request: NextRequest) {
     }
     // console.log(result.data);
     const { id, title, date, pinned, type, password, notes } = result.data;
-    // console.log({ id, title, date, type, password });
-    if (!password && type == "AUTRE") {
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
-    }
 
     const oldEvent = await prisma.event.findUnique({
       where: { id: id },
@@ -57,66 +51,74 @@ export async function POST(request: NextRequest) {
         type: true,
         password: true,
         photos: true,
+        coverUrl: true,
       },
     });
     // console.log(oldEvent);
 
-    if (!oldEvent || !oldEvent.photos) {
+    if (!oldEvent) {
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
       );
     }
 
-    const oldDateString = new Date(oldEvent.date.toISOString().substring(0, 10))
-      .toISOString()
-      .substring(0, 10);
-    const oldPath = `/${oldEvent.type}/${oldDateString}-${oldEvent.title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
+    const oldPath = getDirectoryPath(
+      oldEvent.type,
+      oldEvent.date,
+      oldEvent.title,
+    );
     // console.log(oldPath);
 
     const src = join(env.DATA_FOLDER, "photos", oldPath);
 
-    const dateFormat = new Date(date);
-    // console.log(dateFormat);
-    const dateString = new Date(dateFormat.setDate(dateFormat.getDate() + 1))
-      .toISOString()
-      .substring(0, 10);
-    // console.log(dateString);
-    const newPath = `/${type}/${dateString}-${title
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}`;
+    console.log("Updated date", date);
+
+    const nearestDate = getNearestMidnight(date);
+    console.log(nearestDate);
+
+    const newPath = getDirectoryPath(type, nearestDate, title);
     // console.log(newPath);
 
     const dest = join(env.DATA_FOLDER, "photos", newPath);
     // console.log(src, dest);
-    if (type !== oldEvent.type) {
-      move(src, dest, (err) => {
-        if (err) {
-          return (
-            console.error(err),
-            NextResponse.json(
-              { error: "Failed to move the files" },
-              { status: 500 },
-            )
+    if (
+      type !== oldEvent.type ||
+      title !== oldEvent.title ||
+      date !== oldEvent.date.toISOString()
+    ) {
+      if (type !== oldEvent.type) {
+        console.log(`Type changed from ${oldEvent.type} to ${type}`);
+        move(src, dest, (err) => {
+          if (err) {
+            return (
+              console.error(err),
+              NextResponse.json(
+                { error: "Failed to move the files" },
+                { status: 500 },
+              )
+            );
+          }
+          console.log(`${id} - ${title} - Move successful !`);
+        });
+      } else if (
+        title !== oldEvent.title ||
+        date !== oldEvent.date.toISOString()
+      ) {
+        try {
+          await rename(src, dest);
+          console.log(`${id} - ${title} - Rename successful !`);
+        } catch (error) {
+          console.error(error);
+          return NextResponse.json(
+            { error: "Failed to rename the directory" },
+            { status: 500 },
           );
         }
-        console.log(`${id} - ${title} - Move successful !`);
-      });
-    } else if (title !== oldEvent.title || dateString !== oldDateString) {
-      try {
-        await rename(src, dest);
-        console.log(`${id} - ${title} - Rename successful !`);
-      } catch (error) {
-        console.error(error);
-        return NextResponse.json(
-          { error: "Failed to rename the directory" },
-          { status: 500 },
+      } else {
+        // Logging everything for debugging purposes
+        console.log(
+          `No files were moved or renamed for ${title}, ${type}, ${date}`,
         );
       }
     } else {
@@ -125,10 +127,7 @@ export async function POST(request: NextRequest) {
           id: id,
         },
         data: {
-          title: title,
-          date: dateFormat,
           pinned: pinned,
-          type: type,
           password: type === "AUTRE" ? password : null,
           notes: notes,
         },
@@ -137,14 +136,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ event: event }, { status: 200 });
     }
 
-    // console.log(oldEvent.photos);
-
     const photos = oldEvent.photos.map((photo) => {
       const url = photo.url.replace(oldPath, newPath);
       const { createdAt, updatedAt, ...data } = photo;
       return { ...data, url };
     });
-    // console.log(photos);
+
+    const coverUrl = oldEvent.coverUrl.replace(oldPath, newPath);
 
     const data = await prisma.$transaction([
       prisma.event.update({
@@ -153,11 +151,12 @@ export async function POST(request: NextRequest) {
         },
         data: {
           title: title,
-          date: dateFormat,
+          date: nearestDate,
           pinned: pinned,
           type: type,
           password: type === "AUTRE" ? password : null,
           notes: notes,
+          coverUrl: coverUrl,
         },
       }),
       ...photos.map((photo) =>

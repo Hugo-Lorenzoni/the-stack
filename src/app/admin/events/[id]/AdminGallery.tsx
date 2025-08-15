@@ -30,6 +30,7 @@ import DeletePhotoButton from "./DeletePhotoButton";
 import DeleteEventButton from "./DeleteEventButton";
 import EditEventModal from "./EditEventModal";
 import ImageComponent from "@/components/ImageComponent";
+import ChangeCoverModal from "./ChangeCoverModal";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -80,6 +81,10 @@ type Props = {
   eventPassword: string | undefined;
   eventPhotos: Photo[];
   eventNotes: string | undefined;
+  eventCoverName: string;
+  eventCoverUrl: string;
+  eventCoverWidth: number;
+  eventCoverHeight: number;
 };
 
 export default function AdminGallery({
@@ -91,6 +96,10 @@ export default function AdminGallery({
   eventPassword,
   eventPhotos,
   eventNotes,
+  eventCoverName,
+  eventCoverUrl,
+  eventCoverWidth,
+  eventCoverHeight,
 }: Props) {
   const [photos, setPhotos] = useState<Photo[]>(eventPhotos);
 
@@ -101,8 +110,6 @@ export default function AdminGallery({
   const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
 
   const [progress, setProgress] = useState(0);
-
-  const eventDateString = eventDate.toISOString().substring(0, 10);
 
   function closeLightbox() {
     setCurrentPhoto(null);
@@ -172,7 +179,6 @@ export default function AdminGallery({
     const files = Array.from(values.photos).map(async (photo, index) => {
       const photoData = new FormData();
       console.log(eventDate);
-      console.log(eventDateString);
 
       // formData.append(`file-${index}`, values.photos[index]);
       photoData.append("file", photo);
@@ -181,7 +187,7 @@ export default function AdminGallery({
         JSON.stringify({
           id: eventId,
           title: eventTitle,
-          date: eventDateString,
+          date: eventDate,
           type: eventType,
         }),
       );
@@ -287,6 +293,15 @@ export default function AdminGallery({
             eventType,
             eventPassword,
             eventNotes,
+          }}
+        />
+        <ChangeCoverModal
+          {...{
+            eventId,
+            eventCoverName,
+            eventCoverUrl,
+            eventCoverWidth,
+            eventCoverHeight,
           }}
         />
         <DeleteEventButton eventId={eventId} />

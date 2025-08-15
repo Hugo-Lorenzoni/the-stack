@@ -1,13 +1,9 @@
 import sizeOf from "image-size";
 
+import { saveFile } from "@/lib/files";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { mkdir, stat, writeFile } from "fs/promises";
-import { Type } from "@prisma/client";
-import { join } from "path";
-import mime from "mime";
 import * as z from "zod";
-import { env } from "process";
 
 const photoSchema = z.object({
   name: z.string(),
@@ -38,7 +34,6 @@ export async function POST(request: NextRequest) {
     const result = valuesSchema.safeParse(JSON.parse(values));
 
     if (!result.success) {
-      // handle error then return
       console.log(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
@@ -46,24 +41,13 @@ export async function POST(request: NextRequest) {
       );
     }
     const currentEvent = result.data;
-    // console.log(result.data);
-
-    const dateString = new Date(currentEvent.date)
-      .toISOString()
-      .substring(0, 10);
-    // console.log(dateString);
 
     const photoFile = data.get("file") as File;
-    // if (Math.random() < 0.1) {
-    //   return NextResponse.json(
-    //     { error: "Something went wrong." },
-    //     { status: 500 },
-    //   );
-    // }
+
     const photoURL = await saveFile(
       photoFile,
       currentEvent.title,
-      dateString,
+      new Date(currentEvent.date),
       currentEvent.type,
       false,
     );
@@ -99,7 +83,6 @@ export async function POST(request: NextRequest) {
         id: true,
         title: true,
         date: true,
-        // photos: { orderBy: { name: "asc" } },
       },
     });
     if (!event) {
@@ -122,60 +105,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-const saveFile = async (
-  file: File,
-  title: string,
-  date: string,
-  type: Type,
-  cover: boolean,
-) => {
-  const fileArray = await file.arrayBuffer();
-  const buffer = Buffer.from(fileArray);
-
-  //!Formatting du nom du dossier
-  const relativeUploadDir = `/${type}/${date}-${title
-    .replace(/\.[^/.]+$/, "")
-    .replace(/\s+/g, "-")
-    .replace(/[/.]/g, "-")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")}`;
-  const uploadDir = join(env.DATA_FOLDER, "photos", relativeUploadDir);
-
-  try {
-    await stat(uploadDir);
-  } catch (e: any) {
-    if (e.code === "ENOENT") {
-      //!Création du dossier
-      await mkdir(uploadDir, { recursive: true });
-    } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e,
-      );
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
-    }
-  }
-  try {
-    //!Formatting du nom du fichier
-    const filename = `${cover ? "cover-" : ""}${file.name
-      .toLocaleLowerCase()
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .replace(/[/.]/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}.${mime.getExtension(file.type)}`;
-
-    await writeFile(`${uploadDir}/${filename}`, buffer);
-    return `${relativeUploadDir}/${filename}`;
-  } catch (e) {
-    console.error("Error while trying to upload a file\n", e);
-    return NextResponse.json(
-      { error: "Something went wrong." },
-      { status: 500 },
-    );
-  }
-};

@@ -2,7 +2,7 @@ import { getInfos } from "@/utils/getInfos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BadgeCheck,
-  Image,
+  Image as Picture,
   UserCircle,
   Users2,
   Lock,
@@ -24,7 +24,7 @@ export default async function AdminPage() {
           <CardHeader>
             <CardTitle className="flex justify-between gap-2">
               Photos
-              <Image strokeWidth={2.25} />
+              <Picture strokeWidth={2.25} />
             </CardTitle>
           </CardHeader>
           <CardContent>

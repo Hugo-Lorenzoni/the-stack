@@ -8,6 +8,9 @@ import { join } from "path";
 import mime from "mime";
 import * as z from "zod";
 import { env } from "process";
+import { getNearestMidnight } from "@/lib/time";
+import { getDirectoryPath, getFileName } from "@/lib/path";
+import { saveFile } from "@/lib/files";
 
 type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
@@ -37,13 +40,8 @@ export async function POST(request: NextRequest) {
       JSON.parse(values);
     // console.log(date);
 
-    const dateFormat = new Date(date);
-    // console.log(dateFormat);
-
-    const dateString = new Date(dateFormat.setDate(dateFormat.getDate() + 1))
-      .toISOString()
-      .substring(0, 10);
-    // console.log(dateString);
+    const nearestDate = getNearestMidnight(date);
+    // console.log(nearestDate);
 
     if (!password && type == "AUTRE") {
       return NextResponse.json(
@@ -64,7 +62,7 @@ export async function POST(request: NextRequest) {
         { status: 415 },
       );
     }
-    const coverUrl = await saveFile(coverFile, title, dateString, type, true);
+    const coverUrl = await saveFile(coverFile, title, nearestDate, type, true);
 
     const parsedCover = photoSchema.parse({
       name: coverFile.name,
@@ -81,7 +79,7 @@ export async function POST(request: NextRequest) {
     const event = await prisma.event.create({
       data: {
         title: title,
-        date: dateFormat,
+        date: nearestDate,
         notes: notes,
         pinned: pinned,
         type: type,
@@ -103,60 +101,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-const saveFile = async (
-  file: File,
-  title: string,
-  date: string,
-  type: Type,
-  cover: boolean,
-) => {
-  const fileArray = await file.arrayBuffer();
-  const buffer = Buffer.from(fileArray);
-
-  //!Formatting du nom du dossier
-  const relativeUploadDir = `/${type}/${date}-${title
-    .replace(/\.[^/.]+$/, "")
-    .replace(/\s+/g, "-")
-    .replace(/[/.]/g, "-")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")}`;
-  const uploadDir = join(env.DATA_FOLDER, "photos", relativeUploadDir);
-
-  try {
-    await stat(uploadDir);
-  } catch (e: any) {
-    if (e.code === "ENOENT") {
-      //!Création du dossier
-      await mkdir(uploadDir, { recursive: true });
-    } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e,
-      );
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
-    }
-  }
-  try {
-    //!Formatting du nom du fichier
-    const filename = `${cover ? "cover-" : ""}${file.name
-      .toLocaleLowerCase()
-      .replace(/\.[^/.]+$/, "")
-      .replace(/\s+/g, "-")
-      .replace(/[/.]/g, "-")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")}.${mime.getExtension(file.type)}`;
-
-    await writeFile(`${uploadDir}/${filename}`, buffer);
-    return `${relativeUploadDir}/${filename}`;
-  } catch (e) {
-    console.error("Error while trying to upload a file\n", e);
-    return NextResponse.json(
-      { error: "Something went wrong." },
-      { status: 500 },
-    );
-  }
-};

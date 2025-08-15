@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getNearestMidnight } from "@/lib/time";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -34,12 +35,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const updatedData = {
+      ...result.data,
+      date: getNearestMidnight(result.data.date),
+    };
+
     const res = await prisma.video.update({
       where: {
         id: result.data.id,
       },
       data: {
-        ...result.data,
+        ...updatedData,
       },
     });
     console.log(res);

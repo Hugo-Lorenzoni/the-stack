@@ -1,5 +1,6 @@
 import { Video } from "@/app/admin/new-video/page";
 import prisma from "@/lib/prisma";
+import { getNearestMidnight } from "@/lib/time";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -14,12 +15,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Invalid URL" }, { status: 500 });
     }
 
+    const date = getNearestMidnight(body.date);
+    console.log("Date of the video", date.toISOString());
+
     const video = await prisma.video.create({
       data: {
         id: id,
         url: body.url,
         name: body.name,
-        date: body.date,
+        date: date,
       },
     });
     if (!video) {
