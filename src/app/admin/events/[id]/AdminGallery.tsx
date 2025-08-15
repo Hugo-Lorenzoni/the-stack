@@ -258,29 +258,30 @@ export default function AdminGallery({
         >
           <AddPhotosInput errors={errors} register={register} />
           {isLoading ? <Progress value={progress} /> : ""}
-          <Button disabled={isLoading} type="submit">
-            {isLoading ? (
-              <>
-                <Loader2
-                  color="#ffffff"
-                  className="mr-2 h-4 w-4 animate-spin text-white"
-                />
-                Loading
-              </>
-            ) : (
-              "Add"
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            type="reset"
-            className="ml-4"
-            onClick={() => {
-              reset();
-            }}
-          >
-            Reset
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button disabled={isLoading} type="submit">
+              {isLoading ? (
+                <>
+                  <Loader2
+                    color="#ffffff"
+                    className="mr-2 size-4 animate-spin text-white"
+                  />
+                  Ajout des photos en cours
+                </>
+              ) : (
+                "Ajouter"
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              type="reset"
+              onClick={() => {
+                reset();
+              }}
+            >
+              Reset
+            </Button>
+          </div>
         </form>
       </Form>
       <div className="mt-4 flex flex-wrap justify-end gap-2">

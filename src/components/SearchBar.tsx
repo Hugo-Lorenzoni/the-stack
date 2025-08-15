@@ -18,6 +18,9 @@ export default function SearchBar() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      search: "",
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -36,7 +39,7 @@ export default function SearchBar() {
               <FormItem className="space-y-0">
                 <FormLabel
                   htmlFor="default-search"
-                  className="sr-only mb-2 text-sm font-medium text-white "
+                  className="sr-only mb-2 text-sm font-medium text-white"
                 >
                   Search
                 </FormLabel>
@@ -44,7 +47,7 @@ export default function SearchBar() {
                   <Input
                     type="search"
                     id="default-search"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pr-16 text-sm text-gray-900 focus:border-orange-500 focus:ring-orange-500 "
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 pr-16 text-sm text-gray-900 focus:border-orange-500 focus:ring-orange-500"
                     placeholder="Search"
                     required
                     {...field}
@@ -55,7 +58,7 @@ export default function SearchBar() {
           />
           <Button
             type="submit"
-            className="absolute bottom-0 right-0 rounded-lg bg-orange-700 px-4 py-2 text-sm font-medium text-white hover:bg-orange-800 focus:outline-hidden focus:ring-4 focus:ring-orange-300 "
+            className="absolute right-0 bottom-0 rounded-lg bg-orange-700 px-4 py-2 text-sm font-medium text-white hover:bg-orange-800 focus:ring-4 focus:ring-orange-300 focus:outline-hidden"
           >
             <Search className="h-4 w-4 text-white" />
           </Button>
