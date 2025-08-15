@@ -164,7 +164,7 @@ export default function AdminGallery({
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [closeModal, nextPhoto, prevPhoto, currentPhotoId, totalPhotos]);
+  }, [closeLightbox, nextPhoto, prevPhoto, currentPhotoId, totalPhotos]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
