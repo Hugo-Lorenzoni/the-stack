@@ -14,11 +14,9 @@ import { Menu } from "lucide-react";
 export default function MobileNav({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const path = usePathname();
+
   useEffect(() => {
-    if (open) {
-      // console.log(path);
-      setOpen(false);
-    }
+    setOpen(false);
   }, [path]);
 
   return (

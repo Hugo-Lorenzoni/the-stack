@@ -94,40 +94,10 @@ const formSchema = z
 //type FormData =z.infer<typeof formSchema>
 
 export default function RegisterPage() {
-  const [check, setChecked] = useState(false);
-  const [cercle, setCercle] = useState(undefined);
   const [showPassword, setShowPassword] = useState("password");
 
   const router = useRouter();
 
-  function handleCheck(field: {
-    onChange: any;
-    onBlur?: Noop;
-    value?: boolean;
-    name?: "check";
-    ref?: RefCallBack;
-  }) {
-    if (field.onChange) {
-      if (field.value != undefined) {
-        setChecked(field?.value);
-      }
-    }
-    return field.onChange;
-  }
-  function handleChange(field: {
-    onChange: any;
-    onBlur?: Noop;
-    value: any;
-    name?: "cercle";
-    ref?: RefCallBack;
-  }) {
-    if (field.onChange) {
-      if (field.value != undefined) {
-        setCercle(field?.value);
-      }
-    }
-    return field.onChange;
-  }
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -139,6 +109,11 @@ export default function RegisterPage() {
       check: false,
     },
   });
+
+  const { watch } = form;
+
+  const cercleWatch = watch("cercle");
+  const checkWatch = watch("check");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -175,7 +150,7 @@ export default function RegisterPage() {
     <main className="mx-auto my-8 min-h-[calc(100vh-10rem)] max-w-md px-6">
       <h1 className="text-2xl font-semibold">Création de compte</h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-4">
           <FormField
             control={form.control}
             name="email"
@@ -190,9 +165,6 @@ export default function RegisterPage() {
                     {...field}
                   />
                 </FormControl>
-                {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -219,9 +191,6 @@ export default function RegisterPage() {
                 <FormControl>
                   <Input type="text" required placeholder="Nom" {...field} />
                 </FormControl>
-                {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -245,7 +214,7 @@ export default function RegisterPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="absolute bottom-0 right-0"
+                    className="absolute right-0 bottom-0"
                     onClick={() =>
                       setShowPassword((prev) =>
                         prev == "password" ? "text" : "password",
@@ -286,11 +255,11 @@ export default function RegisterPage() {
             control={form.control}
             name="check"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+              <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4 shadow-sm">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
-                    onCheckedChange={handleCheck(field)}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
@@ -301,7 +270,7 @@ export default function RegisterPage() {
               </FormItem>
             )}
           />
-          {check ? (
+          {checkWatch ? (
             <>
               <Alert className="border-2 border-red-600 bg-red-100 py-3 text-red-600 [&:has(svg)]:pl-4">
                 <AlertTitle className="flex items-center">
@@ -318,26 +287,24 @@ export default function RegisterPage() {
                 control={form.control}
                 name="cercle"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
+                  <FormItem>
                     <FormLabel>Cercle</FormLabel>
                     <FormControl>
                       <RadioGroup
-                        onValueChange={handleChange(field)}
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="flex flex-col space-y-1"
+                        className="flex flex-col gap-1.5"
                       >
                         {CercleList.map((key) => {
                           return (
-                            <>
-                              <FormItem className="flex items-center space-x-3 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value={key} />
-                                </FormControl>
-                                <FormLabel className="font-normal hover:cursor-pointer">
-                                  {key}
-                                </FormLabel>
-                              </FormItem>
-                            </>
+                            <FormItem key={key} className="flex items-center">
+                              <FormControl>
+                                <RadioGroupItem value={key} />
+                              </FormControl>
+                              <FormLabel className="font-normal hover:cursor-pointer">
+                                {key}
+                              </FormLabel>
+                            </FormItem>
                           );
                         })}
                       </RadioGroup>
@@ -346,7 +313,7 @@ export default function RegisterPage() {
                   </FormItem>
                 )}
               />
-              {cercle === "AUTRE" ? (
+              {cercleWatch === "AUTRE" ? (
                 <>
                   <FormField
                     control={form.control}

@@ -23,13 +23,6 @@ export default async function EventsPage(props: {
 
   const count = await getEventsCount("BAPTISE");
   const events = await getEvents(page.toString(), eventPerPage, "BAPTISE");
-  // console.log(events.length);
-
-  // console.log(events);
-  // console.log(searchParams);
-  // console.log(events.length);
-  // console.log(count;
-  // console.log(Number(page) * eventPerPage);
 
   return (
     <main className="container my-8 min-h-[calc(100vh-10rem)]">
@@ -37,7 +30,7 @@ export default async function EventsPage(props: {
         Événements baptisés
       </h1>
       <Alert
-        className="mt-8 border-4 border-red-400 pl-11 font-semibold"
+        className="mt-8 border-4 border-red-400 font-semibold"
         variant="destructive"
       >
         <AlertCircle className="bold h-4 w-4" strokeWidth={3} />
@@ -58,12 +51,12 @@ export default async function EventsPage(props: {
               >
                 <Link href={`/fpmsevents/${event.id}`}>
                   <div className="relative isolate">
-                    <div className="absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white drop-shadow-eventtitle">
+                    <div className="drop-shadow-eventtitle absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white">
                       <h2>{event.title}</h2>
                       <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
                     </div>
                     {event.pinned && (
-                      <Pin className="absolute right-4 top-4 z-10 rotate-45 text-white drop-shadow-eventtitle" />
+                      <Pin className="drop-shadow-eventtitle absolute top-4 right-4 z-10 rotate-45 text-white" />
                     )}
                     <ImageComponent
                       className="relative -z-10 h-full w-full scale-105 object-cover duration-200 group-hover:scale-110"

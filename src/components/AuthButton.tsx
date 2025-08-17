@@ -22,7 +22,7 @@ export default function AuthButton({ session }: { session: Session | null }) {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center duration-150 ease-in-out hover:opacity-80">
             <Avatar>
-              <AvatarFallback className="font-semibold text-orange-600">
+              <AvatarFallback className="text-xs font-semibold text-orange-600">
                 {Array.from(`${session.user.name}`)[0].toUpperCase() +
                   Array.from(`${session.user.surname}`)[0].toUpperCase()}
               </AvatarFallback>
@@ -34,7 +34,12 @@ export default function AuthButton({ session }: { session: Session | null }) {
           <DropdownMenuContent className="shadow-md" align="end">
             <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
             <DropdownMenuItem>
-              <Button onClick={() => signOut()} className="w-full">
+              <Button
+                onClick={() => {
+                  signOut({ callbackUrl: "/" });
+                }}
+                className="w-full"
+              >
                 Déconnexion
               </Button>
             </DropdownMenuItem>
@@ -63,7 +68,7 @@ export default function AuthButton({ session }: { session: Session | null }) {
   return (
     <div className="flex flex-wrap gap-4">
       <Button
-        className="bg-white font-semibold text-orange-600 hover:bg-white hover:bg-opacity-90"
+        className="hover:bg-opacity-90 bg-white font-semibold text-orange-600 hover:bg-white"
         onClick={() => signIn()}
       >
         Se connecter

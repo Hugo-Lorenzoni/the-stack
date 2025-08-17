@@ -83,8 +83,7 @@ export default function ChangeCoverModal({
       reset();
       setCover(null);
     }
-  }),
-    [isModalOpen, isDirty, reset, setCover];
+  }, [isModalOpen, isDirty, reset, setCover]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
