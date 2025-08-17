@@ -340,7 +340,7 @@ export default function EditEventModal({
                     <>
                       <Loader2
                         color="#ffffff"
-                        className="mr-2 h-4 w-4 animate-spin text-white"
+                        className="size-4 animate-spin text-white"
                       />
                       En cours
                     </>

@@ -150,8 +150,8 @@ export default function EditUser({ rowUser }: EditUserProps) {
           <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>
               <Button>
-                <span className="pr-2">Edit</span>
-                <Pencil className="h-4 w-4" />
+                <Pencil className="size-4" />
+                Edit
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -201,7 +201,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
                         <>
                           <Loader2
                             color="#ffffff"
-                            className="mr-2 h-4 w-4 animate-spin text-white"
+                            className="size-4 animate-spin text-white"
                           />
                           En cours
                         </>
@@ -220,7 +220,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
                 className="ml-2 bg-red-600 text-red-100 hover:bg-red-800"
                 disabled={isLoading}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="size-4" />
                 Delete
               </Button>
             </AlertDialogTrigger>
@@ -247,7 +247,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
                     <>
                       <Loader2
                         color="#ffffff"
-                        className="mr-2 h-4 w-4 animate-spin text-white"
+                        className="size-4 animate-spin text-white"
                       />
                       En cours
                     </>
@@ -261,7 +261,7 @@ export default function EditUser({ rowUser }: EditUserProps) {
         </>
       ) : (
         <Button disabled className="bg-red-100 text-red-600">
-          <X className="mr-2 h-4 w-4" />
+          <X className="size-4" />
           Deleted
         </Button>
       )}

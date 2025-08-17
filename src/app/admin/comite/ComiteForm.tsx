@@ -167,7 +167,7 @@ export default function ComiteForm({ comite }: { comite: Comite }) {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="mr-2 size-4 animate-spin text-white"
+                  className="size-4 animate-spin text-white"
                 />
                 Loading
               </>

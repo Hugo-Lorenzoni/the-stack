@@ -141,8 +141,8 @@ export default function ChangeCoverModal({
       <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
           <Button>
-            <Picture className="h-4 w-4" />
-            <span className="pl-2">Changer la photo de couverture</span>
+            <Picture className="size-4" />
+            Changer la photo de couverture
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[95vh] overflow-y-auto">
@@ -202,7 +202,7 @@ export default function ChangeCoverModal({
                     <>
                       <Loader2
                         color="#ffffff"
-                        className="mr-2 h-4 w-4 animate-spin text-white"
+                        className="size-4 animate-spin text-white"
                       />
                       En cours
                     </>

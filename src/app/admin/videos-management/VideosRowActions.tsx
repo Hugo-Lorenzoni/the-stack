@@ -261,7 +261,7 @@ export default function VideosRowActions({ row }: Props) {
                         <>
                           <Loader2
                             color="#ffffff"
-                            className="mr-2 h-4 w-4 animate-spin text-white"
+                            className="size animate-spin text-white"
                           />
                           En cours
                         </>
@@ -280,7 +280,7 @@ export default function VideosRowActions({ row }: Props) {
                 className="bg-red-600 text-red-100 hover:bg-red-800"
                 disabled={isLoading}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="size-4" />
                 Delete
               </Button>
             </AlertDialogTrigger>
@@ -307,7 +307,7 @@ export default function VideosRowActions({ row }: Props) {
                     <>
                       <Loader2
                         color="#ffffff"
-                        className="mr-2 h-4 w-4 animate-spin text-white"
+                        className="size-4 animate-spin text-white"
                       />
                       En cours
                     </>
@@ -321,7 +321,7 @@ export default function VideosRowActions({ row }: Props) {
         </>
       ) : (
         <Button disabled className="bg-red-100 text-red-600">
-          <X className="mr-2 h-4 w-4" />
+          <X className="size-4" />
           Deleted
         </Button>
       )}

@@ -175,7 +175,7 @@ export default function NewSponsorPage() {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="mr-2 h-4 w-4 animate-spin text-white"
+                  className="size-4 animate-spin text-white"
                 />
                 Loading
               </>
@@ -188,7 +188,7 @@ export default function NewSponsorPage() {
             type="reset"
             className="ml-4"
             onClick={() => {
-              reset(), setImage(null);
+              (reset(), setImage(null));
             }}
           >
             Reset

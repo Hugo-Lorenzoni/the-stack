@@ -126,22 +126,22 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
           {info && (
             <section className="relative h-[calc(100vh-10rem)] overflow-hidden rounded-2xl">
               <ImageComponent
-                className="h-full w-full object-cover blur-[1px] brightness-75 "
+                className="h-full w-full object-cover blur-xs brightness-75"
                 src={info.coverUrl}
                 width={info.coverWidth}
                 height={info.coverHeight}
                 alt={info.coverName}
-                quality="preview"
+                quality="thumbnail"
               />
-              <div className="absolute bottom-0 left-0 right-0 m-4  mx-auto h-fit max-w-xl ">
+              <div className="absolute right-0 bottom-0 left-0 m-4 mx-auto h-fit max-w-xl">
                 <div className="mx-4 rounded-xl bg-white px-8 py-6 shadow-2xl">
-                  <h1 className="relative mb-4 w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
+                  <h1 className="relative mb-6 w-fit text-3xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
                     {info.title}
                   </h1>
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-2 "
+                      className="space-y-2"
                     >
                       <FormField
                         control={form.control}
@@ -162,7 +162,7 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
                                 <Button
                                   type="button"
                                   variant="outline"
-                                  className="absolute bottom-0 right-0"
+                                  className="absolute right-0 bottom-0"
                                   onClick={() =>
                                     setShowPassword((prev) =>
                                       prev == "password" ? "text" : "password",
@@ -186,9 +186,11 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
                                   )}
                                 </Button>
                               </div>
-                              <p className="text-sm text-red-600">
-                                {isForbidden && "Mot de passe incorrect"}
-                              </p>
+                              {isForbidden && (
+                                <p className="text-sm text-red-600">
+                                  Mot de passe incorrect
+                                </p>
+                              )}
                               <FormMessage />
                             </FormItem>
                           );

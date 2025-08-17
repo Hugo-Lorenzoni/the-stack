@@ -52,18 +52,18 @@ export default function EventRowActions(props: { row: Row<Event> }) {
         <>
           <Button className="mr-2" asChild>
             <Link href={`/admin/events/${event.id}`}>
-              <Eye className="mr-2 h-4 w-4" />
+              <Eye className="size-4" />
               Preview
             </Link>
           </Button>
           <Button onClick={(e) => handleChange(e, event)}>
-            <Send className="mr-2 h-4 w-4" />
+            <Send className="size-4" />
             Publier
           </Button>
         </>
       ) : (
         <Button disabled className="bg-green-100 text-green-600">
-          <Check className="mr-2 h-4 w-4" />
+          <Check className="size-4" />
           Publié
         </Button>
       )}

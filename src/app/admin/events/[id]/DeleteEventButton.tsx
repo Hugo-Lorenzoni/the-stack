@@ -64,7 +64,7 @@ export default function DeleteEventButton({ eventId }: Props) {
     >
       <AlertDialogTrigger asChild>
         <Button className="bg-red-600 hover:bg-red-500">
-          <Trash className="mr-2 h-4 w-4" /> Supprimer l&apos;événement
+          <Trash className="size-4" /> Supprimer l&apos;événement
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -89,7 +89,7 @@ export default function DeleteEventButton({ eventId }: Props) {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="mr-2 h-4 w-4 animate-spin text-white"
+                  className="size-4 animate-spin text-white"
                 />
                 En cours
               </>

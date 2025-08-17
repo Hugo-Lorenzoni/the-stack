@@ -110,7 +110,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
               {currentPhoto ? (
                 <Button asChild>
                   <a href={currentPhoto.url} download>
-                    <Download className="mr-2" />
+                    <Download />
                     Download
                   </a>
                 </Button>
@@ -119,7 +119,7 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
               )}
 
               <Button className="ml-2" onClick={() => closeModal()}>
-                <XCircle className="mr-2" />
+                <XCircle />
                 Close
               </Button>
             </div>

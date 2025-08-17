@@ -53,8 +53,9 @@ export default function AuthButton({ session }: { session: Session | null }) {
                     onClick={() =>
                       navigator.clipboard.writeText(validationCode)
                     }
+                    className="w-full"
                   >
-                    <Copy className="mr-2" />
+                    <Copy />
                     {validationCode}
                   </Button>
                 </DropdownMenuItem>

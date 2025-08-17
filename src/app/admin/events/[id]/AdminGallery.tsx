@@ -271,7 +271,7 @@ export default function AdminGallery({
                 <>
                   <Loader2
                     color="#ffffff"
-                    className="mr-2 size-4 animate-spin text-white"
+                    className="size-4 animate-spin text-white"
                   />
                   Ajout des photos en cours
                 </>
@@ -356,7 +356,7 @@ export default function AdminGallery({
               {currentPhoto ? (
                 <Button asChild>
                   <a href={currentPhoto.url} download>
-                    <Download className="mr-2" />
+                    <Download />
                     Download
                   </a>
                 </Button>
@@ -365,7 +365,7 @@ export default function AdminGallery({
               )}
 
               <Button className="ml-2" onClick={() => closeLightbox()}>
-                <XCircle className="mr-2" />
+                <XCircle />
                 Close
               </Button>
             </div>
