@@ -28,6 +28,7 @@ import DeleteEventButton from "./DeleteEventButton";
 import EditEventModal from "./EditEventModal";
 import ImageComponent from "@/components/ImageComponent";
 import ChangeCoverModal from "./ChangeCoverModal";
+import DownloadAllPicturesButton from "./DownloadAllPicturesButton";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -311,6 +312,7 @@ export default function AdminGallery({
             eventCoverHeight,
           }}
         />
+        <DownloadAllPicturesButton eventId={eventId} />
         <DeleteEventButton eventId={eventId} />
       </div>
       <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
