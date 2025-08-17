@@ -5,33 +5,27 @@ import { env } from "process";
 import { join } from "path";
 
 export const getInfos = cache(async () => {
-  const countEventOuvert = await prisma.event.count({
-    where: {
-      type: "OUVERT",
-    },
-  });
-  const countEventFpms = await prisma.event.count({
-    where: {
-      type: "BAPTISE",
-    },
-  });
-  const countEventAutre = await prisma.event.count({
-    where: {
-      type: "AUTRE",
-    },
-  });
-  const countUser = await prisma.user.count();
-  const countWaitingUser = await prisma.user.count({
-    where: {
-      role: "WAITING",
-    },
-  });
-  const countPhoto = await prisma.photo.count();
-  const countVideo = await prisma.video.count();
+  const [
+    countEventOuvert,
+    countEventFpms,
+    countEventAutre,
+    countUser,
+    countWaitingUser,
+    countPhoto,
+    countVideo,
+    size,
+  ] = await Promise.all([
+    prisma.event.count({ where: { type: "OUVERT" } }),
+    prisma.event.count({ where: { type: "BAPTISE" } }),
+    prisma.event.count({ where: { type: "AUTRE" } }),
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "WAITING" } }),
+    prisma.photo.count(),
+    prisma.video.count(),
+    getFolderSize.strict(join(env.DATA_FOLDER, "photos")),
+  ]);
 
-  const folder = join(env.DATA_FOLDER, "photos");
-
-  const size = await getFolderSize.strict(folder);
+  // const size = await getFolderSize.strict(folder);
   const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
 
   const res = {
