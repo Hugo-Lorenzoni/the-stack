@@ -21,6 +21,8 @@ model User {
   password        String
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt @default(now())
+
+  resetPassword   ResetPassword[]
 }
 
 model Event {
@@ -87,6 +89,18 @@ model EventToSponsor {
   @@unique([A, B], map: "_EventToSponsor_AB_unique")
   @@index([B], map: "_EventToSponsor_B_index")
   @@map("_EventToSponsor")
+}
+
+model ResetPassword {
+  id              String      @id @default(uuid())
+  token           String      @unique
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt @default(now())
+  used            Boolean     @default(false)
+  expiresAt       DateTime    
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
 }
 
 enum Role {

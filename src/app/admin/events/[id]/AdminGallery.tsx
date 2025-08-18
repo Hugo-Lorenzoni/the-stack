@@ -59,39 +59,41 @@ export default function AdminGallery({
     setCurrentPhotoId(photoId);
   }, [photoId]);
 
+  const totalPhotos = photos.length;
+
   useEffect(() => {
     if (
       currentPhotoId !== null &&
       !isNaN(currentPhotoId) &&
-      currentPhotoId < photos.length &&
+      currentPhotoId < totalPhotos &&
       photoId !== null &&
       !isNaN(photoId) &&
-      photoId < photos.length &&
+      photoId < totalPhotos &&
       currentPhotoId !== photoId
     ) {
       router.replace(`${pathname}?photoId=${currentPhotoId}`, {
         scroll: false,
       });
     }
-  }, [currentPhotoId, pathname, router, photoId]);
+  }, [currentPhotoId, pathname, router, photoId, totalPhotos]);
 
   const closeLightbox = useCallback(() => {
     setCurrentPhotoId(null);
     router.push(pathname, { scroll: false });
-  }, [router]);
+  }, [router, pathname]);
 
   function openLightbox(index: number) {
     setCurrentPhotoId(index);
     router.push(`${pathname}?photoId=${index}`, { scroll: false });
   }
 
-  const prevPhoto = () => {
+  const prevPhoto = useCallback(() => {
     setCurrentPhotoId((id) => (id !== null ? id - 1 : null));
-  };
+  }, []);
 
-  const nextPhoto = () => {
+  const nextPhoto = useCallback(() => {
     setCurrentPhotoId((id) => (id !== null ? id + 1 : null));
-  };
+  }, []);
 
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {
@@ -105,8 +107,6 @@ export default function AdminGallery({
       }
     },
   });
-
-  const totalPhotos = eventPhotos.length;
 
   useEffect(() => {
     function handleKeyPress(e: KeyboardEvent) {

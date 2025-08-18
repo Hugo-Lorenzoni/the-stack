@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,6 +21,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string(),
@@ -44,7 +46,6 @@ export default function ConnectionPage() {
     setLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
     try {
       const results = await signIn("credentials", {
         email: values.email,
@@ -156,6 +157,15 @@ export default function ConnectionPage() {
                       </div>
                     </FormControl>
                     <FormMessage />
+                    <FormDescription className="text-right text-xs italic">
+                      Vous avez oublié votre mot de passe ? <br />
+                      <Link
+                        href={`/forgot-password?email=${form.watch("email")}`}
+                        className="text-orange-600 hover:underline"
+                      >
+                        Cliquez ici pour le réinitialiser.
+                      </Link>
+                    </FormDescription>
                   </FormItem>
                 )}
               />

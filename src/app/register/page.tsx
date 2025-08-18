@@ -42,7 +42,7 @@ const formSchema = z
         email: z.string().email({ message: "Invalid email address" }),
         password: z
           .string()
-          .min(4, { message: "Must be 4 or more characters long" })
+          .min(8, { message: "Must be 8 or more characters long" })
           .regex(new RegExp(".*[A-Z].*"), "One uppercase character")
           .regex(new RegExp(".*[a-z].*"), "One lowercase character")
           .regex(new RegExp(".*\\d.*"), "One number"),
