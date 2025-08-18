@@ -164,8 +164,8 @@ export default function VideosRowActions({ row }: Props) {
           <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Pencil className="h-4 w-4" />
-                <span className="pl-2">Edit</span>
+                <Pencil className="size-4" />
+                Edit
               </Button>
             </DialogTrigger>
             <DialogContent>

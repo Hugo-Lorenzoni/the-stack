@@ -13,14 +13,16 @@ import { Button } from "@/components/ui/button";
 import { Download, Loader2, Trash } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
 
 type Props = {
   eventId: string;
 };
 
-export default function DownloadAllPicturesButton({ eventId }: Props) {
+const DownloadAllPicturesButton = memo(function DownloadAllPicturesButton({
+  eventId,
+}: Props) {
   const [isDownloading, setDownloading] = useState<boolean>(false);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
@@ -95,7 +97,7 @@ export default function DownloadAllPicturesButton({ eventId }: Props) {
               <>
                 <Loader2
                   color="#ffffff"
-                  className="h-4 w-4 animate-spin text-white"
+                  className="size-4 animate-spin text-white"
                 />
                 En cours de téléchargement...
               </>
@@ -107,4 +109,5 @@ export default function DownloadAllPicturesButton({ eventId }: Props) {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+});
+export default DownloadAllPicturesButton;

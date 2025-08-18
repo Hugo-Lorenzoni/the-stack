@@ -2,7 +2,7 @@
 
 import { Photo } from "@prisma/client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, memo, SetStateAction, useState } from "react";
 
 import {
   AlertDialog,
@@ -27,7 +27,11 @@ type Props = {
   setPhotos: Dispatch<SetStateAction<Photo[]>>;
 };
 
-export default function DeletePhotoButton({ photo, photos, setPhotos }: Props) {
+const DeletePhotoButton = memo(function DeletePhotoButton({
+  photo,
+  photos,
+  setPhotos,
+}: Props) {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isLoading, setLoading] = useState<boolean>(false);
 
@@ -114,4 +118,6 @@ export default function DeletePhotoButton({ photo, photos, setPhotos }: Props) {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+});
+
+export default DeletePhotoButton;

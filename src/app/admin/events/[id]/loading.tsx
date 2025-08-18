@@ -13,7 +13,7 @@ export default function EventLoadingPage() {
       </div>
       <div className="mt-4 max-w-lg space-y-2">
         <div className="py-0.5 text-sm">Ajouter des photos</div>
-        <Skeleton className="h-11 border border-input " />
+        <Skeleton className="border-input h-11 border" />
         <Button disabled>Add</Button>
         <Button disabled variant="outline" className="ml-4">
           Reset
@@ -21,8 +21,8 @@ export default function EventLoadingPage() {
       </div>
       <div className="mt-4 flex justify-end gap-2">
         <Button disabled>
-          <Pencil className="h-4 w-4" />
-          <span className="pl-2">Edit</span>
+          <Pencil className="size-4" />
+          Edit
         </Button>
         <Button className="bg-red-600 hover:bg-red-500" disabled>
           Supprimer l&apos;événement

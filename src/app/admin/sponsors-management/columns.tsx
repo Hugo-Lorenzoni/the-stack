@@ -71,8 +71,8 @@ export const columns: ColumnDef<Sponsor>[] = [
 
       return (
         <Button>
-          <span className="pr-2">Edit</span>
-          <Pencil className="h-4 w-4" />
+          <Pencil className="size-4" />
+          Edit
         </Button>
       );
     },

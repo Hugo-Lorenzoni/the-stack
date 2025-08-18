@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { CalendarIcon, Loader2, Pencil } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -74,7 +74,7 @@ type Props = {
   eventNotes: string | undefined;
 };
 
-export default function EditEventModal({
+const EditEventModal = memo(function EditEventModal({
   eventId,
   eventTitle,
   eventPinned,
@@ -159,8 +159,8 @@ export default function EditEventModal({
       <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
         <DialogTrigger asChild>
           <Button>
-            <Pencil className="h-4 w-4" />
-            <span className="pl-2">Edit</span>
+            <Pencil className="size-4" />
+            Edit
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[95vh] overflow-y-auto">
@@ -355,4 +355,6 @@ export default function EditEventModal({
       </Dialog>
     </>
   );
-}
+});
+
+export default EditEventModal;

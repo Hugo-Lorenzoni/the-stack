@@ -25,7 +25,7 @@ export default function ImageComponent({
 }: ImageComponentProps) {
   //* The "pretty loading" effect was removed because it blocked the image from appearing until the javascript was loaded on the page.
   //* This was problematic because the javascript was not loaded until all lazy loaded images were downloaded.
-  //   const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   return (
     <div className={cn("relative overflow-hidden", className)} {...props}>
       {/* {isLoading && (
@@ -86,7 +86,8 @@ export default function ImageComponent({
         )}
         // className={cn(
         //   "h-full w-full object-cover transition-opacity duration-500 ease-in-out",
-        //     isLoading ? "opacity-0" : "opacity-100",
+        //   isLoading ? "opacity-0" : "opacity-100",
+        //   quality === "preview" && "object-contain",
         // )}
         // onLoad={() => setIsLoading(false)}
       />

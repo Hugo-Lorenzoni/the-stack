@@ -1,66 +1,86 @@
 "use client";
 import { Photo } from "@prisma/client";
-import {
-  ChevronLeftCircle,
-  ChevronRightCircle,
-  Download,
-  XCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, Download, XCircle } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import useSwipe from "../hooks/useSwipe";
 import ImageComponent from "./ImageComponent";
 import { Button } from "./ui/button";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function Gallery(props: { eventName: string; photos: Photo[] }) {
-  const [isOpen, setOpen] = useState(false);
-  const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
-  const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(null);
+export default function Gallery({
+  eventName,
+  photos,
+}: {
+  eventName: string;
+  photos: Photo[];
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  function closeModal() {
-    setCurrentPhoto(null);
-    setCurrentPhotoId(null);
-    setOpen(false);
-  }
+  const photoId = parseInt(searchParams.get("photoId") || "");
+  const [currentPhotoId, setCurrentPhotoId] = useState<number | null>(photoId);
 
-  function openModal(photo: Photo, index: number) {
-    setOpen(true);
-    setCurrentPhotoId(index);
-    setCurrentPhoto(photo);
-  }
+  useEffect(() => {
+    setCurrentPhotoId(photoId);
+  }, [photoId]);
 
-  function prevPhoto() {
-    if (currentPhotoId) {
-      setCurrentPhoto(props.photos[currentPhotoId - 1]);
-      setCurrentPhotoId(currentPhotoId - 1);
+  useEffect(() => {
+    if (
+      currentPhotoId !== null &&
+      !isNaN(currentPhotoId) &&
+      currentPhotoId < photos.length &&
+      photoId !== null &&
+      !isNaN(photoId) &&
+      photoId < photos.length &&
+      currentPhotoId !== photoId
+    ) {
+      router.replace(`${pathname}?photoId=${currentPhotoId}`, {
+        scroll: false,
+      });
     }
+  }, [currentPhotoId, pathname, router, photoId]);
+
+  const closeLightbox = useCallback(() => {
+    setCurrentPhotoId(null);
+    router.push(pathname, { scroll: false });
+  }, [router]);
+
+  function openLightbox(index: number) {
+    setCurrentPhotoId(index);
+    router.push(`${pathname}?photoId=${index}`, { scroll: false });
   }
-  function nextPhoto() {
-    setCurrentPhoto(props.photos[(currentPhotoId ? currentPhotoId : 0) + 1]);
-    setCurrentPhotoId((currentPhotoId ? currentPhotoId : 0) + 1);
-  }
+
+  const prevPhoto = () => {
+    setCurrentPhotoId((id) => (id !== null ? id - 1 : null));
+  };
+
+  const nextPhoto = () => {
+    setCurrentPhotoId((id) => (id !== null ? id + 1 : null));
+  };
 
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {
-      if (currentPhotoId != props.photos.length - 1) {
+      if (photoId != photos.length - 1) {
         nextPhoto();
       }
     },
     onSwipedRight: () => {
-      if (currentPhotoId != 0) {
+      if (photoId != 0) {
         prevPhoto();
       }
     },
   });
 
-  const totalPhotos = props.photos.length;
+  const totalPhotos = photos.length;
 
   useEffect(() => {
     function handleKeyPress(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        closeModal();
-      } else if (e.key === "ArrowRight" && currentPhotoId !== totalPhotos - 1) {
+        closeLightbox();
+      } else if (e.key === "ArrowRight" && photoId !== totalPhotos - 1) {
         nextPhoto();
-      } else if (e.key === "ArrowLeft" && currentPhotoId !== 0) {
+      } else if (e.key === "ArrowLeft" && photoId !== 0) {
         prevPhoto();
       }
     }
@@ -72,12 +92,12 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [closeModal, nextPhoto, prevPhoto, currentPhotoId, totalPhotos]);
+  }, [closeLightbox, nextPhoto, prevPhoto, photoId, totalPhotos]);
 
   return (
     <>
       <ul className="mt-4 grid grid-flow-row-dense grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {props.photos.map((photo, index) => {
+        {photos.map((photo, index) => {
           return (
             <ImageComponent
               key={index}
@@ -92,24 +112,26 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
               src={photo.url}
               width={photo.width}
               height={photo.height}
-              alt={props.eventName}
-              onClick={() => openModal(photo, index)}
+              alt={eventName}
+              onClick={() => openLightbox(index)}
               quality="thumbnail"
             />
           );
         })}
       </ul>
-      {isOpen ? (
+      {currentPhotoId !== null &&
+      !isNaN(currentPhotoId) &&
+      currentPhotoId <= photos.length ? (
         <section
           {...swipeHandlers}
           className="fixed inset-0 z-20 bg-black py-8 text-white"
         >
           <div className="mx-auto mb-4 flex max-w-[calc(100%-4rem)] flex-col items-center justify-between gap-2 sm:flex-row">
-            {currentPhoto?.name}
+            {photos[currentPhotoId]?.name}
             <div>
-              {currentPhoto ? (
+              {photos[currentPhotoId] ? (
                 <Button asChild>
-                  <a href={currentPhoto.url} download>
+                  <a href={photos[currentPhotoId].url} download>
                     <Download />
                     Download
                   </a>
@@ -118,19 +140,19 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
                 ""
               )}
 
-              <Button className="ml-2" onClick={() => closeModal()}>
+              <Button className="ml-2" onClick={() => closeLightbox()}>
                 <XCircle />
                 Close
               </Button>
             </div>
           </div>
-          {currentPhoto ? (
+          {photos[currentPhotoId] ? (
             <ImageComponent
               className="mx-auto h-[calc(100%-4rem)] w-[calc(100%-2rem)] object-contain sm:w-[calc(100%-8rem)]"
-              src={currentPhoto.url}
-              width={currentPhoto.width}
-              height={currentPhoto.height}
-              alt={currentPhoto.name}
+              src={photos[currentPhotoId].url}
+              width={photos[currentPhotoId].width}
+              height={photos[currentPhotoId].height}
+              alt={photos[currentPhotoId].name}
               quality="preview"
             />
           ) : (
@@ -143,16 +165,16 @@ export default function Gallery(props: { eventName: string; photos: Photo[] }) {
             onClick={() => prevPhoto()}
           >
             {/* <div className="flex size-12 items-center justify-center"> */}
-            <ChevronLeftCircle className="size-12" />
+            <ChevronLeft className="size-10" />
             {/* </div> */}
             <span className="sr-only">Précédent</span>
           </Button>
           <Button
             className="absolute right-8 bottom-4 size-16 rounded-full sm:top-1/2"
-            disabled={currentPhotoId == props.photos.length - 1}
+            disabled={currentPhotoId == photos.length - 1}
             onClick={() => nextPhoto()}
           >
-            <ChevronRightCircle className="size-12" />
+            <ChevronRight className="size-10" />
             <span className="sr-only">Suivant</span>
           </Button>
         </section>

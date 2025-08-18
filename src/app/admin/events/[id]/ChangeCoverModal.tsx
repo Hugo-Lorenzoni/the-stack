@@ -15,7 +15,7 @@ import * as z from "zod";
 
 import { Loader2, Image as Picture } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { NewCoverInput } from "./NewCoverInput";
 import ImageComponent from "@/components/ImageComponent";
@@ -52,7 +52,7 @@ type Props = {
   eventCoverHeight: number;
 };
 
-export default function ChangeCoverModal({
+const ChangeCoverModal = memo(function ChangeCoverModal({
   eventId,
   eventCoverName,
   eventCoverUrl,
@@ -217,4 +217,6 @@ export default function ChangeCoverModal({
       </Dialog>
     </>
   );
-}
+});
+
+export default ChangeCoverModal;

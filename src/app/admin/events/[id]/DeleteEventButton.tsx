@@ -13,14 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Trash } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { toast } from "sonner";
 
 type Props = {
   eventId: string;
 };
 
-export default function DeleteEventButton({ eventId }: Props) {
+const DeleteEventButton = memo(function DeleteEventButton({ eventId }: Props) {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const [isDeleteEventModalOpen, setDeleteEventModalOpen] = useState(false);
 
@@ -101,4 +101,6 @@ export default function DeleteEventButton({ eventId }: Props) {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+});
+
+export default DeleteEventButton;
