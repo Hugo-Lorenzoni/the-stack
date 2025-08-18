@@ -39,6 +39,10 @@ jobs:
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
           echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
           echo "DATA_FOLDER=${{ secrets.DATA_FOLDER }}" >> .env
+          echo "EMAIL"=${{ secrets.EMAIL }} >> .env
+          echo "GOOGLE_REFRESH_TOKEN"=${{ secrets.GOOGLE_REFRESH_TOKEN }} >> .env
+          echo "GOOGLE_CLIENT_SECRET"=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .
+          echo "GOOGLE_CLIENT_ID"=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
 
       - name: Create folders
         run: |
