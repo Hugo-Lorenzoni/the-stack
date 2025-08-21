@@ -16,7 +16,7 @@ BACKUP_PREFIX="db_dump"
 MAX_BACKUPS=10
 
 # Generate timestamp for backup filename
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+TIMESTAMP=$(date +%Y-%m-%d_%Hh%M)
 BACKUP_FILENAME="${BACKUP_PREFIX}_${TIMESTAMP}.sql"
 BACKUP_PATH="${BACKUP_DIR}/${BACKUP_FILENAME}"
 
