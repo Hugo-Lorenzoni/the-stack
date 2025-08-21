@@ -86,6 +86,9 @@ jobs:
       - name: Copy public assets to deployment folder
         run: cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
 
+      - name: Copy db backup script to deployment folder
+        run: cp ./mysql_backup.sh $HOME/${{ env.DEPLOYMENT_FOLDER }}
+
       - name: Copy ecosystem config to deployment folder
         run: cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
 
