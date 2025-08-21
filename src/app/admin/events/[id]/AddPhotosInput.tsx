@@ -1,7 +1,8 @@
 "use client";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { Input } from "../../../../components/ui/input";
-import { Label } from "../../../../components/ui/label";
 
 export default function AddPhotosInput({
   errors,
@@ -21,7 +22,7 @@ export default function AddPhotosInput({
     <div className="mt-4">
       <Label>Ajouter des photos</Label>
       <Input
-        className="file:border mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
+        className="mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer file:rounded-md file:border"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         multiple

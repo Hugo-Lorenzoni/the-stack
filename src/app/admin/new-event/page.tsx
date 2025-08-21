@@ -4,15 +4,6 @@ import { CoverInput } from "@/app/admin/new-event/CoverInput";
 import { PhotosInput } from "@/app/admin/new-event/PhotosInput";
 
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
@@ -21,29 +12,38 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
-import { Event, Type } from "@prisma/client";
+import { Event } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-import { Noop, RefCallBack, useForm } from "react-hook-form";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import { CalendarIcon, Loader2 } from "lucide-react";
 
@@ -93,33 +93,42 @@ const formSchema = z
       .trim()
       .optional(),
     pinned: z.boolean(),
-    // pinned: z.boolean().optional(),
     cover: z
       .custom<FileList>((v) => v instanceof FileList)
-      .refine((files) => files.length == 1, "Image is required.")
+      .refine(
+        (files) => files.length == 1,
+        "Une image de couverture est requise. Veuillez sélectionner exactement une image pour poursuivre la création de l'événement.",
+      )
       .refine(
         (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
-        ".jpg, .jpeg, .png and .webp files are accepted.",
+        "Seuls les fichiers aux formats .jpg, .jpeg, .png et .webp sont acceptés pour la photo de couverture. Merci de choisir une image conforme aux formats pris en charge.",
       )
       .refine(
         (files) => files[0]?.size <= MAX_FILE_SIZE,
-        `Max file size is 10MB.`,
+        "La taille maximale autorisée pour la photo de couverture est de 10 Mo. Veuillez compresser votre image ou sélectionner un fichier plus léger.",
       ),
 
     type: z.enum(TypeList),
     password: z.string().optional(),
     photos: z
       .custom<FileList>((v) => v instanceof FileList)
-      .refine((files) => files.length >= 1, "Images is required.")
+      .refine(
+        (files) => files.length >= 1,
+        "Au moins une photo doit être sélectionnée pour l'événement. Ajoutez une ou plusieurs images afin de continuer.",
+      )
       .refine(
         (files) => handleFiles(files, "type"),
-        ".jpg, .jpeg, .png and .webp files are accepted.",
+        "Seuls les fichiers aux formats .jpg, .jpeg, .png et .webp sont acceptés pour les photos. Retirez les fichiers non pris en charge et réessayez.",
       )
-      .refine((files) => handleFiles(files, "size"), `Max file size is 10MB.`),
+      .refine(
+        (files) => handleFiles(files, "size"),
+        "La taille maximale autorisée pour chaque photo est de 10 Mo. Supprimez les fichiers trop volumineux ou réduisez leur taille avant l'envoi.",
+      ),
   })
   .refine((data) => data.type != "AUTRE" || data.password, {
-    message: "Un mot de passe est requis pour les événement de type AUTRE",
-    path: ["password"], // path of error
+    message:
+      "Un mot de passe est requis pour les événements de type AUTRE. Veuillez renseigner un mot de passe afin de restreindre l'accès aux photos de cet événement.",
+    path: ["password"],
   });
 
 export default function NewEventPage() {

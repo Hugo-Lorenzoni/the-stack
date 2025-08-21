@@ -1,7 +1,8 @@
 "use client";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
 
 export function PhotosInput({
   errors,

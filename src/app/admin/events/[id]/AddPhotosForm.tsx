@@ -43,12 +43,18 @@ function handleFiles(files: FileList, key: string) {
 const formSchema = z.object({
   photos: z
     .custom<FileList>((v) => v instanceof FileList)
-    .refine((files) => files.length >= 1, "Images is required.")
+    .refine(
+      (files) => files.length >= 1,
+      "Au moins une photo doit être sélectionnée pour l'événement. Ajoutez une ou plusieurs images afin de continuer.",
+    )
     .refine(
       (files) => handleFiles(files, "type"),
-      ".jpg, .jpeg, .png and .webp files are accepted.",
+      "Seuls les fichiers aux formats .jpg, .jpeg, .png et .webp sont acceptés pour les photos. Retirez les fichiers non pris en charge et réessayez.",
     )
-    .refine((files) => handleFiles(files, "size"), `Max file size is 10MB.`),
+    .refine(
+      (files) => handleFiles(files, "size"),
+      "La taille maximale autorisée pour chaque photo est de 10 Mo. Supprimez les fichiers trop volumineux ou réduisez leur taille avant l'envoi.",
+    ),
 });
 
 const AddPhotosForm = memo(function AddPhotosForm({

@@ -28,7 +28,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      throw new Error("User not found");
+      return NextResponse.json(
+        { message: "Cet email n'existe pas" },
+        { status: 404 },
+      );
     }
 
     // Random 32-byte token, encoded as hex
@@ -52,10 +55,10 @@ export async function POST(request: NextRequest) {
     const resetLink = `${env.NEXTAUTH_URL}/reset-password/${token}`;
 
     const emailContent = `
-        <h2>Bonjour ${user.name},</h2>
+        <h3>Bonjour ${user.name},</h3>
         <p>Vous avez demandé un lien de réinitialisation de votre mot de passe.</p>
-        <p>Cliquez sur le lien suivant pour réinitialiser votre mot de passe :</p>
-        <a href="${resetLink}">Réinitialiser le mot de passe</a>`;
+        <p>Cliquez sur le lien suivant pour réinitialiser votre mot de passe : <a href="${resetLink}">Réinitialiser le mot de passe</a></p>
+        `;
 
     await nodemailerClient.sendMail({
       from: env.GMAIL_EMAIL_ADDRESS,

@@ -1,11 +1,11 @@
 "use client";
+
 import { useState } from "react";
-import Image from "next/image";
-import { Button } from "../../components/ui/button";
 import { Lock, SearchX } from "lucide-react";
 import Link from "next/link";
 import { Type } from "@prisma/client";
 import ImageComponent from "@/components/ImageComponent";
+import { Button } from "@/components/ui/button";
 
 type Event = {
   id: string;
@@ -55,10 +55,10 @@ export default function SearchPagination(props: {
             event.type == "AUTRE"
               ? "autresevents"
               : event.type == "OUVERT"
-              ? "events"
-              : event.type == "BAPTISE"
-              ? "fpmsevents"
-              : "";
+                ? "events"
+                : event.type == "BAPTISE"
+                  ? "fpmsevents"
+                  : "";
           return (
             <li
               key={event.id}
@@ -66,15 +66,15 @@ export default function SearchPagination(props: {
             >
               <Link href={`/${path}/${event.id}`}>
                 <div className="relative isolate">
-                  <div className="absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white drop-shadow-eventtitle">
+                  <div className="drop-shadow-eventtitle absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white">
                     <h2>{event.title}</h2>
                     <p>{date.toLocaleDateString("fr-BE", options)}</p>
                   </div>
                   {event.type == "AUTRE" && (
-                    <Lock className="absolute right-4 top-4 z-10 text-white drop-shadow-eventtitle" />
+                    <Lock className="drop-shadow-eventtitle absolute top-4 right-4 z-10 text-white" />
                   )}
                   <ImageComponent
-                    className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110 "
+                    className="h-full w-full scale-105 object-cover duration-200 group-hover:scale-110"
                     src={event.coverUrl}
                     width={event.coverWidth}
                     height={event.coverHeight}

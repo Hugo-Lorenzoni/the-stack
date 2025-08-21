@@ -1,8 +1,9 @@
 "use client";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
 
 export function SponsorLogoInput({
   errors,
@@ -47,7 +48,7 @@ export function SponsorLogoInput({
       <Label>Logo du sponsor</Label>
 
       <Input
-        className="file:border mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer  file:rounded-md"
+        className="mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer file:rounded-md file:border"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         name={name}

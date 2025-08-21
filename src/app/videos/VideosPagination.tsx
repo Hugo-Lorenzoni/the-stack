@@ -2,9 +2,9 @@
 
 import { Video } from "@prisma/client";
 import { useState } from "react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type PropsType = {
   videos: Video[];
@@ -41,7 +41,7 @@ export default function VideosPagination({ videos }: PropsType) {
           onChange={(e) => (setSearchField(e.target.value), setCurrentPage(1))}
           placeholder="Search"
         />
-        <div className="pointer-events-none absolute bottom-0 right-0 top-0 flex items-center rounded-lg px-4">
+        <div className="pointer-events-none absolute top-0 right-0 bottom-0 flex items-center rounded-lg px-4">
           <Search className="h-4 w-4" />
         </div>
       </div>
