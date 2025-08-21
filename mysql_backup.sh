@@ -7,7 +7,7 @@
 CONTAINER_NAME="mysql_db"
 
 # Backup directory (make sure this directory exists)
-BACKUP_DIR="/mnt/mysql_backups"
+BACKUP_DIR="/mnt/nas/mysql_backups"
 
 # Backup filename pattern (will include timestamp)
 BACKUP_PREFIX="db_dump"
