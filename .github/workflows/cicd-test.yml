@@ -86,11 +86,10 @@ jobs:
       - name: Copy public assets to deployment folder
         run: cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
 
-      - name: Chmod and copy mysql_backup.sh to deployment folder
+      - name: Copy and chmod mysql_backup.sh to deployment folder
         run: |
-          chmod +x ./mysql_backup.sh
           cp ./mysql_backup.sh $HOME/${{ env.DEPLOYMENT_FOLDER }}
-
+          chmod +x $HOME/${{ env.DEPLOYMENT_FOLDER }}/mysql_backup.sh
       - name: Copy ecosystem config to deployment folder
         run: cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
 
