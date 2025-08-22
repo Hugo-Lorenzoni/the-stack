@@ -3,7 +3,7 @@
 # MySQL Docker Backup Script
 # Configure these variables according to your setup
 
-ENV_FILE="${ENV_FILE:-.env}"
+ENV_FILE=".env"
 
 # Load environment variables from .env file
 if [ -f "$ENV_FILE" ]; then

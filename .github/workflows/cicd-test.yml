@@ -90,6 +90,12 @@ jobs:
         run: |
           cp ./mysql_backup.sh $HOME/${{ env.DEPLOYMENT_FOLDER }}
           chmod +x $HOME/${{ env.DEPLOYMENT_FOLDER }}/mysql_backup.sh
+
+      - name: Get environment variables
+        run: |
+          touch $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
+
       - name: Copy ecosystem config to deployment folder
         run: cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
 
