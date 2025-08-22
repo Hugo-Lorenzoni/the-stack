@@ -107,7 +107,11 @@ jobs:
         run: cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
 
       - name: Restart PM2
-        run: cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 restart ecosystem.config.js
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
+          cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 restart ecosystem.config.js
 
       - name: Save PM2 process list
         run: pm2 save
