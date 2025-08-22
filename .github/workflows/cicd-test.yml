@@ -64,9 +64,8 @@ jobs:
       - name: Push changes to db and generate Prisma client
         uses: nick-fields/retry@v3
         with:
-          timeout_seconds: 30
+          timeout_seconds: 60
           max_attempts: 3
-          retry_on: error
           command: |
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
