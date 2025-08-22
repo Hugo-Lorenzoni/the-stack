@@ -35,7 +35,7 @@ BACKUP_PATH="${BACKUP_DIR}/${BACKUP_FILENAME}"
 mkdir -p "$BACKUP_DIR"
 
 # Create the backup
-echo "Starting MySQL backup at $(date)"
+echo "Starting $DATABASE_NAME backup at $(date)"
 docker exec "$CONTAINER_NAME" sh -c "exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" --single-transaction $DATABASE_NAME" > "$BACKUP_PATH"
 
 # Check if backup was successful
