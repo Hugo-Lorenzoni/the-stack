@@ -19,9 +19,7 @@ jobs:
 
       - name: Setup Node via NVM
         run: |
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          nvm use --lts
+          source ~/.bashrc
           npm install
 
       - name: Get environment variables
@@ -68,10 +66,14 @@ jobs:
           timeout_seconds: 30
           max_attempts: 3
           retry_on: error
-          command: npx prisma db push
+          command: |
+            source ~/.bashrc
+            npx prisma db push
 
       - name: Build project
-        run: npm run build
+        run: |
+          source ~/.bashrc
+          npm run build
 
       - name: Create folders for deployment
         run: |
