@@ -22,7 +22,7 @@ export const getInfos = cache(async () => {
     prisma.user.count({ where: { role: "WAITING" } }),
     prisma.photo.count(),
     prisma.video.count(),
-    getFolderSize.strict(join(env.DATA_FOLDER, "photos")),
+    getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
   ]);
 
   // const size = await getFolderSize.strict(folder);
