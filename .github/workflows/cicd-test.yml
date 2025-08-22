@@ -17,9 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node via NVM
+      - name: Install dependencies
         run: |
-          source ~/.bashrc
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
           npm install
 
       - name: Get environment variables
@@ -67,12 +69,16 @@ jobs:
           max_attempts: 3
           retry_on: error
           command: |
-            source ~/.bashrc
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use --lts
             npx prisma db push
 
       - name: Build project
         run: |
-          source ~/.bashrc
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
           npm run build
 
       - name: Create folders for deployment
