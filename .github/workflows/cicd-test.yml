@@ -24,7 +24,7 @@ jobs:
           nvm use --lts
           npm install
 
-      - name: Get environment variables
+      - name: Create .env file
         run: |
           touch .env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
@@ -43,15 +43,14 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET"=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
           echo "GOOGLE_CLIENT_ID"=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
 
-      - name: Create folders
+      - name: Create folders in data folder
         run: |
           mkdir -p ${{ secrets.DATA_FOLDER }}/photos
           mkdir -p ${{ secrets.DATA_FOLDER }}/json
-      - name: Copy public assets
-        run: cp -r ./public/* ${{ secrets.DATA_FOLDER }}/photos/
 
-      - name: Copy json files if they do not exist
+      - name: Copy public assets & json files if they do not exist
         run: |
+          cp -r ./public/* ${{ secrets.DATA_FOLDER }}/photos/
           if [ ! -f ${{ secrets.DATA_FOLDER }}/json/comite.json ]; then
             cp ./src/data/comite.json ${{ secrets.DATA_FOLDER }}/json/
           fi
@@ -62,7 +61,7 @@ jobs:
       - name: Deploy database
         run: docker compose -f docker-compose.test.yml up -d --force-recreate
 
-      - name: Push changes to the db and generate Prisma client
+      - name: Push changes to db and generate Prisma client
         uses: nick-fields/retry@v3
         with:
           timeout_seconds: 30
@@ -87,35 +86,26 @@ jobs:
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
 
-      - name: Copy build files to deployment folder
-        run: cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
-
-      - name: Copy public assets to deployment folder
-        run: cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
+      - name: Copy build files, public assets & PM2 config file to deployment folder
+        run: |
+          cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
+          cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
+          cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
 
       - name: Copy and chmod mysql_backup.sh to deployment folder
         run: |
           cp ./mysql_backup.sh $HOME/${{ env.DEPLOYMENT_FOLDER }}
           chmod +x $HOME/${{ env.DEPLOYMENT_FOLDER }}/mysql_backup.sh
 
-      - name: Get environment variables
+      - name: Create .env file in deployment folder for the backup script
         run: |
           touch $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
 
-      - name: Copy ecosystem config to deployment folder
-        run: cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
-
-      - name: Restart PM2
+      - name: Restart PM2 & save process list
         run: |
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm use --lts
           cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 restart ecosystem.config.js
-
-      - name: Save PM2 process list
-        run: |
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          nvm use --lts
           pm2 save
