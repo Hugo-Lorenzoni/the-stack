@@ -3,20 +3,31 @@
 # MySQL Docker Backup Script
 # Configure these variables according to your setup
 
+ENV_FILE="${ENV_FILE:-.env}"
+
+# Load environment variables from .env file
+if [ -f "$ENV_FILE" ]; then
+    # Export variables from .env file
+    export $(grep -v '^#' "$ENV_FILE" | grep -v '^$' | xargs)
+    echo "Loaded environment variables from $ENV_FILE"
+else
+    echo "Warning: .env file not found at $ENV_FILE"
+    exit 1
+fi
+
+DATABASE_NAME="$MYSQL_DATABASE"
+
 # Docker container name
 CONTAINER_NAME="mysql_db"
 
 # Backup directory (make sure this directory exists)
-BACKUP_DIR="/mnt/nas/mysql_backups"
-
-# Backup filename pattern (will include timestamp)
-BACKUP_PREFIX="db_dump"
-
+BACKUP_DIR="/mnt/nas/db"
 # Maximum number of backups to keep
 MAX_BACKUPS=10
 
 # Generate timestamp for backup filename
 TIMESTAMP=$(date +%Y-%m-%d_%Hh%M)
+BACKUP_PREFIX="${DATABASE_NAME}_backup"
 BACKUP_FILENAME="${BACKUP_PREFIX}_${TIMESTAMP}.sql"
 BACKUP_PATH="${BACKUP_DIR}/${BACKUP_FILENAME}"
 
@@ -25,7 +36,7 @@ mkdir -p "$BACKUP_DIR"
 
 # Create the backup
 echo "Starting MySQL backup at $(date)"
-docker exec "$CONTAINER_NAME" sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > "$BACKUP_PATH"
+docker exec "$CONTAINER_NAME" sh -c "exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" --single-transaction $DATABASE_NAME" > "$BACKUP_PATH"
 
 # Check if backup was successful
 if [ $? -eq 0 ] && [ -s "$BACKUP_PATH" ]; then
