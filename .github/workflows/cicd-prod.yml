@@ -1,0 +1,110 @@
+name: Deploy to Production VM
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DEPLOYMENT_FOLDER: "site-cpv"
+
+jobs:
+  deploy-prod:
+    runs-on: [self-hosted, prod]
+    environment: PROD
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
+          npm install
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+          echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+          echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+          echo 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}' >> .env
+          echo "ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "DATA_FOLDER=${{ secrets.DATA_FOLDER }}" >> .env
+          echo "EMAIL"=${{ secrets.EMAIL }} >> .env
+          echo "GOOGLE_REFRESH_TOKEN"=${{ secrets.GOOGLE_REFRESH_TOKEN }} >> .env
+          echo "GOOGLE_CLIENT_SECRET"=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
+          echo "GOOGLE_CLIENT_ID"=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+
+      - name: Create folders in data folder
+        run: |
+          mkdir -p ${{ secrets.DATA_FOLDER }}/photos
+          mkdir -p ${{ secrets.DATA_FOLDER }}/json
+
+      - name: Copy public assets & json files if they do not exist
+        run: |
+          cp -r ./public/* ${{ secrets.DATA_FOLDER }}/photos/
+          if [ ! -f ${{ secrets.DATA_FOLDER }}/json/comite.json ]; then
+            cp ./src/data/comite.json ${{ secrets.DATA_FOLDER }}/json/
+          fi
+          if [ ! -f ${{ secrets.DATA_FOLDER }}/json/text-intro.json ]; then
+            cp ./src/data/text-intro.json ${{ secrets.DATA_FOLDER }}/json/
+          fi
+
+      - name: Deploy database
+        run: docker compose -f docker-compose.prod.yml up -d --force-recreate
+
+      - name: Push changes to db and generate Prisma client
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 60
+          max_attempts: 3
+          command: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use --lts
+            npx prisma db push
+
+      - name: Build project
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
+          npm run build
+
+      - name: Create folders for deployment
+        run: |
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
+
+      - name: Copy build files, public assets & PM2 config file to deployment folder
+        run: |
+          cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
+          cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
+          cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
+
+      - name: Copy mysql_backup.sh to deployment folder and change its permissions
+        run: |
+          cp ./mysql_backup.sh $HOME/${{ env.DEPLOYMENT_FOLDER }}
+          chmod +x $HOME/${{ env.DEPLOYMENT_FOLDER }}/mysql_backup.sh
+
+      - name: Create .env file in deployment folder for the backup script
+        run: |
+          touch $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
+
+      - name: Restart PM2 & save process list
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
+          cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 restart ecosystem.config.js
+          pm2 save
