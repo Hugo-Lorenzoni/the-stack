@@ -13,7 +13,7 @@ export const getInfos = cache(async () => {
     countWaitingUser,
     countPhoto,
     countVideo,
-    size,
+    // size,
   ] = await Promise.all([
     prisma.event.count({ where: { type: "OUVERT" } }),
     prisma.event.count({ where: { type: "BAPTISE" } }),
@@ -22,11 +22,11 @@ export const getInfos = cache(async () => {
     prisma.user.count({ where: { role: "WAITING" } }),
     prisma.photo.count(),
     prisma.video.count(),
-    getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
+    // getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
   ]);
 
   // const size = await getFolderSize.strict(folder);
-  const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
+  // const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
 
   const res = {
     countEventOuvert,
@@ -36,7 +36,7 @@ export const getInfos = cache(async () => {
     countWaitingUser,
     countPhoto,
     countVideo,
-    formatedSize,
+    // formatedSize,
   };
   return res;
 });

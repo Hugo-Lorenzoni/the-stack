@@ -16,6 +16,8 @@ import {
   DatabaseBackup,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { LoadingStorageCard, StorageCard } from "./StorageCard";
+import { Suspense } from "react";
 
 export default async function AdminPage() {
   const infos = await getInfos();
@@ -113,21 +115,9 @@ export default async function AdminPage() {
             <p>{infos.countVideo} vidéos</p>
           </CardContent>
         </Card>
-        <Card className="gap-3 border-2">
-          <CardHeader>
-            <CardTitle className="flex justify-between gap-2">
-              Stockage
-              <DatabaseBackup strokeWidth={2.25} />
-            </CardTitle>
-            <CardDescription>
-              Espace de stockage utilisé par les photos sur le NAS du Magellan
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="pb-1">{infos.formatedSize} / 2000 Go</p>
-            <Progress value={(infos.formatedSize / 2000) * 100} />
-          </CardContent>
-        </Card>
+        <Suspense fallback={<LoadingStorageCard />}>
+          <StorageCard />
+        </Suspense>
       </div>
     </section>
   );
