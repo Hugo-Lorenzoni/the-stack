@@ -84,6 +84,7 @@ jobs:
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/node_modules/next
 
       - name: Copy build files, public assets & PM2 config file to deployment folder
         run: |
