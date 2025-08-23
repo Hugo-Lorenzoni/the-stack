@@ -92,6 +92,7 @@ jobs:
           cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
           cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
           cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
+          cp ./package.json $HOME/${{ env.DEPLOYMENT_FOLDER }}
 
       - name: Copy mysql_backup.sh to deployment folder and change its permissions
         run: |
