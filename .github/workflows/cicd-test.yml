@@ -88,7 +88,7 @@ jobs:
 
       - name: Copy build files, public assets & PM2 config file to deployment folder
         run: |
-          cp -r ./node_modules/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/node_modules
+          cp -r ./node_modules $HOME/${{ env.DEPLOYMENT_FOLDER }}/
           cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
           cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
           cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
