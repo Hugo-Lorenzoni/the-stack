@@ -12,8 +12,8 @@ export const getInfos = cache(async () => {
     // countEventAutre,
     countUser,
     countWaitingUser,
-    countPhoto,
-    countVideo,
+    // countPhoto,
+    // countVideo,
     // size,
   ] = await Promise.all([
     prisma.event.groupBy({
@@ -26,8 +26,8 @@ export const getInfos = cache(async () => {
     // prisma.event.count({ where: { type: "AUTRE" } }),
     prisma.user.count(),
     prisma.user.count({ where: { role: "WAITING" } }),
-    prisma.photo.count(),
-    prisma.video.count(),
+    // prisma.photo.count(),
+    // prisma.video.count(),
     // getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
   ]);
 
@@ -46,8 +46,8 @@ export const getInfos = cache(async () => {
     countEventAutre,
     countUser,
     countWaitingUser,
-    countPhoto,
-    countVideo,
+    // countPhoto,
+    // countVideo,
     // formatedSize,
   };
   return res;
