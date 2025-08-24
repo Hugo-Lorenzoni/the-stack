@@ -5,10 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import prisma from "@/lib/prisma";
-import { BadgeCheck, DatabaseBackup, Lock, Users2 } from "lucide-react";
+import { BadgeCheck, Lock, Users2 } from "lucide-react";
 
 export async function EventsCard() {
   const eventCounts = await prisma.event.groupBy({

@@ -1,28 +1,10 @@
-import { getInfos } from "@/utils/getInfos";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  BadgeCheck,
-  Image as Picture,
-  UserCircle,
-  Users2,
-  Lock,
-  Video,
-  DatabaseBackup,
-} from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { LoadingStorageCard, StorageCard } from "./StorageCard";
 import { Suspense } from "react";
-import { LoadingVideosCard, VideosCard } from "./VideosCard";
-import { LoadingPhotosCard, PhotosCard } from "./PhotosCard";
 import { EventsCard, LoadingEventsCard } from "./EventsCard";
+import { LoadingPhotosCard, PhotosCard } from "./PhotosCard";
+import { LoadingStorageCard, StorageCard } from "./StorageCard";
+import { LoadingVideosCard, VideosCard } from "./VideosCard";
 
-export default async function AdminPage() {
+export default function AdminPage() {
   // const infos = await getInfos();
 
   return (

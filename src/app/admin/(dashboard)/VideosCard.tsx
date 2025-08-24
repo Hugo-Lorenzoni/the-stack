@@ -5,13 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import prisma from "@/lib/prisma";
-import getFolderSize from "get-folder-size";
-import { DatabaseBackup, Video } from "lucide-react";
-import { join } from "path";
-import { env } from "process";
+import { Video } from "lucide-react";
 
 export async function VideosCard() {
   const countVideo = await prisma.video.count();
