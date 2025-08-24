@@ -14,7 +14,6 @@ module.exports = {
       exec_mode: "cluster",
       watch: false,
       merge_logs: true,
-      node_args: "--max-old-space-size=4096",
       env: {
         NODE_ENV: "production",
       },
