@@ -6,18 +6,24 @@ import { join } from "path";
 
 export const getInfos = cache(async () => {
   const [
-    countEventOuvert,
-    countEventFpms,
-    countEventAutre,
+    eventCounts,
+    // countEventOuvert,
+    // countEventFpms,
+    // countEventAutre,
     countUser,
     countWaitingUser,
     countPhoto,
     countVideo,
     // size,
   ] = await Promise.all([
-    prisma.event.count({ where: { type: "OUVERT" } }),
-    prisma.event.count({ where: { type: "BAPTISE" } }),
-    prisma.event.count({ where: { type: "AUTRE" } }),
+    prisma.event.groupBy({
+      by: ["type"],
+      _count: { id: true },
+      where: { type: { in: ["OUVERT", "BAPTISE", "AUTRE"] } },
+    }),
+    // prisma.event.count({ where: { type: "OUVERT" } }),
+    // prisma.event.count({ where: { type: "BAPTISE" } }),
+    // prisma.event.count({ where: { type: "AUTRE" } }),
     prisma.user.count(),
     prisma.user.count({ where: { role: "WAITING" } }),
     prisma.photo.count(),
@@ -27,6 +33,12 @@ export const getInfos = cache(async () => {
 
   // const size = await getFolderSize.strict(folder);
   // const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
+  const countEventOuvert =
+    eventCounts.find((e) => e.type === "OUVERT")?._count.id || 0;
+  const countEventFpms =
+    eventCounts.find((e) => e.type === "BAPTISE")?._count.id || 0;
+  const countEventAutre =
+    eventCounts.find((e) => e.type === "AUTRE")?._count.id || 0;
 
   const res = {
     countEventOuvert,
