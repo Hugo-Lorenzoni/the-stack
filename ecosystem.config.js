@@ -6,7 +6,7 @@ module.exports = {
     {
       name: "site-cpv",
       cwd: rootPath,
-      script: "node_modules/next/dist/bin/next",
+      script: ".next/standalone/server.js",
       time: true,
       log_date_format: "YYYY-MM-DD HH:mm Z",
       args: "start",
