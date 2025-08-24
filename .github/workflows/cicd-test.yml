@@ -82,10 +82,11 @@ jobs:
       - name: Create folders for deployment
         run: |
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
 
       - name: Copy build files, public assets & PM2 config file to deployment folder
         run: |
-          cp -rf ./.next/standalone $HOME/${{ env.DEPLOYMENT_FOLDER }}/
+          cp -rf ./.next/standalone $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
           cp -rf ./public $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next/standalone/
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next/standalone/.next/
           cp -rf ./.next/static $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next/standalone/.next/
