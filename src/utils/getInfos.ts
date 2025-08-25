@@ -10,6 +10,13 @@ import { after } from "next/server";
 // const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
 const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
 
+async function timedPromise<T>(promise: Promise<T>, label: string): Promise<T> {
+  const start = Date.now();
+  const result = await promise;
+  console.log(`[TIMER] ${label} took ${Date.now() - start}ms`);
+  return result;
+}
+
 async function fetchInfos() {
   const time = Date.now();
   const [
@@ -20,16 +27,25 @@ async function fetchInfos() {
     videoCount,
     _storageUsed,
   ] = await Promise.all([
-    prisma.event.groupBy({
-      by: ["type"],
-      _count: { id: true },
-      where: { type: { in: ["OUVERT", "BAPTISE", "AUTRE"] } },
-    }),
-    prisma.user.count(),
-    prisma.user.count({ where: { role: "WAITING" } }),
-    prisma.photo.count(),
-    prisma.video.count(),
-    getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
+    timedPromise(
+      prisma.event.groupBy({
+        by: ["type"],
+        _count: { id: true },
+        where: { type: { in: ["OUVERT", "BAPTISE", "AUTRE"] } },
+      }),
+      "eventCounts",
+    ),
+    timedPromise(prisma.user.count(), "userCount"),
+    timedPromise(
+      prisma.user.count({ where: { role: "WAITING" } }),
+      "waitingUserCount",
+    ),
+    timedPromise(prisma.photo.count(), "photoCount"),
+    timedPromise(prisma.video.count(), "videoCount"),
+    timedPromise(
+      getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
+      "storageUsed",
+    ),
   ]);
 
   // const size = await getFolderSize.strict(folder);
