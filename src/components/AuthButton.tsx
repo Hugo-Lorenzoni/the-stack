@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { Copy } from "lucide-react";
 
 export default function AuthButton({ session }: { session: Session | null }) {

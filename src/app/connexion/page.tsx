@@ -21,7 +21,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
-import Link from "next/link";
+import Link from "@/components/Link";
 
 const formSchema = z.object({
   email: z.string(),

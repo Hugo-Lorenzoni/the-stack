@@ -3,52 +3,105 @@ import { cache } from "react";
 import getFolderSize from "get-folder-size";
 import { env } from "process";
 import { join } from "path";
+import { readFile, writeFile } from "fs/promises";
+import { existsSync } from "fs";
+import { after } from "next/server";
 
-export const getInfos = cache(async () => {
+// const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
+const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
+
+async function fetchInfos() {
   const [
     eventCounts,
-    // countEventOuvert,
-    // countEventFpms,
-    // countEventAutre,
-    countUser,
-    countWaitingUser,
-    // countPhoto,
-    // countVideo,
-    // size,
+    userCount,
+    waitingUserCount,
+    photoCount,
+    videoCount,
+    _storageUsed,
   ] = await Promise.all([
     prisma.event.groupBy({
       by: ["type"],
       _count: { id: true },
       where: { type: { in: ["OUVERT", "BAPTISE", "AUTRE"] } },
     }),
-    // prisma.event.count({ where: { type: "OUVERT" } }),
-    // prisma.event.count({ where: { type: "BAPTISE" } }),
-    // prisma.event.count({ where: { type: "AUTRE" } }),
     prisma.user.count(),
     prisma.user.count({ where: { role: "WAITING" } }),
-    // prisma.photo.count(),
-    // prisma.video.count(),
-    // getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
+    prisma.photo.count(),
+    prisma.video.count(),
+    getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
   ]);
 
   // const size = await getFolderSize.strict(folder);
-  // const formatedSize = Number((size / 1000 / 1000 / 1000).toFixed(2));
-  const countEventOuvert =
+  const storageUsed = Number((_storageUsed / 1000 / 1000 / 1000).toFixed(2));
+
+  const eventOuvertCount =
     eventCounts.find((e) => e.type === "OUVERT")?._count.id || 0;
-  const countEventFpms =
+  const eventFpmsCount =
     eventCounts.find((e) => e.type === "BAPTISE")?._count.id || 0;
-  const countEventAutre =
+  const eventAutreCount =
     eventCounts.find((e) => e.type === "AUTRE")?._count.id || 0;
 
-  const res = {
-    countEventOuvert,
-    countEventFpms,
-    countEventAutre,
-    countUser,
-    countWaitingUser,
-    // countPhoto,
-    // countVideo,
-    // formatedSize,
+  const totalCount = eventOuvertCount + eventFpmsCount + eventAutreCount;
+
+  return {
+    timestamp: Date.now(),
+    userCount,
+    waitingUserCount,
+    photoCount,
+    eventOuvertCount,
+    eventFpmsCount,
+    eventAutreCount,
+    totalCount,
+    videoCount,
+    storageUsed,
   };
-  return res;
+}
+
+export const getInfos = cache(async () => {
+  const now = Date.now();
+  const path = join(env.DATA_FOLDER, "json", "infos.json");
+  let infos = {
+    timestamp: 0,
+    userCount: 0,
+    waitingUserCount: 0,
+    photoCount: 0,
+    eventOuvertCount: 0,
+    eventFpmsCount: 0,
+    eventAutreCount: 0,
+    totalCount: 0,
+    videoCount: 0,
+    storageUsed: 0,
+  };
+
+  if (!existsSync(path)) {
+    const infos = await fetchInfos();
+
+    // Write the data to a JSON file
+    await writeFile(
+      join(env.DATA_FOLDER, "json", "infos.json"),
+      JSON.stringify(infos),
+    );
+  } else {
+    infos = JSON.parse(await readFile(path, "utf-8"));
+
+    if (
+      infos.timestamp === undefined ||
+      now - infos.timestamp > CACHE_DURATION
+    ) {
+      console.log("[INFO] infos.json is outdated.");
+
+      after(async () => {
+        console.log("[INFO] Refreshing infos.json data...");
+        const infos = await fetchInfos();
+
+        // Write the data to a JSON file
+        await writeFile(
+          join(env.DATA_FOLDER, "json", "infos.json"),
+          JSON.stringify(infos),
+        );
+      });
+    }
+  }
+
+  return infos;
 });

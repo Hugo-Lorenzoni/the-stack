@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { usePathname } from "next/navigation";
 
 export default function AdminLayout({
@@ -24,6 +24,7 @@ export default function AdminLayout({
           <Link
             className={currentRoute === "/admin" ? activeStyle : linkStyle}
             href="/admin"
+            prefetch={false}
           >
             Tableau de bord
           </Link>
@@ -33,6 +34,7 @@ export default function AdminLayout({
               currentRoute === "/admin/new-event" ? activeStyle : linkStyle
             }
             href="/admin/new-event"
+            prefetch={false}
           >
             Nouvel événement
           </Link>
@@ -41,6 +43,7 @@ export default function AdminLayout({
               currentRoute === "/admin/drafted-events" ? activeStyle : linkStyle
             }
             href="/admin/drafted-events"
+            prefetch={false}
           >
             Publication des événements
           </Link>
@@ -51,6 +54,7 @@ export default function AdminLayout({
                 : linkStyle
             }
             href="/admin/events-management"
+            prefetch={false}
           >
             Gestion des événements
           </Link>
@@ -62,6 +66,7 @@ export default function AdminLayout({
                 : linkStyle
             }
             href="/admin/accounts-approval"
+            prefetch={false}
           >
             Approbation des comptes
           </Link>
@@ -72,6 +77,7 @@ export default function AdminLayout({
                 : linkStyle
             }
             href="/admin/accounts-management"
+            prefetch={false}
           >
             Gestion des comptes
           </Link>
@@ -81,6 +87,7 @@ export default function AdminLayout({
               currentRoute === "/admin/new-sponsor" ? activeStyle : linkStyle
             }
             href="/admin/new-sponsor"
+            prefetch={false}
           >
             Créer un nouveau sponsor
           </Link>
@@ -91,6 +98,7 @@ export default function AdminLayout({
                 : linkStyle
             }
             href="/admin/sponsors-management"
+            prefetch={false}
           >
             Gestion des sponsors
           </Link> */}
@@ -100,6 +108,7 @@ export default function AdminLayout({
               currentRoute === "/admin/new-video" ? activeStyle : linkStyle
             }
             href="/admin/new-video"
+            prefetch={false}
           >
             Nouvelle vidéo
           </Link>
@@ -110,6 +119,7 @@ export default function AdminLayout({
                 : linkStyle
             }
             href="/admin/videos-management"
+            prefetch={false}
           >
             Gestion des vidéos
           </Link>
@@ -119,6 +129,7 @@ export default function AdminLayout({
               currentRoute === "/admin/comite" ? activeStyle : linkStyle
             }
             href="/admin/comite"
+            prefetch={false}
           >
             Comité
           </Link>
@@ -127,6 +138,7 @@ export default function AdminLayout({
               currentRoute === "/admin/text-intro" ? activeStyle : linkStyle
             }
             href="/admin/text-intro"
+            prefetch={false}
           >
             Texte d&apos;introduction
           </Link>

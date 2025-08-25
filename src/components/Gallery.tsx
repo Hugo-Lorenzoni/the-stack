@@ -46,7 +46,7 @@ export default function Gallery({
   const closeLightbox = useCallback(() => {
     setCurrentPhotoId(null);
     router.push(pathname, { scroll: false });
-  }, [router]);
+  }, [router, pathname]);
 
   function openLightbox(index: number) {
     setCurrentPhotoId(index);
@@ -100,7 +100,7 @@ export default function Gallery({
         {photos.map((photo, index) => {
           return (
             <ImageComponent
-              key={index}
+              key={photo.id}
               index={index}
               className={`h-full w-full cursor-pointer rounded-md object-cover ${
                 photo.width < photo.height

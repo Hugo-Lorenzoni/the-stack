@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import Image from "next/image";
 import { getAdminEvents } from "@/utils/getAdminEvents";
 import { Pin } from "lucide-react";
@@ -39,12 +39,12 @@ export default async function EventsManagementPage() {
               >
                 <Link href={`/admin/events/${event.id}`}>
                   <div className="relative isolate">
-                    <div className="absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white drop-shadow-eventtitle">
+                    <div className="drop-shadow-eventtitle absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white">
                       <h2>{event.title}</h2>
                       <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
                     </div>
                     {event.pinned && (
-                      <Pin className="absolute right-4 top-4 z-10 rotate-45 text-white drop-shadow-eventtitle" />
+                      <Pin className="drop-shadow-eventtitle absolute top-4 right-4 z-10 rotate-45 text-white" />
                     )}
                     <ImageComponent
                       className="relative -z-10 h-full w-full scale-105 object-cover duration-200 group-hover:scale-110"

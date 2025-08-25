@@ -31,46 +31,18 @@ export default function ImageComponent({
       {/* {isLoading && (
         <div className="absolute inset-0 -z-20 animate-pulse bg-zinc-200/50 dark:bg-zinc-800/50" />
       )} */}
-      {!index ? (
-        <Image
-          loader={({ src }) => `/api/image${src}?placeholder=true`}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className={cn(
-            "absolute inset-0 -z-10 h-full w-full object-cover",
-            quality === "preview" && "object-contain",
-          )}
-          priority
-        />
-      ) : index < 10 ? (
-        <Image
-          loader={({ src }) => `/api/image${src}?placeholder=true`}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className={cn(
-            "absolute inset-0 -z-10 h-full w-full object-cover",
-            quality === "preview" && "object-contain",
-          )}
-          priority
-        />
-      ) : (
-        <Image
-          loading="lazy"
-          loader={({ src }) => `/api/image${src}?placeholder=true`}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className={cn(
-            "absolute inset-0 -z-10 h-full w-full object-cover",
-            quality === "preview" && "object-contain",
-          )}
-        />
-      )}
+      <Image
+        loader={({ src }) => `/api/image${src}?placeholder=true`}
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className={cn(
+          "absolute inset-0 -z-10 h-full w-full object-cover",
+          quality === "preview" && "object-contain",
+        )}
+        priority={!index || index < 10}
+      />
       <Image
         loading="lazy"
         loader={({ src }) =>

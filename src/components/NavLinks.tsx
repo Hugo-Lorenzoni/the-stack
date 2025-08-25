@@ -1,10 +1,10 @@
-import Link from "next/link";
 import AuthButton from "./AuthButton";
 // import { useSession } from "next-auth/react";
 import SearchBar from "./SearchBar";
 import { getNextAuthSession } from "@/utils/auth";
 import { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
+import Link from "@/components/Link";
 
 type Props = HTMLAttributes<HTMLUListElement>;
 

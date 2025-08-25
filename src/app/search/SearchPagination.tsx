@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Lock, SearchX } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { Type } from "@prisma/client";
 import ImageComponent from "@/components/ImageComponent";
 import { Button } from "@/components/ui/button";

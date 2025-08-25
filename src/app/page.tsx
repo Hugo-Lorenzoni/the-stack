@@ -26,7 +26,7 @@ export default async function Home() {
           alt="Statue de Houdain FPMs"
           quality="full"
         />
-        <h1 className="absolute bottom-12 left-[15%] right-[15%] z-0 pr-[15%] text-4xl font-bold text-white drop-shadow-title">
+        <h1 className="drop-shadow-title absolute right-[15%] bottom-12 left-[15%] z-0 pr-[15%] text-4xl font-bold text-white">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté
           Polytechnique de Mons !
         </h1>
@@ -36,8 +36,8 @@ export default async function Home() {
           <h2 className="relative mb-4 w-fit text-2xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
             {textintro.title}
           </h2>
-          {textintro.text.map((p, i) => (
-            <p key={i}>{p}</p>
+          {textintro.text.map((p) => (
+            <p key={p}>{p}</p>
           ))}
           <p className="text-end">{textintro.signature}</p>
           <p className="text-end italic">{textintro.date}</p>

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Event } from "@/app/admin/drafted-events/columns";
 import { Check, Eye, Send } from "lucide-react";
 
-import Link from "next/link";
+import Link from "@/components/Link";
 
 export default function EventRowActions(props: { row: Row<Event> }) {
   const [event, setEvent] = useState<Event | null>(props.row.original);

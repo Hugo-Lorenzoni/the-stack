@@ -174,6 +174,7 @@ export default function AdminGallery({
               setPhotos={setPhotos}
             />
             <ImageComponent
+              index={index}
               className="h-full w-full object-cover"
               src={photo.url}
               width={photo.width}
