@@ -1,24 +1,39 @@
 "use client";
 
-import NextjsLink, { LinkProps } from "next/link";
-import { HTMLProps, useState } from "react";
+import NextjsLink from "next/link";
+import { useRouter } from "next/navigation";
+import { type ComponentPropsWithRef } from "react";
 
-type Props = LinkProps & HTMLProps<HTMLAnchorElement>;
+export default function Link(props: ComponentPropsWithRef<typeof NextjsLink>) {
+  const router = useRouter();
+  const strHref = typeof props.href === "string" ? props.href : props.href.href;
 
-export default function Link({ href, children, ...props }: Props) {
-  const [active, setActive] = useState(false);
+  const conditionalPrefetch = () => {
+    if (strHref) {
+      router.prefetch(strHref);
+    }
+  };
 
   return (
     <NextjsLink
-      href={href}
-      prefetch={active ? null : false}
-      onMouseEnter={() => {
-        console.log("prefetching", href);
-        setActive(true);
-      }}
       {...props}
-    >
-      {children}
-    </NextjsLink>
+      prefetch={false}
+      onMouseEnter={(e) => {
+        conditionalPrefetch();
+        return props.onMouseEnter?.(e);
+      }}
+      onPointerEnter={(e) => {
+        conditionalPrefetch();
+        return props.onPointerEnter?.(e);
+      }}
+      onTouchStart={(e) => {
+        conditionalPrefetch();
+        return props.onTouchStart?.(e);
+      }}
+      onFocus={(e) => {
+        conditionalPrefetch();
+        return props.onFocus?.(e);
+      }}
+    />
   );
 }

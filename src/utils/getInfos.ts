@@ -11,6 +11,7 @@ import { after } from "next/server";
 const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
 
 async function fetchInfos() {
+  const time = Date.now();
   const [
     eventCounts,
     userCount,
@@ -42,6 +43,8 @@ async function fetchInfos() {
     eventCounts.find((e) => e.type === "AUTRE")?._count.id || 0;
 
   const totalCount = eventOuvertCount + eventFpmsCount + eventAutreCount;
+
+  console.log(`[INFO] Fetched infos in ${Date.now() - time}ms`);
 
   return {
     timestamp: Date.now(),
@@ -88,8 +91,6 @@ export const getInfos = cache(async () => {
       infos.timestamp === undefined ||
       now - infos.timestamp > CACHE_DURATION
     ) {
-      console.log("[INFO] infos.json is outdated.");
-
       after(async () => {
         console.log("[INFO] Refreshing infos.json data...");
         const infos = await fetchInfos();
