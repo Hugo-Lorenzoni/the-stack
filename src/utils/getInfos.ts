@@ -13,8 +13,15 @@ import {
   getFolderSizeStream,
 } from "@/lib/folder-size";
 
-// const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
-const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+// const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
+
+async function timedPromise<T>(promise: Promise<T>, label: string): Promise<T> {
+  const start = Date.now();
+  const result = await promise;
+  console.log(`[TIMER] ${label} took ${Date.now() - start}ms`);
+  return result;
+}
 
 async function fetchInfos() {
   const time = Date.now();
@@ -35,7 +42,10 @@ async function fetchInfos() {
     prisma.user.count({ where: { role: "WAITING" } }),
     prisma.photo.count(),
     prisma.video.count(),
-    getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
+    timedPromise(
+      getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
+      "getFolderSizeOptimized",
+    ),
   ]);
 
   // const size = await getFolderSize.strict(folder);
