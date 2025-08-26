@@ -292,7 +292,7 @@ export default function RegisterPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue="FPMS"
                         className="flex flex-col gap-1.5"
                       >
                         {CercleList.map((key) => {
@@ -326,6 +326,7 @@ export default function RegisterPage() {
                             type="text"
                             required
                             placeholder="Exemple : Cercle des Sciences"
+                            defaultValue=""
                             {...field}
                           />
                         </FormControl>
@@ -344,6 +345,7 @@ export default function RegisterPage() {
                             type="text"
                             required
                             placeholder="Bruxelles"
+                            defaultValue=""
                             {...field}
                           />
                         </FormControl>
