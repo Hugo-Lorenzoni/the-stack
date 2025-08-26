@@ -6,11 +6,20 @@ import { join } from "path";
 import { readFile, writeFile } from "fs/promises";
 import { existsSync } from "fs";
 import { after } from "next/server";
+import {
+  getFolderSizeFast,
+  getFolderSizeNode,
+  getFolderSizeOptimized,
+  getFolderSizeStream,
+} from "@/lib/folder-size";
 
 // const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
 const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
 
-async function timedPromise<T>(promise: Promise<T>, label: string): Promise<T> {
+export async function timedPromise<T>(
+  promise: Promise<T>,
+  label: string,
+): Promise<T> {
   const start = Date.now();
   const result = await promise;
   console.log(`[TIMER] ${label} took ${Date.now() - start}ms`);
@@ -20,13 +29,17 @@ async function timedPromise<T>(promise: Promise<T>, label: string): Promise<T> {
 async function fetchInfos() {
   const time = Date.now();
   const [
+    _storageUsed,
     eventCounts,
     userCount,
     waitingUserCount,
     photoCount,
     videoCount,
-    _storageUsed,
   ] = await Promise.all([
+    timedPromise(
+      getFolderSizeFast(join(env.DATA_FOLDER, "photos")),
+      "storageUsed",
+    ),
     timedPromise(
       prisma.event.groupBy({
         by: ["type"],
@@ -42,10 +55,6 @@ async function fetchInfos() {
     ),
     timedPromise(prisma.photo.count(), "photoCount"),
     timedPromise(prisma.video.count(), "videoCount"),
-    timedPromise(
-      getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
-      "storageUsed",
-    ),
   ]);
 
   // const size = await getFolderSize.strict(folder);
