@@ -16,10 +16,7 @@ import {
 // const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes
 const CACHE_DURATION = 1000 * 10; // 10 seconds (for testing)
 
-export async function timedPromise<T>(
-  promise: Promise<T>,
-  label: string,
-): Promise<T> {
+async function timedPromise<T>(promise: Promise<T>, label: string): Promise<T> {
   const start = Date.now();
   const result = await promise;
   console.log(`[TIMER] ${label} took ${Date.now() - start}ms`);
