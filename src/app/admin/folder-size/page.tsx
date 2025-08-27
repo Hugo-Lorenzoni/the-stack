@@ -20,30 +20,34 @@ async function timedPromise<T>(
 }
 
 export default async function folderSizePage() {
-  const folderSize = await timedPromise(
-    getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
-    "folderSize",
-  );
-
-  const folderSizeFast = await timedPromise(
-    getFolderSizeFast(join(env.DATA_FOLDER, "photos")),
-    "folderSizeFast",
-  );
-
-  const folderSizeNode = await timedPromise(
-    getFolderSizeNode(join(env.DATA_FOLDER, "photos")),
-    "folderSizeNode",
-  );
-
-  const folderSizeOptimized = await timedPromise(
-    getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
-    "folderSizeOptimized",
-  );
-
-  const folderSizeStream = await timedPromise(
-    getFolderSizeStream(join(env.DATA_FOLDER, "photos")),
-    "folderSizeStream",
-  );
+  const [
+    folderSize,
+    folderSizeFast,
+    folderSizeNode,
+    folderSizeOptimized,
+    folderSizeStream,
+  ] = await Promise.all([
+    timedPromise(
+      getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
+      "folderSize",
+    ),
+    timedPromise(
+      getFolderSizeFast(join(env.DATA_FOLDER, "photos")),
+      "folderSizeFast",
+    ),
+    timedPromise(
+      getFolderSizeNode(join(env.DATA_FOLDER, "photos")),
+      "folderSizeNode",
+    ),
+    timedPromise(
+      getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
+      "folderSizeOptimized",
+    ),
+    timedPromise(
+      getFolderSizeStream(join(env.DATA_FOLDER, "photos")),
+      "folderSizeStream",
+    ),
+  ]);
 
   return (
     <div>
