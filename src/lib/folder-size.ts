@@ -1,6 +1,8 @@
 import os from "os";
 import { exec } from "child_process";
 import { promisify } from "util";
+import { promises as fs } from "fs";
+import * as path from "path";
 
 export async function getFolderSizeOptimized(dir: string): Promise<number> {
   if (os.platform() === "win32") {
@@ -19,12 +21,11 @@ async function getFolderSizeWindows(dir: string): Promise<number> {
 const execAsync = promisify(exec);
 
 async function getFolderSizeUnix(dir: string): Promise<number> {
-  const { stdout } = await execAsync(`du -sb "${dir}"`);
+  const { stdout } = await execAsync(
+    `du -sb --apparent-size --exclude="*.db" --no-dereference "${dir}"`,
+  );
   return parseInt(stdout.split("\t")[0], 10);
 }
-
-import { promises as fs } from "fs";
-import * as path from "path";
 
 export async function getFolderSizeNode(dir: string): Promise<number> {
   let total = 0;

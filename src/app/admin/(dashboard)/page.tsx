@@ -16,7 +16,6 @@ import {
   Users2,
   Video,
 } from "lucide-react";
-import { after } from "next/server";
 
 export default async function AdminPage() {
   const {

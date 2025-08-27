@@ -42,10 +42,16 @@ async function fetchInfos() {
     prisma.user.count({ where: { role: "WAITING" } }),
     prisma.photo.count(),
     prisma.video.count(),
-    timedPromise(
-      getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
-      "getFolderSizeOptimized",
-    ),
+    Promise.race([
+      timedPromise(
+        getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
+        "getFolderSizeOptimized",
+      ),
+      timedPromise(
+        getFolderSizeFast(join(env.DATA_FOLDER, "photos")),
+        "getFolderSizeFast",
+      ),
+    ]),
   ]);
 
   // const size = await getFolderSize.strict(folder);
