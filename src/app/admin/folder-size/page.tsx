@@ -53,8 +53,8 @@ export default function folderSizePage() {
         <thead>
           <tr>
             <th className="border border-slate-300 px-4 py-2">Method</th>
-            <th className="border border-slate-300 px-4 py-2">Size (GB)</th>
-            <th className="border border-slate-300 px-4 py-2">Time (ms)</th>
+            <th className="border border-slate-300 px-4 py-2">Size (Go)</th>
+            <th className="border border-slate-300 px-4 py-2">Time (s)</th>
           </tr>
         </thead>
         <tbody>
@@ -96,9 +96,11 @@ async function FolderSizeResult({ promise, methodName }: FolderSizeRowProps) {
     <tr>
       <td className="border border-slate-300 px-4 py-2">{methodName}</td>
       <td className="border border-slate-300 px-4 py-2">
-        {(size / 1024 / 1024 / 1024).toFixed(2)}
+        {(size / 1000 / 1000 / 1000).toFixed(2)}
       </td>
-      <td className="border border-slate-300 px-4 py-2">{time}</td>
+      <td className="border border-slate-300 px-4 py-2">
+        {(time / 1000).toFixed(2)}
+      </td>
     </tr>
   );
 }
