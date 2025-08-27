@@ -35,11 +35,12 @@ export default function NotFound() {
               Page non trouvée
             </h2>
             <p className="mb-2 text-lg text-gray-600">
-              Désolé, la page que vous recherchez n'existe pas ou a été
+              Désolé, la page que vous recherchez n&apos;existe pas ou a été
               déplacée.
             </p>
             <p className="text-gray-500">
-              Vérifiez l'URL ou utilisez les liens ci-dessous pour naviguer.
+              Vérifiez l&apos;URL ou utilisez les liens ci-dessous pour
+              naviguer.
             </p>
           </div>
 
@@ -52,7 +53,7 @@ export default function NotFound() {
             <Button asChild className="bg-orange-600 hover:bg-orange-700">
               <Link href="/">
                 <Home size={20} />
-                Retour à l'accueil
+                Retour à l&apos;accueil
               </Link>
             </Button>
           </div>
