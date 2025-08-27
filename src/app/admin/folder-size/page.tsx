@@ -117,7 +117,7 @@ function LoadingRow({ methodName }: { methodName: string }) {
   );
 }
 
-export function FolderSizeRow({ methodName, promise }: FolderSizeRowProps) {
+function FolderSizeRow({ methodName, promise }: FolderSizeRowProps) {
   return (
     <Suspense fallback={<LoadingRow methodName={methodName} />}>
       <FolderSizeResult promise={promise} methodName={methodName} />
