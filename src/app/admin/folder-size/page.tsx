@@ -7,6 +7,7 @@ import {
 import getFolderSize from "get-folder-size";
 import { join } from "path";
 import { env } from "process";
+import { Suspense } from "react";
 
 async function timedPromise<T>(
   promise: Promise<T>,
@@ -19,35 +20,30 @@ async function timedPromise<T>(
   return [result, time];
 }
 
-export default async function folderSizePage() {
-  const [
-    folderSize,
-    folderSizeFast,
-    folderSizeNode,
-    folderSizeOptimized,
-    folderSizeStream,
-  ] = await Promise.all([
-    timedPromise(
-      getFolderSize.loose(join(env.DATA_FOLDER, "photos")),
-      "folderSize",
-    ),
-    timedPromise(
-      getFolderSizeFast(join(env.DATA_FOLDER, "photos")),
-      "folderSizeFast",
-    ),
-    timedPromise(
-      getFolderSizeNode(join(env.DATA_FOLDER, "photos")),
-      "folderSizeNode",
-    ),
-    timedPromise(
-      getFolderSizeOptimized(join(env.DATA_FOLDER, "photos")),
-      "folderSizeOptimized",
-    ),
-    timedPromise(
-      getFolderSizeStream(join(env.DATA_FOLDER, "photos")),
-      "folderSizeStream",
-    ),
-  ]);
+export default function folderSizePage() {
+  const folderPath = join(env.DATA_FOLDER, "photos");
+
+  // Create individual promises for each method
+  const folderSizePromise = timedPromise(
+    getFolderSize.loose(folderPath),
+    "folderSize",
+  );
+  const folderSizeFastPromise = timedPromise(
+    getFolderSizeFast(folderPath),
+    "folderSizeFast",
+  );
+  const folderSizeNodePromise = timedPromise(
+    getFolderSizeNode(folderPath),
+    "folderSizeNode",
+  );
+  const folderSizeOptimizedPromise = timedPromise(
+    getFolderSizeOptimized(folderPath),
+    "folderSizeOptimized",
+  );
+  const folderSizeStreamPromise = timedPromise(
+    getFolderSizeStream(folderPath),
+    "folderSizeStream",
+  );
 
   return (
     <div>
@@ -57,68 +53,74 @@ export default async function folderSizePage() {
         <thead>
           <tr>
             <th className="border border-slate-300 px-4 py-2">Method</th>
-            <th className="border border-slate-300 px-4 py-2">Size (bytes)</th>
+            <th className="border border-slate-300 px-4 py-2">Size (GB)</th>
             <th className="border border-slate-300 px-4 py-2">Time (ms)</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="border border-slate-300 px-4 py-2">
-              get-folder-size
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSize[0]}
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSize[1]}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-slate-300 px-4 py-2">
-              getFolderSizeFast
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeFast[0]}
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeFast[1]}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-slate-300 px-4 py-2">
-              getFolderSizeNode
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeNode[0]}
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeNode[1]}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-slate-300 px-4 py-2">
-              getFolderSizeOptimized
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeOptimized[0]}
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeOptimized[1]}
-            </td>
-          </tr>
-          <tr>
-            <td className="border border-slate-300 px-4 py-2">
-              getFolderSizeStream
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeStream[0]}
-            </td>
-            <td className="border border-slate-300 px-4 py-2">
-              {folderSizeStream[1]}
-            </td>
-          </tr>
+          <FolderSizeRow
+            methodName="get-folder-size"
+            promise={folderSizePromise}
+          />
+          <FolderSizeRow
+            methodName="getFolderSizeFast"
+            promise={folderSizeFastPromise}
+          />
+          <FolderSizeRow
+            methodName="getFolderSizeNode"
+            promise={folderSizeNodePromise}
+          />
+          <FolderSizeRow
+            methodName="getFolderSizeOptimized"
+            promise={folderSizeOptimizedPromise}
+          />
+          <FolderSizeRow
+            methodName="getFolderSizeStream"
+            promise={folderSizeStreamPromise}
+          />
         </tbody>
       </table>
     </div>
+  );
+}
+
+interface FolderSizeRowProps {
+  methodName: string;
+  promise: Promise<[number, number]>;
+}
+
+async function FolderSizeResult({ promise, methodName }: FolderSizeRowProps) {
+  const [size, time] = await promise;
+
+  return (
+    <tr>
+      <td className="border border-slate-300 px-4 py-2">{methodName}</td>
+      <td className="border border-slate-300 px-4 py-2">
+        {(size / 1024 / 1024 / 1024).toFixed(2)}
+      </td>
+      <td className="border border-slate-300 px-4 py-2">{time}</td>
+    </tr>
+  );
+}
+
+function LoadingRow({ methodName }: { methodName: string }) {
+  return (
+    <tr>
+      <td className="border border-slate-300 px-4 py-2">{methodName}</td>
+      <td className="border border-slate-300 px-4 py-2">
+        <div className="h-4 w-full animate-pulse rounded bg-gray-200"></div>
+      </td>
+      <td className="border border-slate-300 px-4 py-2">
+        <div className="h-4 w-full animate-pulse rounded bg-gray-200"></div>
+      </td>
+    </tr>
+  );
+}
+
+export function FolderSizeRow({ methodName, promise }: FolderSizeRowProps) {
+  return (
+    <Suspense fallback={<LoadingRow methodName={methodName} />}>
+      <FolderSizeResult promise={promise} methodName={methodName} />
+    </Suspense>
   );
 }
