@@ -105,7 +105,7 @@ jobs:
           nvm use --lts
           export PM2_HOME="$HOME/.pm2"
           cd $HOME/${{ env.DEPLOYMENT_FOLDER }} 
-          pm2 kill
+          pm2 delete all || true
           pm2 start ecosystem.config.js
           pm2 save
           which pm2
@@ -119,11 +119,3 @@ jobs:
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm use --lts
           pm2 ls
-          echo $PM2_HOME
-
-      - name: Print debug info
-        run: |
-          which pm2
-          pm2 -v
-          echo $PM2_HOME
-          echo $HOME
