@@ -3,14 +3,22 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import { promises as fs } from "fs";
 import * as path from "path";
+import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
 
 export async function getFolderSizeOptimized(dir: string): Promise<number> {
+  if (process.env.PHASE === PHASE_PRODUCTION_BUILD) {
+    console.log(
+      "[getFolderSizeOptimized] Skipping folder size calculation during production build",
+    );
+    return Promise.resolve(0);
+  }
   if (os.platform() === "win32") {
     return getFolderSizeWindows(dir);
   } else {
     return getFolderSizeUnix(dir);
   }
 }
+
 async function getFolderSizeWindows(dir: string): Promise<number> {
   const { stdout } = await execAsync(
     `powershell -command "& {(Get-ChildItem -Recurse -ErrorAction SilentlyContinue '${dir}' | Measure-Object -Property Length -Sum).Sum}"`,
@@ -28,6 +36,12 @@ async function getFolderSizeUnix(dir: string): Promise<number> {
 }
 
 export async function getFolderSizeNode(dir: string): Promise<number> {
+  if (process.env.PHASE === PHASE_PRODUCTION_BUILD) {
+    console.log(
+      "[getFolderSizeNode] Skipping folder size calculation during production build",
+    );
+    return Promise.resolve(0);
+  }
   let total = 0;
   const files = await fs.readdir(dir, { withFileTypes: true });
 
@@ -45,6 +59,12 @@ export async function getFolderSizeNode(dir: string): Promise<number> {
 }
 
 export async function getFolderSizeStream(folderPath: string): Promise<number> {
+  if (process.env.PHASE === PHASE_PRODUCTION_BUILD) {
+    console.log(
+      "[getFolderSizeStream] Skipping folder size calculation during production build",
+    );
+    return Promise.resolve(0);
+  }
   let totalSize = 0;
   const queue: string[] = [folderPath];
 
@@ -68,6 +88,12 @@ export async function getFolderSizeStream(folderPath: string): Promise<number> {
 }
 
 export async function getFolderSizeFast(folderPath: string): Promise<number> {
+  if (process.env.PHASE === PHASE_PRODUCTION_BUILD) {
+    console.log(
+      "[getFolderSizeFast] Skipping folder size calculation during production build",
+    );
+    return Promise.resolve(0);
+  }
   let totalSize = 0;
 
   async function calculateSize(currentPath: string): Promise<void> {
