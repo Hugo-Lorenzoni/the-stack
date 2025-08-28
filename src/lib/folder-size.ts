@@ -7,7 +7,7 @@ import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
 import { env } from "process";
 
 export async function getFolderSizeOptimized(dir: string): Promise<number> {
-  if (env.NEXT_PUBLIC_IS_BUILDING === "true") {
+  if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
     console.log(
       "[getFolderSizeOptimized] Skipping folder size calculation during production build",
     );
@@ -37,7 +37,7 @@ async function getFolderSizeUnix(dir: string): Promise<number> {
 }
 
 export async function getFolderSizeNode(dir: string): Promise<number> {
-  if (env.NEXT_PUBLIC_IS_BUILDING === "true") {
+  if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
     console.log(
       "[getFolderSizeNode] Skipping folder size calculation during production build",
     );
@@ -60,7 +60,7 @@ export async function getFolderSizeNode(dir: string): Promise<number> {
 }
 
 export async function getFolderSizeStream(folderPath: string): Promise<number> {
-  if (env.NEXT_PUBLIC_IS_BUILDING === "true") {
+  if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
     console.log(
       "[getFolderSizeStream] Skipping folder size calculation during production build",
     );
@@ -89,12 +89,7 @@ export async function getFolderSizeStream(folderPath: string): Promise<number> {
 }
 
 export async function getFolderSizeFast(folderPath: string): Promise<number> {
-  // console.log("IS_BUILDING", process.env.IS_BUIDING);
-  // console.log("IS_BUILDING", env.IS_BUIDING);
-  console.log("NEXT_PUBLIC_IS_BUILDING", process.env.NEXT_PUBLIC_IS_BUILDING);
-  console.log("NEXT_PUBLIC_IS_BUILDING", env.NEXT_PUBLIC_IS_BUILDING);
-
-  if (env.NEXT_PUBLIC_IS_BUILDING === "true") {
+  if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
     console.log(
       "[getFolderSizeFast] Skipping folder size calculation during production build",
     );

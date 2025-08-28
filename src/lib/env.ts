@@ -15,7 +15,6 @@ const EnvSchema = z.object({
   GOOGLE_REFRESH_TOKEN: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
-  NEXT_PUBLIC_IS_BUILDING: z.string().default("false"),
 });
 
 EnvSchema.parse(process.env);

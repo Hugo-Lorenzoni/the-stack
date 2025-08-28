@@ -108,6 +108,10 @@ jobs:
           pm2 kill
           pm2 start ecosystem.config.js
           pm2 save
+          which pm2
+          pm2 -v
+          echo $PM2_HOME
+          echo $HOME
 
       - name: PM2 list
         run: |
@@ -117,7 +121,9 @@ jobs:
           pm2 ls
           echo $PM2_HOME
 
-      - name: HOME
+      - name: Print debug info
         run: |
-          echo "Home is $HOME"
+          which pm2
+          pm2 -v
           echo $PM2_HOME
+          echo $HOME
