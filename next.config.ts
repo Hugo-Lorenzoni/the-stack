@@ -19,16 +19,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-interface PhaseConfig extends NextConfig {
-  env: Record<string, string | undefined>;
-}
-
-export default module.exports = (phase: string): PhaseConfig => {
-  console.log("config", phase);
-  return {
-    ...nextConfig,
-    env: {
-      PHASE: phase,
-    },
-  };
-};
+export default nextConfig;
