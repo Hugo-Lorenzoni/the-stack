@@ -112,6 +112,9 @@ jobs:
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm use --lts
           pm2 ls
+          echo $PM2_HOME
 
       - name: HOME
-        run: echo "Home is $HOME"
+        run: |
+          echo "Home is $HOME"
+          echo $PM2_HOME
