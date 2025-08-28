@@ -105,3 +105,10 @@ jobs:
           nvm use --lts
           cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 kill && pm2 start ecosystem.config.js
           pm2 save
+
+      - name: PM2 list
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm use --lts
+          pm2 ls
