@@ -108,14 +108,3 @@ jobs:
           pm2 delete all || true
           pm2 start ecosystem.config.js
           pm2 save
-          which pm2
-          pm2 -v
-          echo $PM2_HOME
-          echo $HOME
-
-      - name: PM2 list
-        run: |
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          nvm use --lts
-          pm2 ls
