@@ -83,16 +83,14 @@ jobs:
         run: |
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}
           mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
-          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
-          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/node_modules
 
       - name: Copy build files, public assets & PM2 config file to deployment folder
         run: |
-          cp -r ./node_modules $HOME/${{ env.DEPLOYMENT_FOLDER }}/
-          cp -r ./.next/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
-          cp -r ./public/* $HOME/${{ env.DEPLOYMENT_FOLDER }}/public
+          cp -rf ./.next/standalone $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next
+          cp -rf ./public $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next/standalone/
+          mkdir -p $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next/standalone/.next/
+          cp -rf ./.next/static $HOME/${{ env.DEPLOYMENT_FOLDER }}/.next/standalone/.next/
           cp ./ecosystem.config.js $HOME/${{ env.DEPLOYMENT_FOLDER }}
-          cp ./package.json $HOME/${{ env.DEPLOYMENT_FOLDER }}
           cp ./.env $HOME/${{ env.DEPLOYMENT_FOLDER }}/.env
 
       - name: Copy mysql_backup.sh to deployment folder and change its permissions
@@ -105,5 +103,5 @@ jobs:
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm use --lts
-          cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 restart ecosystem.config.js
+          cd $HOME/${{ env.DEPLOYMENT_FOLDER }} && pm2 kill && pm2 start ecosystem.config.js
           pm2 save
