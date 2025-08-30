@@ -197,14 +197,12 @@ export default function AdminGallery({
             <div>
               {photos[photoId] ? (
                 <Button asChild>
-                  <a href={photos[photoId].url} download>
+                  <a href={`/api/image${photos[photoId].url}`} download>
                     <Download />
                     Download
                   </a>
                 </Button>
-              ) : (
-                ""
-              )}
+              ) : null}
 
               <Button className="ml-2" onClick={() => closeLightbox()}>
                 <XCircle />

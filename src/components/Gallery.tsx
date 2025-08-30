@@ -131,14 +131,12 @@ export default function Gallery({
             <div>
               {photos[currentPhotoId] ? (
                 <Button asChild>
-                  <a href={photos[currentPhotoId].url} download>
+                  <a href={`/api/image${photos[currentPhotoId].url}`} download>
                     <Download />
                     Download
                   </a>
                 </Button>
-              ) : (
-                ""
-              )}
+              ) : null}
 
               <Button className="ml-2" onClick={() => closeLightbox()}>
                 <XCircle />
