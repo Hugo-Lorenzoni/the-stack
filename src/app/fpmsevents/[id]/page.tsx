@@ -15,7 +15,7 @@ export default async function EventPage(props: {
           Événement introuvable
         </h1>
         <p className="mt-4">
-          L'événement que vous recherchez n'existe pas ou a été supprimé.
+          L'événement que vous recherchez n&apos;existe pas ou a été supprimé.
         </p>
       </main>
     );
