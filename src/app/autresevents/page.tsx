@@ -37,7 +37,7 @@ export default async function AutresEventsPage(props: {
                 className="group overflow-hidden rounded-2xl shadow-lg duration-200 hover:shadow-xl"
               >
                 <Link href={`/autresevents/${event.id}`}>
-                  <div className="relative isolate">
+                  <div className="relative isolate h-full w-full">
                     <div className="drop-shadow-eventtitle absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white">
                       <h2>{event.title}</h2>
                       <p>{event.date.toLocaleDateString("fr-BE", options)}</p>
