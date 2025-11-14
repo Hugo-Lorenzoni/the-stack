@@ -15,10 +15,13 @@ export async function getFolderSizeOptimized(dir: string): Promise<number> {
   }
   if (os.platform() === "win32") {
     return getFolderSizeWindows(dir);
+  } else if (os.platform() === "darwin") {
+    return getFolderSizeMac(dir);
   } else {
     return getFolderSizeUnix(dir);
   }
 }
+const execAsync = promisify(exec);
 
 async function getFolderSizeWindows(dir: string): Promise<number> {
   const { stdout } = await execAsync(
@@ -27,7 +30,13 @@ async function getFolderSizeWindows(dir: string): Promise<number> {
   return parseInt(stdout.trim(), 10);
 }
 
-const execAsync = promisify(exec);
+async function getFolderSizeMac(dir: string): Promise<number> {
+  const { stdout } = await execAsync(
+    `du -sk "${dir}" | awk '{print $1 * 1024}'`,
+  );
+  console.log("Mac du output:", stdout);
+  return parseInt(stdout.trim(), 10);
+}
 
 async function getFolderSizeUnix(dir: string): Promise<number> {
   const { stdout } = await execAsync(
