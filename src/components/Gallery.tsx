@@ -45,7 +45,7 @@ export default function Gallery({
 
   const closeLightbox = useCallback(() => {
     setCurrentPhotoId(null);
-    router.push(pathname, { scroll: false });
+    router.back();
   }, [router, pathname]);
 
   function openLightbox(index: number) {
