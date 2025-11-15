@@ -51,21 +51,19 @@ export default function SearchPagination(props: {
       <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {results.map((event) => {
           const date = new Date(event.date);
-          const path =
-            event.type == "AUTRE"
-              ? "autresevents"
-              : event.type == "OUVERT"
-                ? "events"
-                : event.type == "BAPTISE"
-                  ? "fpmsevents"
-                  : "";
+          const pathMap: Record<Type, string> = {
+            AUTRE: "autresevents",
+            OUVERT: "events",
+            BAPTISE: "fpmsevents",
+          };
+          const path = pathMap[event.type] || "";
           return (
             <li
               key={event.id}
               className="group overflow-hidden rounded-2xl shadow-lg duration-200 hover:shadow-xl"
             >
               <Link href={`/${path}/${event.id}`}>
-                <div className="relative isolate">
+                <div className="relative isolate h-full w-full">
                   <div className="drop-shadow-eventtitle absolute bottom-4 left-5 z-10 mr-5 text-lg font-semibold text-white">
                     <h2>{event.title}</h2>
                     <p>{date.toLocaleDateString("fr-BE", options)}</p>
