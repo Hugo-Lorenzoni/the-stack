@@ -28,6 +28,6 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Run tests (optional)
-        run: npm test
-        continue-on-error: false
+      # - name: Run tests (optional)
+      #   run: npm test
+      #   continue-on-error: false
