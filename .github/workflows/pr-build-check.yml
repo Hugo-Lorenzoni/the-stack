@@ -43,6 +43,11 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET"=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
           echo "GOOGLE_CLIENT_ID"=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
 
+      - name: Create data folders
+        run: |
+          mkdir -p ${{ secrets.DATA_FOLDER }}/photos
+          mkdir -p ${{ secrets.DATA_FOLDER }}/json
+
       - name: Copy public assets & json files if they do not exist
         run: |
           cp -r ./public/* ${{ secrets.DATA_FOLDER }}/photos/
