@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: TEST
 
     steps:
       - name: Checkout code
@@ -21,6 +22,42 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+          echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+          echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+          echo 'DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}' >> .env
+          echo "ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "DATA_FOLDER=${{ secrets.DATA_FOLDER }}" >> .env
+          echo "EMAIL"=${{ secrets.EMAIL }} >> .env
+          echo "GOOGLE_REFRESH_TOKEN"=${{ secrets.GOOGLE_REFRESH_TOKEN }} >> .env
+          echo "GOOGLE_ACCESS_TOKEN"=${{ secrets.GOOGLE_ACCESS_TOKEN }} >> .env
+          echo "GOOGLE_CLIENT_SECRET"=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
+          echo "GOOGLE_CLIENT_ID"=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+
+      - name: Copy public assets & json files if they do not exist
+        run: |
+          cp -r ./public/* ${{ secrets.DATA_FOLDER }}/photos/
+          if [ ! -f ${{ secrets.DATA_FOLDER }}/json/comite.json ]; then
+            cp ./src/data/comite.json ${{ secrets.DATA_FOLDER }}/json/
+          fi
+          if [ ! -f ${{ secrets.DATA_FOLDER }}/json/text-intro.json ]; then
+            cp ./src/data/text-intro.json ${{ secrets.DATA_FOLDER }}/json/
+          fi
+
+      - name: Deploy database
+        run: docker compose -f docker-compose.test.yml up -d --force-recreate
+
+      - name: Push changes to db and generate Prisma client
+        run: npx prisma db push
 
       - name: Build Next.js app
         run: npm run build
