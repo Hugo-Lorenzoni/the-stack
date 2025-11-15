@@ -62,13 +62,13 @@ jobs:
         run: docker compose -f docker-compose.test.yml up -d --force-recreate
 
       - name: Push changes to db and generate Prisma client
-        run: npx prisma db push
+        uses: nick-fields/retry@v3
+        with:
+          timeout_seconds: 60
+          max_attempts: 3
+          run: npx prisma db push
 
       - name: Build Next.js app
         run: npm run build
         env:
           NODE_ENV: production
-
-      # - name: Run tests (optional)
-      #   run: npm test
-      #   continue-on-error: false
