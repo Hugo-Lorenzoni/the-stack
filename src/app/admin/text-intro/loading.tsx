@@ -8,19 +8,19 @@ export default function TextIntroLoadingPage() {
       <div className="mt-4 flex max-w-xl flex-1 flex-col gap-2 text-sm">
         <div className="space-y-2">
           <div className="py-0.5">Titre</div>
-          <Skeleton className="h-10 w-full border border-input" />
+          <Skeleton className="border-input h-10 w-full border" />
         </div>
         <div className="flex flex-1 flex-col space-y-2">
           <div className="py-0.5">Texte d&apos;introduction</div>
-          <Skeleton className="h-full w-full border border-input" />
+          <Skeleton className="border-input h-full w-full border" />
         </div>
         <div className="space-y-2">
           <div className="py-0.5">Signature</div>
-          <Skeleton className="h-10 w-full border border-input" />
+          <Skeleton className="border-input h-10 w-full border" />
         </div>
         <div className="space-y-2">
           <div className="py-0.5">Date</div>
-          <Skeleton className="h-10 w-full border border-input" />
+          <Skeleton className="border-input h-10 w-full border" />
         </div>
         <Button disabled>Submit</Button>
         <Button disabled variant="outline">

@@ -45,7 +45,7 @@ export function NewCoverInput({
       <Label>Choisir une nouvelle photo de couverture</Label>
 
       <Input
-        className="file:border mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer file:rounded-md"
+        className="mt-2 flex h-fit cursor-pointer items-center file:cursor-pointer file:rounded-md file:border"
         accept=".jpg,.jpeg,.png,.webp"
         type="file"
         name={name}
