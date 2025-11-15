@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: TEST
 
     steps:
       - name: Checkout code
@@ -26,3 +27,7 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+
+      # - name: Run tests (optional)
+      #   run: npm test
+      #   continue-on-error: false
