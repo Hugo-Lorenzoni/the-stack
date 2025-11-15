@@ -5,6 +5,18 @@ import { promises as fs } from "fs";
 import * as path from "path";
 import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
 import { env } from "process";
+import getFolderSize from "get-folder-size";
+
+export async function getFolderSizeLibrary(dir: string): Promise<number> {
+  if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
+    console.log(
+      "[getFolderSizeLibrary] Skipping folder size calculation during production build",
+    );
+    return Promise.resolve(0);
+  }
+
+  return getFolderSize.loose(dir);
+}
 
 export async function getFolderSizeOptimized(dir: string): Promise<number> {
   if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {

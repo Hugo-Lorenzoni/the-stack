@@ -1,10 +1,10 @@
 import {
   getFolderSizeFast,
+  getFolderSizeLibrary,
   getFolderSizeNode,
   getFolderSizeOptimized,
   getFolderSizeStream,
 } from "@/lib/folder-size";
-import getFolderSize from "get-folder-size";
 import { join } from "path";
 import { env } from "process";
 import { Suspense } from "react";
@@ -25,7 +25,7 @@ export default function folderSizePage() {
 
   // Create individual promises for each method
   const folderSizePromise = timedPromise(
-    getFolderSize.loose(folderPath),
+    getFolderSizeLibrary(folderPath),
     "folderSize",
   );
   const folderSizeFastPromise = timedPromise(
