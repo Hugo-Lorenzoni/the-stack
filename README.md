@@ -49,3 +49,31 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+## Maintaining the Project
+
+Project maintenance primarily involves keeping dependencies up to date. The following commands are useful for this purpose.
+
+### Updating Next.js
+
+To update Next.js to the latest version, run:
+
+```bash
+npx @next/codemod@latest upgrade latest
+```
+
+### Updating Other Dependencies
+
+To interactively update the remaining dependencies, use:
+
+```bash
+npx npm-check-updates -i
+```
+
+### Updating shadcn/ui Components
+
+To update all shadcn/ui components, run:
+
+```bash
+for file in src/components/ui/*.tsx; do npx shadcn@latest add -y -o $(basename "$file" .tsx); done
+```
