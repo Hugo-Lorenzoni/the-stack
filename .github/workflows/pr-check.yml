@@ -84,5 +84,8 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Check formatting with Prettier
-        run: npx prettier@latest --check .
+        run: npx prettier --check .
