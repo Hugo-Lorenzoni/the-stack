@@ -548,7 +548,7 @@ export default function NewEventPage() {
         </Form>
       </section>
       <AlertDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-h-[95vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {isLoading || isRetryLoading || failed.length
