@@ -52,9 +52,7 @@ export default async function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="pb-2 text-xl font-semibold">
-              © Site développé par
-            </h4>
+            <h4 className="pb-2 text-xl font-semibold">© Site développé par</h4>
             <ul>
               <li>Hugo Lorenzoni</li>
               <li>Rodrigue Deghorain</li>
