@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         `;
 
     await nodemailerClient.sendMail({
-      from: env.GMAIL_EMAIL_ADDRESS,
+      from: env.EMAIL,
       to: user.email,
       subject: "CPV FPMs - Réinitialisation du mot de passe",
       html: emailContent,
