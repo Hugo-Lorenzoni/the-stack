@@ -7,31 +7,15 @@ const hasOauthConfig =
   !!env.GOOGLE_CLIENT_SECRET &&
   !!env.GOOGLE_REFRESH_TOKEN;
 
-if (!env.EMAIL_PASSWORD && !hasOauthConfig) {
+if (!hasOauthConfig) {
   throw new Error(
-    "Email transport is not configured. Set EMAIL_PASSWORD or GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REFRESH_TOKEN.",
+    "Email transport is not configured. Set GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REFRESH_TOKEN.",
   );
 }
 
-const smtpBaseConfig = {
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-};
-
-const passwordTransport = env.EMAIL_PASSWORD
-  ? nodemailer.createTransport({
-      ...smtpBaseConfig,
-      auth: {
-        user: env.EMAIL,
-        pass: env.EMAIL_PASSWORD,
-      },
-    })
-  : null;
-
 const oauthTransport = hasOauthConfig
   ? nodemailer.createTransport({
-      ...smtpBaseConfig,
+      service: "gmail",
       auth: {
         type: "OAuth2",
         user: env.EMAIL,
@@ -42,49 +26,17 @@ const oauthTransport = hasOauthConfig
     })
   : null;
 
-export const nodemailerClient = passwordTransport ?? oauthTransport;
+export const nodemailerClient = oauthTransport;
 
-function isOauthAuthFailure(error: unknown) {
-  if (!error || typeof error !== "object") {
-    return false;
+export async function sendMail(mailOptions: SendMailOptions) {
+  if (!oauthTransport) {
+    throw new Error("No OAuth email transport available.");
   }
 
-  const authError = error as {
-    code?: string;
-    command?: string;
-    message?: string;
-  };
-
-  return (
-    authError.code === "EAUTH" ||
-    authError.command === "AUTH XOAUTH2" ||
-    /invalid_grant/i.test(authError.message ?? "")
-  );
-}
-
-export async function sendMailWithFallback(mailOptions: SendMailOptions) {
-  if (passwordTransport && !oauthTransport) {
-    return passwordTransport.sendMail(mailOptions);
-  }
-
-  if (oauthTransport) {
-    try {
-      return await oauthTransport.sendMail(mailOptions);
-    } catch (error) {
-      if (passwordTransport && isOauthAuthFailure(error)) {
-        console.warn(
-          "OAuth2 email auth failed, retrying with EMAIL_PASSWORD transport.",
-        );
-        return passwordTransport.sendMail(mailOptions);
-      }
-
-      throw error;
+  return oauthTransport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log("Error occurred:", error);
     }
-  }
-
-  if (passwordTransport) {
-    return passwordTransport.sendMail(mailOptions);
-  }
-
-  throw new Error("No email transport available.");
+    console.log("Message sent: %s", info.messageId);
+  });
 }

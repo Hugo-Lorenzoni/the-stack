@@ -1,4 +1,4 @@
-import { sendMailWithFallback } from "@/lib/email";
+import { sendMail } from "@/lib/email";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
         <p>Cliquez sur le lien suivant pour réinitialiser votre mot de passe : <a href="${resetLink}">Réinitialiser le mot de passe</a></p>
         `;
 
-    await sendMailWithFallback({
+    await sendMail({
       from: env.EMAIL,
       to: user.email,
       subject: "CPV FPMs - Réinitialisation du mot de passe",
