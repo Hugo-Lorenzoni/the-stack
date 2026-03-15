@@ -13,7 +13,7 @@ if (!hasOauthConfig) {
   );
 }
 
-const oauthTransport = hasOauthConfig
+const nodemailerClient = hasOauthConfig
   ? nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -26,14 +26,12 @@ const oauthTransport = hasOauthConfig
     })
   : null;
 
-export const nodemailerClient = oauthTransport;
-
 export async function sendMail(mailOptions: SendMailOptions) {
-  if (!oauthTransport) {
+  if (!nodemailerClient) {
     throw new Error("No OAuth email transport available.");
   }
 
-  return oauthTransport.sendMail(mailOptions, (error, info) => {
+  return nodemailerClient.sendMail(mailOptions, (error, info) => {
     if (error) {
       return console.log("Error occurred:", error);
     }
