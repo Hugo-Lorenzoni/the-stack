@@ -12,9 +12,9 @@ const EnvSchema = z.object({
   NEXTAUTH_SECRET: z.string(),
   NEXTAUTH_URL: z.string().url(),
   EMAIL: z.string().email(),
-  GOOGLE_REFRESH_TOKEN: z.string(),
-  GOOGLE_CLIENT_SECRET: z.string(),
-  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_REFRESH_TOKEN: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_CLIENT_ID: z.string().optional(),
 });
 
 EnvSchema.parse(process.env);
