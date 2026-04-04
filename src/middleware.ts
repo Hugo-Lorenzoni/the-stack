@@ -25,6 +25,29 @@ export default withAuth(
   {
     callbacks: {
       authorized({ req, token }) {
+        const requestId =
+          req.headers.get("x-request-id") ?? crypto.randomUUID();
+        const flowId = req.headers.get("x-flow-id");
+        const logAccessDenied = (
+          reason:
+            | "admin_role_required"
+            | "baptise_role_required"
+            | "auth_required",
+        ) => {
+          const event = {
+            event: "auth.access_denied",
+            request_id: requestId,
+            ...(flowId && { flow_id: flowId }),
+            method: req.method,
+            path: req.nextUrl.pathname,
+            reason,
+            authenticated: !!token,
+            user_role: token?.role ?? null,
+            timestamp: new Date().toISOString(),
+          };
+          console.warn(JSON.stringify(event));
+        };
+
         const pathname = req.nextUrl.pathname;
         const isAdminPath =
           pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
@@ -43,14 +66,20 @@ export default withAuth(
         }
 
         if (isAdminPath) {
-          return token?.role === "ADMIN";
+          const allowed = token?.role === "ADMIN";
+          if (!allowed) logAccessDenied("admin_role_required");
+          return allowed;
         }
 
         if (isBaptisePath) {
-          return token?.role === "BAPTISE" || token?.role === "ADMIN";
+          const allowed = token?.role === "BAPTISE" || token?.role === "ADMIN";
+          if (!allowed) logAccessDenied("baptise_role_required");
+          return allowed;
         }
 
-        return !!token;
+        const allowed = !!token;
+        if (!allowed) logAccessDenied("auth_required");
+        return allowed;
       },
     },
   },
