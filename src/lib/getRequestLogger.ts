@@ -10,6 +10,7 @@ export type RequestLoggerContext = {
 
 export async function getRequestLogger(page: string): Promise<RequestLoggerContext> {
   const headerStore = await headers();
+  // crypto.randomUUID() uses the Web Crypto API global — available in Node 18+ and Edge.
   const requestId   = headerStore.get('x-request-id') ?? crypto.randomUUID();
   const startTime   = Date.now();
 

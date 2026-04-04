@@ -55,14 +55,23 @@ function createMockResponse(): MockResponse {
 /**
  * Runs the same logic as the middleware function in src/middleware.ts:
  *   const requestId = req.headers.get('x-request-id') ?? crypto.randomUUID();
- *   const response = NextResponse.next();
+ *   const requestHeaders = new Headers(req.headers);
+ *   requestHeaders.set('x-request-id', requestId);
+ *   const response = NextResponse.next({ request: { headers: requestHeaders } });
  *   response.headers.set('x-request-id', requestId);
  *   return response;
  */
-function runMiddlewareLogic(req: MockRequest, res: MockResponse): string {
+function runMiddlewareLogic(
+  req: MockRequest,
+  res: MockResponse,
+): { requestId: string; requestHeaders: MockHeaders } {
   const requestId = req.headers.get('x-request-id') ?? crypto.randomUUID();
+  // Clone and mutate request headers (mirrors NextResponse.next({ request: { headers } }))
+  const requestHeaders = createMockHeaders({ ...req.headers._store });
+  requestHeaders.set('x-request-id', requestId);
+  // Also set on response for client visibility
   res.headers.set('x-request-id', requestId);
-  return requestId;
+  return { requestId, requestHeaders };
 }
 
 // ---------------------------------------------------------------------------
@@ -72,7 +81,7 @@ function runMiddlewareLogic(req: MockRequest, res: MockResponse): string {
 describe('middleware x-request-id injection', () => {
   describe('when x-request-id is absent from the incoming request', () => {
     it('sets x-request-id on the response', () => {
-      const req = createMockRequest(); // no x-request-id header
+      const req = createMockRequest();
       const res = createMockResponse();
 
       runMiddlewareLogic(req, res);
@@ -81,6 +90,25 @@ describe('middleware x-request-id injection', () => {
       expect(responseId).not.toBeNull();
       expect(typeof responseId).toBe('string');
       expect((responseId as string).length).toBeGreaterThan(0);
+    });
+
+    it('sets x-request-id on the forwarded request headers (for downstream handlers)', () => {
+      const req = createMockRequest();
+      const res = createMockResponse();
+
+      const { requestHeaders } = runMiddlewareLogic(req, res);
+
+      expect(requestHeaders.get('x-request-id')).not.toBeNull();
+      expect(requestHeaders.get('x-request-id')).toMatch(UUID_V4_PATTERN);
+    });
+
+    it('request and response carry the same x-request-id value', () => {
+      const req = createMockRequest();
+      const res = createMockResponse();
+
+      const { requestHeaders } = runMiddlewareLogic(req, res);
+
+      expect(requestHeaders.get('x-request-id')).toBe(res.headers.get('x-request-id'));
     });
 
     it('generates a valid UUID v4 when x-request-id is absent', () => {
@@ -101,7 +129,6 @@ describe('middleware x-request-id injection', () => {
         runMiddlewareLogic(req, res);
         ids.add(res.headers.get('x-request-id') as string);
       }
-      // All 10 generated IDs should be unique
       expect(ids.size).toBe(10);
     });
   });
@@ -117,6 +144,16 @@ describe('middleware x-request-id injection', () => {
       expect(res.headers.get('x-request-id')).toBe(existingId);
     });
 
+    it('preserves the existing x-request-id on the forwarded request headers', () => {
+      const existingId = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+      const req = createMockRequest({ 'x-request-id': existingId });
+      const res = createMockResponse();
+
+      const { requestHeaders } = runMiddlewareLogic(req, res);
+
+      expect(requestHeaders.get('x-request-id')).toBe(existingId);
+    });
+
     it('does not overwrite an existing x-request-id with a new UUID', () => {
       const existingId = 'a1b2c3d4-e5f6-4789-abcd-ef0123456789';
       const req = createMockRequest({ 'x-request-id': existingId });
@@ -124,7 +161,6 @@ describe('middleware x-request-id injection', () => {
 
       runMiddlewareLogic(req, res);
 
-      // The response ID must equal the incoming ID, not a freshly generated one
       expect(res.headers.get('x-request-id')).toBe(existingId);
     });
 

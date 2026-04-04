@@ -12,6 +12,7 @@ type RouteHandler = (
 export function withLogging(handler: RouteHandler): RouteHandler {
   return async (req, ctx) => {
     const startTime = Date.now();
+    // crypto.randomUUID() uses the Web Crypto API global — available in Node 18+ and Edge.
     const requestId = req.headers.get('x-request-id') ?? crypto.randomUUID();
 
     const wideEvent: WideEvent = {
