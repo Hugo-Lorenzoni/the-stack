@@ -23,3 +23,55 @@ export const logger = pino(
   },
   prettyStream,
 );
+
+type LogLevel = "info" | "error";
+
+function getErrorDetails(err: unknown) {
+  if (err instanceof Error) {
+    return { message: err.message, type: err.name };
+  }
+  return { message: String(err), type: "Error" };
+}
+
+function getPayloadKeys(payload: unknown): string[] {
+  if (payload !== null && typeof payload === "object") {
+    return Object.keys(payload as Record<string, unknown>).slice(0, 20);
+  }
+  return [];
+}
+
+function onLoggerFailure(level: LogLevel, payload: unknown, err: unknown) {
+  const event = {
+    event: "logging.write_failed",
+    attempted_level: level,
+    error: getErrorDetails(err),
+    payload_keys: getPayloadKeys(payload),
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    console.error(JSON.stringify(event));
+  } catch {
+    console.error("logging.write_failed");
+  }
+}
+
+function safeLog(level: LogLevel, payload: unknown) {
+  try {
+    if (level === "error") {
+      logger.error(payload);
+      return;
+    }
+    logger.info(payload);
+  } catch (err) {
+    onLoggerFailure(level, payload, err);
+  }
+}
+
+export function safeInfo(payload: unknown) {
+  safeLog("info", payload);
+}
+
+export function safeError(payload: unknown) {
+  safeLog("error", payload);
+}
