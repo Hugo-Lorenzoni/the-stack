@@ -16,6 +16,7 @@ export const EnvSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
   LOG_LEVEL: z.string().optional(),
+  LOG_FILE_PATH: z.string().optional(),
   SERVICE_NAME: z.string().optional(),
   SERVICE_VERSION: z.string().optional(),
   COMMIT_SHA: z.string().optional(),

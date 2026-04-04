@@ -46,6 +46,70 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Observability (Grafana + Loki)
+
+This repository includes a ready-to-run observability stack:
+
+- Loki for log storage
+- Promtail for log shipping
+- Grafana for dashboards
+
+### 1. Configure your app logs for ingestion
+
+Set these variables in `.env` (or your production environment):
+
+```bash
+LOG_LEVEL=info
+LOG_FILE_PATH=logs/app.log
+SERVICE_NAME=cpv-app
+SERVICE_VERSION=<release-version>
+COMMIT_SHA=<git-sha>
+```
+
+`LOG_FILE_PATH` writes JSON logs to a file that Promtail scrapes.
+
+### 2. Start the observability stack
+
+```bash
+mkdir -p logs
+docker compose -f docker-compose.observability.yml up -d
+```
+
+Services:
+
+- Grafana: http://localhost:3001
+- Loki API: http://localhost:3100
+
+Default Grafana credentials (override with env vars):
+
+- user: `admin`
+- password: `admin`
+
+### 3. Generate logs
+
+Run the app in production mode so logs stay JSON-formatted:
+
+```bash
+npm run build
+npm run start
+```
+
+Then hit a few pages/API routes. Logs will appear in Grafana (pre-provisioned dashboard: **CPV Logs Overview**).
+
+### 4. Useful Loki queries
+
+```logql
+{job="cpv-app"}
+```
+
+```logql
+sum by (outcome) (count_over_time({job="cpv-app"} | json | outcome!="" [5m]))
+```
+
+```logql
+avg_over_time({job="cpv-app"} | json | unwrap duration_ms [5m])
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.

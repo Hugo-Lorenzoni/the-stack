@@ -1,10 +1,29 @@
+import { mkdirSync } from "fs";
+import { dirname } from "path";
 import pino from "pino";
 import pretty from "pino-pretty";
 
-const prettyStream =
-  process.env.NODE_ENV === "development"
-    ? pretty({ colorize: true, sync: true })
-    : undefined;
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const logFilePath = process.env.LOG_FILE_PATH?.trim();
+
+let fileDestination: pino.DestinationStream | undefined;
+
+if (logFilePath) {
+  mkdirSync(dirname(logFilePath), { recursive: true });
+  fileDestination = pino.destination({ dest: logFilePath, sync: false });
+}
+
+const streams: pino.StreamEntry[] = [
+  {
+    stream: isDevelopment
+      ? pretty({ colorize: true, sync: true })
+      : process.stdout,
+  },
+  ...(fileDestination ? [{ stream: fileDestination }] : []),
+];
+
+const loggerStream = pino.multistream(streams);
 
 // Read directly from process.env to avoid circular dependencies with env.ts
 export const logger = pino(
@@ -21,7 +40,7 @@ export const logger = pino(
       environment: process.env.NODE_ENV ?? "production",
     },
   },
-  prettyStream,
+  loggerStream,
 );
 
 type LogLevel = "info" | "error";
