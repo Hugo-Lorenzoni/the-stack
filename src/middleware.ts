@@ -10,14 +10,17 @@ export default withAuth(
 
     // Clone request headers and inject x-request-id so downstream
     // handlers and server components can read it via headers() or req.headers.
+    // Preserve x-flow-id if the caller supplied one for cross-request correlation.
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-request-id", requestId);
 
     const response = NextResponse.next({
       request: { headers: requestHeaders },
     });
-    // Also set on response so the client can see the correlation ID.
+    // Also set on response so the client can see the correlation IDs.
     response.headers.set("x-request-id", requestId);
+    const flowId = req.headers.get("x-flow-id");
+    if (flowId) response.headers.set("x-flow-id", flowId);
     return response;
   },
   {

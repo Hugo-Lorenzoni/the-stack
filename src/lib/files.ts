@@ -4,6 +4,7 @@ import { join } from "path";
 import { env } from "process";
 import { mkdir, stat, writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export const saveFile = async (
   file: File,
@@ -26,10 +27,12 @@ export const saveFile = async (
       //!Création du dossier
       await mkdir(uploadDir, { recursive: true });
     } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e,
-      );
+      logger.error({
+        action: 'save_file',
+        outcome: 'error',
+        error: { message: (e as Error).message ?? String(e), type: (e as Error).name ?? 'Error' },
+        detail: 'mkdir_failed',
+      });
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -43,7 +46,12 @@ export const saveFile = async (
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {
-    console.error("Error while trying to upload a file\n", e);
+    logger.error({
+      action: 'save_file',
+      outcome: 'error',
+      error: { message: (e as Error).message ?? String(e), type: (e as Error).name ?? 'Error' },
+      detail: 'write_failed',
+    });
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },
