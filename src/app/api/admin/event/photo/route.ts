@@ -2,6 +2,7 @@ import sizeOf from "image-size";
 
 import { saveFile } from "@/lib/files";
 import prisma from "@/lib/prisma";
+import { withLogging } from "@/lib/withLogging";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 
@@ -21,87 +22,81 @@ const valuesSchema = z.object({
   date: z.string(),
 });
 
-export async function POST(request: NextRequest) {
-  try {
-    const data = await request.formData();
+export const POST = withLogging(async (req: NextRequest, { wideEvent }) => {
+  const data = await req.formData();
 
-    const values = data.get("values") as string;
-    if (!values) {
-      console.log("No values");
-      return NextResponse.json({ message: "No values" }, { status: 500 });
-    }
+  const values = data.get("values") as string;
+  if (!values) {
+    return NextResponse.json({ message: "No values" }, { status: 500 });
+  }
 
-    const result = valuesSchema.safeParse(JSON.parse(values));
+  const result = valuesSchema.safeParse(JSON.parse(values));
 
-    if (!result.success) {
-      console.log(result.error);
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
-    const currentEvent = result.data;
-
-    const photoFile = data.get("file") as File;
-
-    const photoURL = await saveFile(
-      photoFile,
-      currentEvent.title,
-      new Date(currentEvent.date),
-      currentEvent.type,
-      false,
-    );
-
-    const photoArray = await photoFile.arrayBuffer();
-    const photoDismensions = sizeOf(Buffer.from(photoArray));
-
-    const photo = {
-      name: photoFile.name,
-      url: photoURL,
-      width: photoDismensions.width,
-      height: photoDismensions.height,
-    };
-
-    const parsedPhoto = photoSchema.parse(photo);
-    if (!parsedPhoto) {
-      console.log("Failed parsing the photo");
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
-    }
-    const event = await prisma.event.update({
-      where: { id: currentEvent.id },
-      data: {
-        photos: {
-          create: {
-            ...parsedPhoto,
-          },
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-        date: true,
-      },
-    });
-    if (!event) {
-      console.log(`${photo.name} - db query failed`);
-
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
-    }
+  if (!result.success) {
     return NextResponse.json(
-      { event: event, photo: parsedPhoto },
-      { status: 200 },
+      { message: "Something went wrong !" },
+      { status: 500 },
     );
-  } catch (error) {
-    console.log(error);
+  }
+
+  const currentEvent = result.data;
+
+  wideEvent.action = "add_photo";
+  wideEvent.event_id = currentEvent.id;
+
+  const photoFile = data.get("file") as File;
+
+  const photoURL = await saveFile(
+    photoFile,
+    currentEvent.title,
+    new Date(currentEvent.date),
+    currentEvent.type,
+    false,
+  );
+
+  const photoArray = await photoFile.arrayBuffer();
+  const photoDismensions = sizeOf(Buffer.from(photoArray));
+
+  const photo = {
+    name: photoFile.name,
+    url: photoURL,
+    width: photoDismensions.width,
+    height: photoDismensions.height,
+  };
+
+  const parsedPhoto = photoSchema.parse(photo);
+  if (!parsedPhoto) {
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },
     );
   }
-}
+
+  const event = await prisma.event.update({
+    where: { id: currentEvent.id },
+    data: {
+      photos: {
+        create: {
+          ...parsedPhoto,
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      date: true,
+    },
+  });
+
+  if (!event) {
+    return NextResponse.json(
+      { error: "Something went wrong." },
+      { status: 500 },
+    );
+  }
+
+  return NextResponse.json(
+    { event: event, photo: parsedPhoto },
+    { status: 200 },
+  );
+});

@@ -174,7 +174,6 @@ export default function NewEventPage() {
 
     eventData.append("cover", cover[0]);
     eventData.append("values", JSON.stringify(data));
-    // console.log(eventData);
 
     try {
       const apiUrlEndpoint = "/api/admin/event";
@@ -183,7 +182,6 @@ export default function NewEventPage() {
         body: eventData,
       };
       const response = await fetch(apiUrlEndpoint, postData);
-      // console.log(response);
       if (response.status == 200) {
         setProgress(10);
         toast.success("Enregistrement de l'événement réussi", {
@@ -200,7 +198,6 @@ export default function NewEventPage() {
           photoData.append("file", photo);
 
           photoData.append("values", JSON.stringify(res.event));
-          // console.log(photoData);
           try {
             const apiUrlEndpoint = "/api/admin/event/photo";
             const postData = {
@@ -208,7 +205,6 @@ export default function NewEventPage() {
               body: photoData,
             };
             const response = await fetch(apiUrlEndpoint, postData);
-            // console.log(response);
             if (response.status == 200) {
               const res = await response.json();
               console.log(res);
@@ -289,7 +285,6 @@ export default function NewEventPage() {
       photoData.append("file", photo);
 
       photoData.append("values", JSON.stringify(event));
-      // console.log(photoData);
       try {
         const apiUrlEndpoint = "/api/admin/event/photo";
         const postData = {
@@ -297,7 +292,6 @@ export default function NewEventPage() {
           body: photoData,
         };
         const response = await fetch(apiUrlEndpoint, postData);
-        // console.log(response);
         if (response.status == 200) {
           const res = await response.json();
           console.log(res);

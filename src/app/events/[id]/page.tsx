@@ -6,7 +6,6 @@ export default async function EventPage(props: {
 }) {
   const params = await props.params;
   const event = await getEvent(params.id);
-  // console.log(event);
 
   if (!event) {
     return (

@@ -2,6 +2,7 @@ import sizeOf from "image-size";
 
 import { getFileName, getFormattedString } from "@/lib/path";
 import prisma from "@/lib/prisma";
+import { withLogging } from "@/lib/withLogging";
 import { mkdir, stat, writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
@@ -20,54 +21,49 @@ const photoSchema = z.object({
   height: z.number(),
 });
 
-export async function POST(request: NextRequest) {
-  try {
-    const data = await request.formData();
+export const POST = withLogging(async (request: NextRequest, { wideEvent }) => {
+  wideEvent.action = "new_sponsor";
 
-    const values = data.get("values") as string;
-    if (!values) {
-      return NextResponse.json({ message: "No values" }, { status: 500 });
-    }
-    const { name, url }: Values = JSON.parse(values);
+  const data = await request.formData();
 
-    const logoFile = data.get("logo") as File;
-    const logoUrl = await saveFile(logoFile, name);
-    const logoArray = await logoFile.arrayBuffer();
-    const logoDismensions = sizeOf(Buffer.from(logoArray));
-    const parsedlogo = photoSchema.parse({
-      name: logoFile.name,
-      url: logoUrl,
-      width: logoDismensions.width,
-      height: logoDismensions.height,
-    });
-    if (!parsedlogo) {
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
-    }
+  const values = data.get("values") as string;
+  if (!values) {
+    return NextResponse.json({ message: "No values" }, { status: 500 });
+  }
+  const { name, url }: Values = JSON.parse(values);
 
-    const sponsor = await prisma.sponsor.create({
-      data: {
-        name: name,
-        url: url,
-        logoName: parsedlogo.name,
-        logoUrl: parsedlogo.url,
-        logoWidth: parsedlogo.width,
-        logoHeight: parsedlogo.height,
-      },
-    });
-    console.log(sponsor);
-
-    return NextResponse.json({ sponsor: sponsor }, { status: 200 });
-  } catch (error) {
-    console.log(error);
+  const logoFile = data.get("logo") as File;
+  const logoUrl = await saveFile(logoFile, name);
+  const logoArray = await logoFile.arrayBuffer();
+  const logoDismensions = sizeOf(Buffer.from(logoArray));
+  const parsedlogo = photoSchema.parse({
+    name: logoFile.name,
+    url: logoUrl,
+    width: logoDismensions.width,
+    height: logoDismensions.height,
+  });
+  if (!parsedlogo) {
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },
     );
   }
-}
+
+  const sponsor = await prisma.sponsor.create({
+    data: {
+      name: name,
+      url: url,
+      logoName: parsedlogo.name,
+      logoUrl: parsedlogo.url,
+      logoWidth: parsedlogo.width,
+      logoHeight: parsedlogo.height,
+    },
+  });
+
+  wideEvent.sponsor_id = sponsor.id;
+
+  return NextResponse.json({ sponsor: sponsor }, { status: 200 });
+});
 
 // Specific version of saveFile for sponsors
 const saveFile = async (file: File, name: string) => {
@@ -82,25 +78,11 @@ const saveFile = async (file: File, name: string) => {
     if (e.code === "ENOENT") {
       await mkdir(uploadDir, { recursive: true });
     } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e,
-      );
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
-      );
+      throw e;
     }
   }
-  try {
-    const filename = getFileName(file, false);
-    await writeFile(`${uploadDir}/${filename}`, buffer);
-    return `${relativeUploadDir}/${filename}`;
-  } catch (e) {
-    console.error("Error while trying to upload a file\n", e);
-    return NextResponse.json(
-      { error: "Something went wrong." },
-      { status: 500 },
-    );
-  }
+
+  const filename = getFileName(file, false);
+  await writeFile(`${uploadDir}/${filename}`, buffer);
+  return `${relativeUploadDir}/${filename}`;
 };

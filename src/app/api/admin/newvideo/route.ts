@@ -1,45 +1,38 @@
 import { Video } from "@/app/admin/new-video/page";
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
+import { withLogging } from "@/lib/withLogging";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-  try {
-    const body: Video = await request.json();
+export const POST = withLogging(async (req, { wideEvent }) => {
+  const body: Video = await req.json();
+  wideEvent.action = "new_video";
 
-    const url = new URL(body.url);
-    const searchParams = url.searchParams;
-    const id = searchParams.get("v");
-    console.log(id);
-    if (!id) {
-      return NextResponse.json({ message: "Invalid URL" }, { status: 500 });
-    }
+  const url = new URL(body.url);
+  const id = url.searchParams.get("v");
+  if (!id) {
+    return NextResponse.json({ message: "Invalid URL" }, { status: 500 });
+  }
 
-    const date = getNearestMidnight(body.date);
-    console.log("Date of the video", date.toISOString());
+  wideEvent.video_id = id;
 
-    const video = await prisma.video.create({
-      data: {
-        id: id,
-        url: body.url,
-        name: body.name,
-        date: date,
-      },
-    });
-    if (!video) {
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
-    console.log(video);
+  const date = getNearestMidnight(body.date);
 
-    return NextResponse.json({ video: video }, { status: 200 });
-  } catch (error) {
-    console.log(error);
+  const video = await prisma.video.create({
+    data: {
+      id: id,
+      url: body.url,
+      name: body.name,
+      date: date,
+    },
+  });
+
+  if (!video) {
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },
     );
   }
-}
+
+  return NextResponse.json({ video: video }, { status: 200 });
+});

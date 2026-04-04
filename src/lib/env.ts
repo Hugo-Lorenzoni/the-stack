@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const EnvSchema = z.object({
+export const EnvSchema = z.object({
   DATA_FOLDER: z.string().default("data"),
   MYSQL_ROOT_PASSWORD: z.string(),
   MYSQL_DATABASE: z.string(),
@@ -15,6 +15,10 @@ const EnvSchema = z.object({
   GOOGLE_REFRESH_TOKEN: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
+  LOG_LEVEL: z.string().optional(),
+  SERVICE_NAME: z.string().optional(),
+  SERVICE_VERSION: z.string().optional(),
+  COMMIT_SHA: z.string().optional(),
 });
 
 EnvSchema.parse(process.env);

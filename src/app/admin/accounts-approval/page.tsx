@@ -1,6 +1,7 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { getWaitingUsers } from "@/utils/getWaitingUsers";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { Cercle } from "@prisma/client";
 
 type Data = {
@@ -15,26 +16,41 @@ type Data = {
 };
 
 export default async function AccountsApprovalPage() {
-  const users = await getWaitingUsers();
+  const { wideEvent, emit } = await getRequestLogger("/admin/accounts-approval");
 
-  const data: Data[] = users.map((user) => {
-    const { id, autreCercle, cercleVille, cercle, ...result } = user;
-    if (cercle == "AUTRE") {
-      return {
-        id: id.substring(0, 8),
-        ...result,
-        cercle: autreCercle ? autreCercle : "Undefined",
-        ville: cercleVille ? cercleVille : "Undefined",
-      };
-    } else {
-      return {
-        id: id.substring(0, 8),
-        ...result,
-        cercle: cercle ? cercle : "Undefined",
-        ville: "Mons",
-      };
-    }
-  });
+  let data: Data[] = [];
+
+  try {
+    const users = await getWaitingUsers();
+
+    data = users.map((user) => {
+      const { id, autreCercle, cercleVille, cercle, ...result } = user;
+      if (cercle == "AUTRE") {
+        return {
+          id: id.substring(0, 8),
+          ...result,
+          cercle: autreCercle ? autreCercle : "Undefined",
+          ville: cercleVille ? cercleVille : "Undefined",
+        };
+      } else {
+        return {
+          id: id.substring(0, 8),
+          ...result,
+          cercle: cercle ? cercle : "Undefined",
+          ville: "Mons",
+        };
+      }
+    });
+
+    wideEvent.outcome = "success";
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <section>

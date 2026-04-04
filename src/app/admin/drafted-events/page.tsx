@@ -1,6 +1,7 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { getDraftedEvents } from "@/utils/getDraftedEvents";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { Type } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -14,21 +15,36 @@ type Data = {
 };
 
 export default async function AccountsApprovalPage() {
-  const events = await getDraftedEvents();
+  const { wideEvent, emit } = await getRequestLogger("/admin/drafted-events");
 
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
+  let data: Data[] = [];
 
-  const data: Data[] = events.map((event) => {
-    const date = new Date(event.date);
-    return {
-      ...event,
-      date: date.toLocaleDateString("fr-BE", options),
+  try {
+    const events = await getDraftedEvents();
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     };
-  });
+
+    data = events.map((event) => {
+      const date = new Date(event.date);
+      return {
+        ...event,
+        date: date.toLocaleDateString("fr-BE", options),
+      };
+    });
+
+    wideEvent.outcome = "success";
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <section>

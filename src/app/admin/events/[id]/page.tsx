@@ -7,7 +7,6 @@ export default async function EventPage(props: {
 }) {
   const params = await props.params;
   const event = await getAdminEvent(params.id);
-  // console.log(event);
 
   return (
     <main className="mt-8 min-h-[calc(100vh-10rem)]">

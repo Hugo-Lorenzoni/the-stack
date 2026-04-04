@@ -6,10 +6,8 @@ export default async function AdminSearchPage(props: {
 }) {
   const searchParams = await props.searchParams;
   const search = searchParams["q"] ?? "";
-  // console.log(search);
 
   const results = await getAdminSearchedEvents(search.toString());
-  // console.log(results);
 
   return <AdminSearchPagination events={results} />;
 }

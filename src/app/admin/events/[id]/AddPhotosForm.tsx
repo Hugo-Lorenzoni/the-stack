@@ -102,7 +102,6 @@ const AddPhotosForm = memo(function AddPhotosForm({
           type: eventType,
         }),
       );
-      // console.log(photoData);
 
       try {
         const apiUrlEndpoint = "/api/admin/event/photo";
@@ -111,10 +110,8 @@ const AddPhotosForm = memo(function AddPhotosForm({
           body: photoData,
         };
         const response = await fetch(apiUrlEndpoint, postData);
-        // console.log(response);
         if (response.status == 200) {
           const res = await response.json();
-          // console.log(res);
           if (res.photo && res.event.photos) {
             setProgress((value) => value + (1 / values.photos.length) * 100);
             toast(`${res.photo.name} successfully added !`);

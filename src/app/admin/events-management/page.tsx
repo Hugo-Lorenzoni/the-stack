@@ -1,6 +1,6 @@
 import Link from "@/components/Link";
-import Image from "next/image";
 import { getAdminEvents } from "@/utils/getAdminEvents";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { Pin } from "lucide-react";
 import ImageComponent from "@/components/ImageComponent";
 
@@ -16,13 +16,27 @@ type Event = {
 };
 
 export default async function EventsManagementPage() {
+  const { wideEvent, emit } = await getRequestLogger("/admin/events-management");
+
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long",
     day: "numeric",
   };
 
-  const events = await getAdminEvents();
+  let events: Awaited<ReturnType<typeof getAdminEvents>> = [];
+
+  try {
+    events = await getAdminEvents();
+    wideEvent.outcome = "success";
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <>

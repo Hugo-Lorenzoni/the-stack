@@ -30,7 +30,6 @@ export function NewCoverInput({
         if (typeof base64 == "string") {
           setImage(base64);
         }
-        // console.log(event.target.files?.[0]);
 
         onChange(event);
       } else {

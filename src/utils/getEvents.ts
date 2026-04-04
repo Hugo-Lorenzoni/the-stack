@@ -3,7 +3,13 @@ import { Type } from "@prisma/client";
 import { cache } from "react";
 
 export const getEvents = cache(
-  async (page: string, eventPerPage: number, type: Type) => {
+  async (
+    page: string,
+    eventPerPage: number,
+    type: Type,
+    wideEvent?: Record<string, unknown>,
+  ) => {
+    const start = Date.now();
     const res = await prisma.event.findMany({
       skip: (Number(page) - 1) * eventPerPage,
       take: eventPerPage,
@@ -29,6 +35,15 @@ export const getEvents = cache(
         { publishedAt: "desc" },
       ],
     });
+    if (wideEvent) {
+      wideEvent.get_events = {
+        duration_ms: Date.now() - start,
+        count: res.length,
+        page: Number(page),
+        type,
+      };
+    }
+
     // Add 12 hours to each event's date
     res.forEach((event) => {
       event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);

@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { getInfos } from "@/utils/getInfos";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import {
   BadgeCheck,
   DatabaseBackup,
@@ -18,17 +19,39 @@ import {
 } from "lucide-react";
 
 export default async function AdminPage() {
-  const {
-    userCount,
-    waitingUserCount,
-    photoCount,
-    eventOuvertCount,
-    eventFpmsCount,
-    eventAutreCount,
-    totalCount,
-    videoCount,
-    storageUsed,
-  } = await getInfos();
+  const { wideEvent, emit } = await getRequestLogger("/admin");
+
+  let userCount = 0;
+  let waitingUserCount = 0;
+  let photoCount = 0;
+  let eventOuvertCount = 0;
+  let eventFpmsCount = 0;
+  let eventAutreCount = 0;
+  let totalCount = 0;
+  let videoCount = 0;
+  let storageUsed = 0;
+
+  try {
+    ({
+      userCount,
+      waitingUserCount,
+      photoCount,
+      eventOuvertCount,
+      eventFpmsCount,
+      eventAutreCount,
+      totalCount,
+      videoCount,
+      storageUsed,
+    } = await getInfos(wideEvent));
+    wideEvent.outcome = "success";
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <section>

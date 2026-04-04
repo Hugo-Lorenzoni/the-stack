@@ -5,83 +5,77 @@ import {
   getFolderSizeOptimized,
   getFolderSizeStream,
 } from "@/lib/folder-size";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { join } from "path";
 import { env } from "process";
 import { Suspense } from "react";
 
-async function timedPromise<T>(
-  promise: Promise<T>,
-  label: string,
-): Promise<[T, number]> {
-  const start = Date.now();
-  const result = await promise;
-  const time = Date.now() - start;
-  console.log(`[TIMER] ${label} took ${time}ms`);
-  return [result, time];
-}
+export default async function folderSizePage() {
+  const { wideEvent, emit } = await getRequestLogger("/admin/folder-size");
 
-export default function folderSizePage() {
   const folderPath = join(env.DATA_FOLDER, "photos");
 
-  // Create individual promises for each method
-  const folderSizePromise = timedPromise(
-    getFolderSizeLibrary(folderPath),
-    "folderSize",
-  );
-  const folderSizeFastPromise = timedPromise(
-    getFolderSizeFast(folderPath),
-    "folderSizeFast",
-  );
-  const folderSizeNodePromise = timedPromise(
-    getFolderSizeNode(folderPath),
-    "folderSizeNode",
-  );
-  const folderSizeOptimizedPromise = timedPromise(
-    getFolderSizeOptimized(folderPath),
-    "folderSizeOptimized",
-  );
-  const folderSizeStreamPromise = timedPromise(
-    getFolderSizeStream(folderPath),
-    "folderSizeStream",
-  );
+  try {
+    // Create individual promises for each method (timing tracked via wideEvent duration_ms)
+    const folderSizePromise = timed(getFolderSizeLibrary(folderPath));
+    const folderSizeFastPromise = timed(getFolderSizeFast(folderPath));
+    const folderSizeNodePromise = timed(getFolderSizeNode(folderPath));
+    const folderSizeOptimizedPromise = timed(getFolderSizeOptimized(folderPath));
+    const folderSizeStreamPromise = timed(getFolderSizeStream(folderPath));
 
-  return (
-    <div>
-      <h1>Folder Size</h1>
-      {/* Table */}
-      <table className="table-auto border-collapse border border-slate-400">
-        <thead>
-          <tr>
-            <th className="border border-slate-300 px-4 py-2">Method</th>
-            <th className="border border-slate-300 px-4 py-2">Size (Go)</th>
-            <th className="border border-slate-300 px-4 py-2">Time (s)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <FolderSizeRow
-            methodName="get-folder-size"
-            promise={folderSizePromise}
-          />
-          <FolderSizeRow
-            methodName="getFolderSizeFast"
-            promise={folderSizeFastPromise}
-          />
-          <FolderSizeRow
-            methodName="getFolderSizeNode"
-            promise={folderSizeNodePromise}
-          />
-          <FolderSizeRow
-            methodName="getFolderSizeOptimized"
-            promise={folderSizeOptimizedPromise}
-          />
-          <FolderSizeRow
-            methodName="getFolderSizeStream"
-            promise={folderSizeStreamPromise}
-          />
-        </tbody>
-      </table>
-    </div>
-  );
+    wideEvent.outcome = "success";
+
+    return (
+      <div>
+        <h1>Folder Size</h1>
+        {/* Table */}
+        <table className="table-auto border-collapse border border-slate-400">
+          <thead>
+            <tr>
+              <th className="border border-slate-300 px-4 py-2">Method</th>
+              <th className="border border-slate-300 px-4 py-2">Size (Go)</th>
+              <th className="border border-slate-300 px-4 py-2">Time (s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <FolderSizeRow
+              methodName="get-folder-size"
+              promise={folderSizePromise}
+            />
+            <FolderSizeRow
+              methodName="getFolderSizeFast"
+              promise={folderSizeFastPromise}
+            />
+            <FolderSizeRow
+              methodName="getFolderSizeNode"
+              promise={folderSizeNodePromise}
+            />
+            <FolderSizeRow
+              methodName="getFolderSizeOptimized"
+              promise={folderSizeOptimizedPromise}
+            />
+            <FolderSizeRow
+              methodName="getFolderSizeStream"
+              promise={folderSizeStreamPromise}
+            />
+          </tbody>
+        </table>
+      </div>
+    );
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
+}
+
+async function timed<T>(promise: Promise<T>): Promise<[T, number]> {
+  const start = Date.now();
+  const result = await promise;
+  return [result, Date.now() - start];
 }
 
 interface FolderSizeRowProps {

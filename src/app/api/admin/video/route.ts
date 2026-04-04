@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
+import { withLogging } from "@/lib/withLogging";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -19,48 +20,41 @@ const formSchema = z.object({
   date: z.string(),
 });
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    console.log(body);
+export const POST = withLogging(async (req, { wideEvent }) => {
+  const body = await req.json();
 
-    const result = formSchema.safeParse(body);
+  const result = formSchema.safeParse(body);
 
-    if (!result.success) {
-      // handle error then return
-      console.log(result.error);
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
-
-    const updatedData = {
-      ...result.data,
-      date: getNearestMidnight(result.data.date),
-    };
-
-    const res = await prisma.video.update({
-      where: {
-        id: result.data.id,
-      },
-      data: {
-        ...updatedData,
-      },
-    });
-    console.log(res);
-    if (!res) {
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
-    return new Response(JSON.stringify(res));
-  } catch (error) {
-    console.log(error);
+  if (!result.success) {
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },
     );
   }
-}
+
+  wideEvent.action = "update_video";
+  wideEvent.video_id = result.data.id;
+
+  const updatedData = {
+    ...result.data,
+    date: getNearestMidnight(result.data.date),
+  };
+
+  const res = await prisma.video.update({
+    where: {
+      id: result.data.id,
+    },
+    data: {
+      ...updatedData,
+    },
+  });
+
+  if (!res) {
+    return NextResponse.json(
+      { message: "Something went wrong !" },
+      { status: 500 },
+    );
+  }
+
+  return new Response(JSON.stringify(res));
+});

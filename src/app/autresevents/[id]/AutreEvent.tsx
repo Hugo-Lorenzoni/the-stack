@@ -84,7 +84,6 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
         body: JSON.stringify(values),
       };
       const response = await fetch(apiUrlEndpoint, postData);
-      // console.log(response);
 
       if (response.status == 200) {
         toast.success("Mot de passe correct", {
@@ -107,8 +106,6 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
       console.log(error);
     }
   }
-
-  // console.log(event);
 
   return (
     <main className="container my-8 min-h-[calc(100vh-10rem)]">

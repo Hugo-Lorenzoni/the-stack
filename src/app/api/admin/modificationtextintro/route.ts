@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
 import { env } from "process";
+import { withLogging } from "@/lib/withLogging";
 
 const textFormSchema = z.object({
   title: z.string(),
@@ -11,51 +12,25 @@ const textFormSchema = z.object({
   date: z.string(),
 });
 
-export async function POST(request: NextRequest) {
-  try {
-    const body: unknown = await request.json();
-    // console.log(body);
+export const POST = withLogging(async (req, { wideEvent }) => {
+  wideEvent.action = "update_text_intro";
 
-    const result = textFormSchema.safeParse(body);
-    if (!result.success) {
-      // handle error then return
-      console.log(result.error);
+  const body: unknown = await req.json();
 
-      result.error;
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    } else {
-      try {
-        const jsonDirectory = path.join(env.DATA_FOLDER, "json");
-
-        // Convert the object back to a JSON string
-        const updatedData = JSON.stringify(result.data);
-
-        // Write the updated data to the JSON file
-        await fs.writeFile(jsonDirectory + "/text-intro.json", updatedData);
-
-        // Send an error response
-        return NextResponse.json(
-          { message: "Texte d'introduction mis à jour !" },
-          { status: 200 },
-        );
-      } catch (error) {
-        console.log(error);
-        // Send an error response
-        return NextResponse.json(
-          { message: "Something went wrong !" },
-          { status: 500 },
-        );
-      }
-    }
-  } catch (error) {
-    console.log(error);
-    // Send an error response
+  const result = textFormSchema.safeParse(body);
+  if (!result.success) {
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },
     );
   }
-}
+
+  const jsonDirectory = path.join(env.DATA_FOLDER, "json");
+  const updatedData = JSON.stringify(result.data);
+  await fs.writeFile(jsonDirectory + "/text-intro.json", updatedData);
+
+  return NextResponse.json(
+    { message: "Texte d'introduction mis à jour !" },
+    { status: 200 },
+  );
+});

@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
+import { withLogging, WideEvent } from "@/lib/withLogging";
 import { Cercle } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 type UserRequest = {
   email: string;
@@ -14,45 +15,40 @@ type UserRequest = {
   cercleVille?: string;
   promo?: number;
 };
-export async function POST(request: Request) {
-  try {
-    const body: UserRequest = await request.json();
-    console.log(body.name, body.surname);
-    if (body.check) {
-      const user = await prisma.user.create({
-        data: {
-          email: body.email,
-          password: await bcrypt.hash(body.password, 10),
-          name: body.name,
-          surname: body.surname,
-          role: "WAITING",
-          cercle: body?.cercle,
-          cercleVille: body?.cercleVille,
-          autreCercle: body?.autreCercle?.toLocaleUpperCase(),
-          promo: body?.promo,
-        },
-      });
-      const { password, ...result } = user;
-      return new Response(JSON.stringify(result));
-    } else {
-      const user = await prisma.user.create({
-        data: {
-          email: body.email,
-          password: await bcrypt.hash(body.password, 10),
-          name: body.name,
-          surname: body.surname,
-          role: "USER",
-        },
-      });
-      const { password, ...result } = user;
-      return new Response(JSON.stringify(result));
-    }
-  } catch (error) {
-    console.log(error);
 
-    return NextResponse.json(
-      { message: "Something went wrong !" },
-      { status: 500 },
-    );
+export const POST = withLogging(async (request: NextRequest, { wideEvent }: { params: Promise<Record<string, string>>; wideEvent: WideEvent }) => {
+  const body: UserRequest = await request.json();
+
+  const role = body.check ? "WAITING" : "USER";
+  wideEvent.registration = { role, cercle: body.cercle ?? null };
+
+  if (body.check) {
+    const user = await prisma.user.create({
+      data: {
+        email: body.email,
+        password: await bcrypt.hash(body.password, 10),
+        name: body.name,
+        surname: body.surname,
+        role: "WAITING",
+        cercle: body?.cercle,
+        cercleVille: body?.cercleVille,
+        autreCercle: body?.autreCercle?.toLocaleUpperCase(),
+        promo: body?.promo,
+      },
+    });
+    const { password, ...result } = user;
+    return new Response(JSON.stringify(result));
+  } else {
+    const user = await prisma.user.create({
+      data: {
+        email: body.email,
+        password: await bcrypt.hash(body.password, 10),
+        name: body.name,
+        surname: body.surname,
+        role: "USER",
+      },
+    });
+    const { password, ...result } = user;
+    return new Response(JSON.stringify(result));
   }
-}
+});

@@ -1,9 +1,25 @@
 import VideosPagination from "@/app/videos/VideosPagination";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { getVideos } from "@/utils/getVideos";
 import { SearchX } from "lucide-react";
 
 export default async function VideosPage() {
-  const videos = await getVideos();
+  const { wideEvent, emit } = await getRequestLogger("/videos");
+
+  let videos: Awaited<ReturnType<typeof getVideos>> = null;
+
+  try {
+    videos = await getVideos();
+    wideEvent.outcome = "success";
+    wideEvent.video_count = videos ? videos.length : 0;
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <main className="container my-8 min-h-[calc(100vh-10rem)]">

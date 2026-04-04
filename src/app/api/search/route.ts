@@ -1,14 +1,15 @@
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withLogging, WideEvent } from "@/lib/withLogging";
 
-import { getNextAuthSession } from "@/utils/auth";
-
-export async function GET(request: Request) {
-  // console.log(request);
+async function handler(
+  request: NextRequest,
+  { wideEvent }: { params: Promise<Record<string, string>>; wideEvent: WideEvent },
+) {
+  wideEvent.action = "search";
 
   const { searchParams } = new URL(request.url);
   const search = searchParams.get("q");
-  // console.log(search);
 
   if (!search) {
     return NextResponse.json(
@@ -16,15 +17,20 @@ export async function GET(request: Request) {
       { status: 500 },
     );
   }
-  const session = await getNextAuthSession();
-  // console.log(session);
 
-  if (session?.user?.role == "ADMIN" || session?.user?.role == "BAPTISE") {
-    const results = await prisma.event.findMany({
+  const isPrivileged =
+    wideEvent.user != null &&
+    (
+      (wideEvent.user as { role?: string }).role === "ADMIN" ||
+      (wideEvent.user as { role?: string }).role === "BAPTISE"
+    );
+
+  let results;
+
+  if (isPrivileged) {
+    results = await prisma.event.findMany({
       where: {
-        title: {
-          contains: search,
-        },
+        title: { contains: search },
         published: true,
       },
       select: {
@@ -40,36 +46,12 @@ export async function GET(request: Request) {
       },
       orderBy: [{ date: "desc" }],
     });
-    if (!results) {
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
-    // Add 12 hours to each event's date
-    results.forEach((event) => {
-      event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
-    });
-    // console.log(results);
-    return new Response(JSON.stringify(results));
   } else {
-    const results = await prisma.event.findMany({
+    results = await prisma.event.findMany({
       where: {
         OR: [
-          {
-            title: {
-              contains: search,
-            },
-            type: "OUVERT",
-            published: true,
-          },
-          {
-            title: {
-              contains: search,
-            },
-            type: "AUTRE",
-            published: true,
-          },
+          { title: { contains: search }, type: "OUVERT", published: true },
+          { title: { contains: search }, type: "AUTRE", published: true },
         ],
       },
       select: {
@@ -85,17 +67,16 @@ export async function GET(request: Request) {
       },
       orderBy: [{ date: "desc" }],
     });
-    if (!results) {
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
-    // Add 12 hours to each event's date
-    results.forEach((event) => {
-      event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
-    });
-    // console.log(results);
-    return new Response(JSON.stringify(results));
   }
+
+  // Add 12 hours to each event's date
+  results.forEach((event) => {
+    event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
+  });
+
+  wideEvent.result_count = results.length;
+
+  return new Response(JSON.stringify(results));
 }
+
+export const GET = withLogging(handler);

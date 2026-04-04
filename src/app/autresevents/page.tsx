@@ -1,15 +1,17 @@
 import Link from "@/components/Link";
-import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
 
 import { getEventsCount } from "@/utils/getEventsCount";
 import { getEvents } from "@/utils/getEvents";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { Pin } from "lucide-react";
 import ImageComponent from "@/components/ImageComponent";
 
 export default async function AutresEventsPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const { wideEvent, emit } = await getRequestLogger("/autresevents");
+
   const searchParams = await props.searchParams;
   const page = searchParams["page"] ?? "1";
   const eventPerPage = 12;
@@ -20,8 +22,27 @@ export default async function AutresEventsPage(props: {
     day: "numeric",
   };
 
-  const count = await getEventsCount("AUTRE");
-  const events = await getEvents(page.toString(), eventPerPage, "AUTRE");
+  let count = 0;
+  let events: Awaited<ReturnType<typeof getEvents>> = [];
+
+  try {
+    count = await getEventsCount("AUTRE", wideEvent);
+    events = await getEvents(page.toString(), eventPerPage, "AUTRE", wideEvent);
+    wideEvent.outcome = "success";
+    wideEvent.event_count = events.length;
+    wideEvent.pagination = {
+      page: Number(page),
+      per_page: eventPerPage,
+      total: count,
+    };
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <main className="container my-8 min-h-[calc(100vh-10rem)]">
