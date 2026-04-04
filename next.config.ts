@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   output: "standalone",
+  outputFileTracingRoot: process.cwd(),
   async headers() {
     return [
       {

@@ -4,12 +4,24 @@ import { safeError, safeInfo } from "./logger";
 
 export type WideEvent = Record<string, unknown>;
 
-type RouteHandler = (
+type ParamsShape = Record<string, string>;
+
+type RouteContext<P extends ParamsShape = ParamsShape> = {
+  params: Promise<P>;
+  [key: string]: unknown;
+};
+
+type RouteHandler<P extends ParamsShape = ParamsShape> = (
   req: NextRequest,
-  ctx: { params: Promise<Record<string, string>>; wideEvent: WideEvent },
+  ctx: RouteContext<P> & { wideEvent: WideEvent },
 ) => Promise<NextResponse | Response>;
 
-export function withLogging(handler: RouteHandler): RouteHandler {
+export function withLogging<P extends ParamsShape = ParamsShape>(
+  handler: RouteHandler<P>,
+): (
+  req: NextRequest,
+  ctx: RouteContext<P>,
+) => Promise<NextResponse | Response> {
   return async (req, ctx) => {
     const startTime = Date.now();
     // crypto.randomUUID() uses the Web Crypto API global — available in Node 18+ and Edge.

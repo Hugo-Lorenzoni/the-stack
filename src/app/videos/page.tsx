@@ -6,7 +6,7 @@ import { SearchX } from "lucide-react";
 export default async function VideosPage() {
   const { wideEvent, emit } = await getRequestLogger("/videos");
 
-  let videos: Awaited<ReturnType<typeof getVideos>> = null;
+  let videos: Awaited<ReturnType<typeof getVideos>> = [];
 
   try {
     videos = await getVideos();
@@ -27,7 +27,7 @@ export default async function VideosPage() {
         Vidéos
       </h1>
       <section className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {videos ? (
+        {videos.length > 0 ? (
           <VideosPagination videos={videos} />
         ) : (
           <>
