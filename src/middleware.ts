@@ -3,31 +3,51 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   function middleware(req) {
-    // crypto.randomUUID() uses the Web Crypto API, available as a global in
-    // both the Node.js (18+) and Edge runtimes — no import needed.
-    const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
-
-    // Clone request headers and inject x-request-id so downstream
-    // handlers and server components can read it via headers() or req.headers.
-    // Preserve x-flow-id if the caller supplied one for cross-request correlation.
+    // Clone request headers and inject IDs so downstream handlers and server
+    // components can read them via headers() or req.headers.
     const requestHeaders = new Headers(req.headers);
+
+    // crypto.randomUUID() uses the Web Crypto API, available as a global in
+    // both the Node.js (18+) and Edge runtimes.
+    const requestId = requestHeaders.get("x-request-id") ?? crypto.randomUUID();
+    const existingFlowId =
+      req.cookies.get("flow_id")?.value ?? requestHeaders.get("x-flow-id");
+    const flowId = existingFlowId ?? crypto.randomUUID();
+
     requestHeaders.set("x-request-id", requestId);
+    requestHeaders.set("x-flow-id", flowId);
 
     const response = NextResponse.next({
       request: { headers: requestHeaders },
     });
-    // Also set on response so the client can see the correlation IDs.
+
+    // Also mirror IDs on the response so the client can correlate requests.
     response.headers.set("x-request-id", requestId);
-    const flowId = req.headers.get("x-flow-id");
-    if (flowId) response.headers.set("x-flow-id", flowId);
+    response.headers.set("x-flow-id", flowId);
+
+    if (!existingFlowId) {
+      response.cookies.set("flow_id", flowId, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: req.nextUrl.protocol === "https:",
+        path: "/",
+      });
+    }
+
     return response;
   },
   {
     callbacks: {
       authorized({ req, token }) {
+        const pathname = req.nextUrl.pathname;
+
         const requestId =
           req.headers.get("x-request-id") ?? crypto.randomUUID();
-        const flowId = req.headers.get("x-flow-id");
+        const flowId =
+          req.headers.get("x-flow-id") ??
+          req.cookies.get("flow_id")?.value ??
+          crypto.randomUUID();
+
         const logAccessDenied = (
           reason:
             | "admin_role_required"
@@ -37,9 +57,9 @@ export default withAuth(
           const event = {
             event: "auth.access_denied",
             request_id: requestId,
-            ...(flowId && { flow_id: flowId }),
+            flow_id: flowId,
             method: req.method,
-            path: req.nextUrl.pathname,
+            path: pathname,
             reason,
             authenticated: !!token,
             user_role: token?.role ?? null,
@@ -48,7 +68,6 @@ export default withAuth(
           console.warn(JSON.stringify(event));
         };
 
-        const pathname = req.nextUrl.pathname;
         const isAdminPath =
           pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
         const isBaptisePath =
