@@ -1,4 +1,5 @@
 import ImageComponent from "@/components/ImageComponent";
+import { getRequestLogger } from "@/lib/getRequestLogger";
 import { getTextIntro } from "@/utils/getTextIntro";
 import { Info } from "lucide-react";
 import Image from "next/image";
@@ -13,7 +14,21 @@ export type TextIntro = {
 };
 
 export default async function Home() {
-  const textintro: TextIntro = await getTextIntro();
+  const { wideEvent, emit } = await getRequestLogger("/");
+
+  let textintro: TextIntro;
+
+  try {
+    textintro = await getTextIntro();
+    wideEvent.outcome = "success";
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    wideEvent.outcome = "error";
+    wideEvent.error = { message: error.message, type: error.name };
+    throw err;
+  } finally {
+    emit();
+  }
 
   return (
     <main>
