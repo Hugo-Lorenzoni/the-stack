@@ -13,7 +13,8 @@ import { NextRequest, NextResponse } from 'next/server';
 // Mock logger so we can capture what gets logged
 vi.mock('../logger', () => ({
   logger: {
-    info: vi.fn(),
+    info:  vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -103,15 +104,15 @@ describe('withLogging', () => {
         handler(makeRequest(), { params: Promise.resolve({}), wideEvent: {} }),
       ).rejects.toThrow('something went wrong');
 
-      expect(logger.info).toHaveBeenCalledOnce();
-      const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+      expect(logger.error).toHaveBeenCalledOnce();
+      const wideEvent = vi.mocked(logger.error).mock.calls[0][0] as Record<string, unknown>;
 
       expect(wideEvent.outcome).toBe('error');
       expect(wideEvent.status_code).toBe(500);
       expect(wideEvent.error).toEqual({ message: 'something went wrong', type: 'TypeError' });
     });
 
-    it('still calls logger.info exactly once when the handler throws', async () => {
+    it('still calls logger.error exactly once when the handler throws', async () => {
       vi.mocked(getNextAuthSession).mockResolvedValue(null);
 
       const handler = withLogging(async () => {
@@ -122,7 +123,8 @@ describe('withLogging', () => {
         handler(makeRequest(), { params: Promise.resolve({}), wideEvent: {} }),
       ).rejects.toThrow();
 
-      expect(logger.info).toHaveBeenCalledOnce();
+      expect(logger.error).toHaveBeenCalledOnce();
+      expect(logger.info).not.toHaveBeenCalled();
     });
   });
 

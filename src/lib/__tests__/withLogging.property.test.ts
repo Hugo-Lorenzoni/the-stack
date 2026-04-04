@@ -13,7 +13,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 vi.mock('../logger', () => ({
   logger: {
-    info: vi.fn(),
+    info:  vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -96,7 +97,7 @@ describe('Property 4: withLogging always calls logger.info exactly once per invo
   });
 
   it(
-    'calls logger.info exactly once regardless of whether the handler succeeds or throws',
+    'calls logger.info or logger.error exactly once regardless of whether the handler succeeds or throws',
     async () => {
       await fc.assert(
         fc.asyncProperty(anyHandlerArb, async (handler) => {
@@ -109,7 +110,10 @@ describe('Property 4: withLogging always calls logger.info exactly once per invo
             // expected for throwing handlers
           }
 
-          expect(vi.mocked(logger.info)).toHaveBeenCalledTimes(1);
+          const totalCalls =
+            vi.mocked(logger.info).mock.calls.length +
+            vi.mocked(logger.error).mock.calls.length;
+          expect(totalCalls).toBe(1);
         }),
         { numRuns: 100 },
       );
@@ -143,8 +147,14 @@ describe('Property 5: wideEvent.duration_ms is always a non-negative integer', (
             // expected for throwing handlers
           }
 
-          expect(vi.mocked(logger.info)).toHaveBeenCalledTimes(1);
-          const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+          const totalCalls =
+            vi.mocked(logger.info).mock.calls.length +
+            vi.mocked(logger.error).mock.calls.length;
+          expect(totalCalls).toBe(1);
+          const wideEvent = (
+            vi.mocked(logger.info).mock.calls[0] ??
+            vi.mocked(logger.error).mock.calls[0]
+          )[0] as Record<string, unknown>;
 
           expect(typeof wideEvent.duration_ms).toBe('number');
           expect(wideEvent.duration_ms as number).toBeGreaterThanOrEqual(0);
@@ -187,8 +197,8 @@ describe('Property 6: When a handler throws any value, wideEvent.error is always
           }
           expect(threw).toBe(true);
 
-          expect(vi.mocked(logger.info)).toHaveBeenCalledTimes(1);
-          const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+          expect(vi.mocked(logger.error)).toHaveBeenCalledTimes(1);
+          const wideEvent = vi.mocked(logger.error).mock.calls[0][0] as Record<string, unknown>;
 
           // error field must be present
           expect(wideEvent.error).toBeDefined();

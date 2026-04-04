@@ -15,7 +15,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 vi.mock('@/lib/logger', () => ({
   logger: {
-    info: vi.fn(),
+    info:  vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -30,6 +31,14 @@ vi.mock('@/utils/auth', () => ({
 import { withLogging } from '../withLogging';
 import { logger } from '@/lib/logger';
 import { getNextAuthSession } from '@/utils/auth';
+
+// Helper: get the wide event from whichever log level was called
+function getLoggedWideEvent(): Record<string, unknown> {
+  const infoCalls  = vi.mocked(logger.info).mock.calls;
+  const errorCalls = vi.mocked(logger.error).mock.calls;
+  const call = infoCalls[0] ?? errorCalls[0];
+  return call[0] as Record<string, unknown>;
+}
 
 // ---------------------------------------------------------------------------
 // Arbitraries
@@ -116,7 +125,7 @@ describe('Property 13: When wideEvent.error is set, it is always a plain object 
               handler(req, { params: Promise.resolve({}), wideEvent: {} }),
             ).rejects.toThrow();
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
 
             expect(wideEvent.error).toBeDefined();
             expect(wideEvent.error).not.toBeUndefined();
@@ -147,7 +156,7 @@ describe('Property 13: When wideEvent.error is set, it is always a plain object 
               handler(req, { params: Promise.resolve({}), wideEvent: {} }),
             ).rejects.toThrow();
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
             const error = wideEvent.error as Record<string, unknown>;
 
             expect(typeof error.message).toBe('string');
@@ -177,7 +186,7 @@ describe('Property 13: When wideEvent.error is set, it is always a plain object 
               handler(req, { params: Promise.resolve({}), wideEvent: {} }),
             ).rejects.toThrow();
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
             const error = wideEvent.error as Record<string, unknown>;
 
             expect(typeof error.type).toBe('string');
@@ -207,7 +216,7 @@ describe('Property 13: When wideEvent.error is set, it is always a plain object 
               handler(req, { params: Promise.resolve({}), wideEvent: {} }),
             ).rejects.toThrow();
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
             const error = wideEvent.error as Record<string, unknown>;
 
             expect(error instanceof Error).toBe(false);
@@ -244,7 +253,7 @@ describe('Property 13: When wideEvent.error is set, it is always a plain object 
               handler(req, { params: Promise.resolve({}), wideEvent: {} }),
             ).rejects.toThrow();
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
 
             // error must be defined and not undefined
             expect(wideEvent.error).toBeDefined();
@@ -289,7 +298,7 @@ describe('Property 13: When wideEvent.error is set, it is always a plain object 
 
             await handler(req, { params: Promise.resolve({}), wideEvent: {} });
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
 
             // When no error occurs, wideEvent.error should not be set
             expect(wideEvent.error).toBeUndefined();

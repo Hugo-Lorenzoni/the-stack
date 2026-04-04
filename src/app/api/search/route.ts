@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { withLogging, WideEvent } from "@/lib/withLogging";
+import { hashValue } from "@/lib/hashValue";
 
 async function handler(
   request: NextRequest,
@@ -17,6 +18,9 @@ async function handler(
       { status: 500 },
     );
   }
+
+  // Hash the search term before logging to avoid storing raw user input
+  wideEvent.query_hash = hashValue(search);
 
   const isPrivileged =
     wideEvent.user != null &&

@@ -15,7 +15,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 vi.mock('@/lib/logger', () => ({
   logger: {
-    info: vi.fn(),
+    info:  vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -30,6 +31,14 @@ vi.mock('@/utils/auth', () => ({
 import { withLogging } from '../withLogging';
 import { logger } from '@/lib/logger';
 import { getNextAuthSession } from '@/utils/auth';
+
+// Helper: get the wide event from whichever log level was called
+function getLoggedWideEvent(): Record<string, unknown> {
+  const infoCalls  = vi.mocked(logger.info).mock.calls;
+  const errorCalls = vi.mocked(logger.error).mock.calls;
+  const call = infoCalls[0] ?? errorCalls[0];
+  return call[0] as Record<string, unknown>;
+}
 
 // ---------------------------------------------------------------------------
 // PII helper
@@ -272,7 +281,7 @@ describe('Property 12: A wide event object never contains keys email, password, 
               handler(req, { params: Promise.resolve({}), wideEvent: {} }),
             ).rejects.toThrow();
 
-            const wideEvent = vi.mocked(logger.info).mock.calls[0][0] as Record<string, unknown>;
+            const wideEvent = getLoggedWideEvent();
             expect(containsPII(wideEvent)).toBe(false);
           },
         ),

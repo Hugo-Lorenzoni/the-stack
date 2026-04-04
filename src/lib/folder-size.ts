@@ -6,12 +6,11 @@ import * as path from "path";
 import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
 import { env } from "process";
 import getFolderSize from "get-folder-size";
+import { logger } from "@/lib/logger";
 
 export async function getFolderSizeLibrary(dir: string): Promise<number> {
   if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    console.log(
-      "[getFolderSizeLibrary] Skipping folder size calculation during production build",
-    );
+    logger.debug({ action: 'folder_size', fn: 'getFolderSizeLibrary', outcome: 'skipped', reason: 'production_build' });
     return Promise.resolve(0);
   }
 
@@ -20,9 +19,7 @@ export async function getFolderSizeLibrary(dir: string): Promise<number> {
 
 export async function getFolderSizeOptimized(dir: string): Promise<number> {
   if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    console.log(
-      "[getFolderSizeOptimized] Skipping folder size calculation during production build",
-    );
+    logger.debug({ action: 'folder_size', fn: 'getFolderSizeOptimized', outcome: 'skipped', reason: 'production_build' });
     return Promise.resolve(0);
   }
   if (os.platform() === "win32") {
@@ -46,7 +43,6 @@ async function getFolderSizeMac(dir: string): Promise<number> {
   const { stdout } = await execAsync(
     `du -sk "${dir}" | awk '{print $1 * 1024}'`,
   );
-  console.log("Mac du output:", stdout);
   return parseInt(stdout.trim(), 10);
 }
 
@@ -59,9 +55,7 @@ async function getFolderSizeUnix(dir: string): Promise<number> {
 
 export async function getFolderSizeNode(dir: string): Promise<number> {
   if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    console.log(
-      "[getFolderSizeNode] Skipping folder size calculation during production build",
-    );
+    logger.debug({ action: 'folder_size', fn: 'getFolderSizeNode', outcome: 'skipped', reason: 'production_build' });
     return Promise.resolve(0);
   }
   let total = 0;
@@ -82,9 +76,7 @@ export async function getFolderSizeNode(dir: string): Promise<number> {
 
 export async function getFolderSizeStream(folderPath: string): Promise<number> {
   if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    console.log(
-      "[getFolderSizeStream] Skipping folder size calculation during production build",
-    );
+    logger.debug({ action: 'folder_size', fn: 'getFolderSizeStream', outcome: 'skipped', reason: 'production_build' });
     return Promise.resolve(0);
   }
   let totalSize = 0;
@@ -111,9 +103,7 @@ export async function getFolderSizeStream(folderPath: string): Promise<number> {
 
 export async function getFolderSizeFast(folderPath: string): Promise<number> {
   if (env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    console.log(
-      "[getFolderSizeFast] Skipping folder size calculation during production build",
-    );
+    logger.debug({ action: 'folder_size', fn: 'getFolderSizeFast', outcome: 'skipped', reason: 'production_build' });
     return Promise.resolve(0);
   }
   let totalSize = 0;

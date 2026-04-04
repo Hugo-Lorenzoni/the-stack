@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { env } from "process";
 import type { SendMailOptions } from "nodemailer";
+import { logger } from "@/lib/logger";
 
 const hasOauthConfig =
   !!env.GOOGLE_CLIENT_ID &&
@@ -33,8 +34,9 @@ export async function sendMail(mailOptions: SendMailOptions) {
 
   return nodemailerClient.sendMail(mailOptions, (error, info) => {
     if (error) {
-      return console.log("Error occurred:", error);
+      logger.error({ action: 'send_mail', outcome: 'error', error: { message: error.message, type: error.name } });
+      return;
     }
-    console.log("Message sent: %s", info.messageId);
+    logger.info({ action: 'send_mail', outcome: 'success', message_id: info.messageId });
   });
 }
