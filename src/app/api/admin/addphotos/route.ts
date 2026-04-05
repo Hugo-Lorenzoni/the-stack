@@ -1,9 +1,11 @@
 import sizeOf from "image-size";
 
 import { saveFile } from "@/lib/files";
+import { getPostHogClient } from "@/lib/posthog-server";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
+import { getNextAuthSession } from "@/utils/auth";
 
 const photoSchema = z.object({
   name: z.string(),
@@ -100,6 +102,20 @@ export async function POST(request: NextRequest) {
         { error: "Something went wrong." },
         { status: 500 },
       );
+    }
+    const session = await getNextAuthSession();
+    if (session?.user?.id) {
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId: session.user.id,
+        event: "photos_added",
+        properties: {
+          event_id: event.id,
+          event_title: event.title,
+          photo_count: parsedPhotos.length,
+        },
+      });
+      await posthog.shutdown();
     }
     return NextResponse.json({ event: event }, { status: 200 });
   } catch (error) {

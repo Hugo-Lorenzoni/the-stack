@@ -1,6 +1,8 @@
 import { Event } from "@/app/admin/drafted-events/columns";
+import { getPostHogClient } from "@/lib/posthog-server";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { getNextAuthSession } from "@/utils/auth";
 
 export async function POST(request: Request) {
   try {
@@ -26,6 +28,16 @@ export async function POST(request: Request) {
       );
     }
     const { published } = result;
+    const session = await getNextAuthSession();
+    if (session?.user?.id) {
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId: session.user.id,
+        event: "event_published",
+        properties: { event_id: result.id, event_title: body.title },
+      });
+      await posthog.shutdown();
+    }
     return new Response(JSON.stringify(published));
   } catch (error) {
     console.log(error);

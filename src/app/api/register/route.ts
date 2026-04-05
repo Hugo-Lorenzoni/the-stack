@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getPostHogClient } from "@/lib/posthog-server";
 import { Cercle } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
@@ -33,6 +34,25 @@ export async function POST(request: Request) {
         },
       });
       const { password, ...result } = user;
+      const posthog = getPostHogClient();
+      posthog.identify({
+        distinctId: user.id,
+        properties: {
+          email: user.email,
+          name: user.name,
+          surname: user.surname,
+        },
+      });
+      posthog.capture({
+        distinctId: user.id,
+        event: "user_registered",
+        properties: {
+          role: "WAITING",
+          cercle: body?.cercle,
+          promo: body?.promo,
+        },
+      });
+      await posthog.shutdown();
       return new Response(JSON.stringify(result));
     } else {
       const user = await prisma.user.create({
@@ -45,6 +65,21 @@ export async function POST(request: Request) {
         },
       });
       const { password, ...result } = user;
+      const posthog = getPostHogClient();
+      posthog.identify({
+        distinctId: user.id,
+        properties: {
+          email: user.email,
+          name: user.name,
+          surname: user.surname,
+        },
+      });
+      posthog.capture({
+        distinctId: user.id,
+        event: "user_registered",
+        properties: { role: "USER" },
+      });
+      await posthog.shutdown();
       return new Response(JSON.stringify(result));
     }
   } catch (error) {

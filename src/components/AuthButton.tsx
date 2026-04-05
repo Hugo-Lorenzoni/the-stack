@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "@/components/Link";
 import { Copy } from "lucide-react";
+import posthog from "posthog-js";
 
 export default function AuthButton({ session }: { session: Session | null }) {
   if (session && session.user) {
@@ -36,6 +37,8 @@ export default function AuthButton({ session }: { session: Session | null }) {
             <DropdownMenuItem>
               <Button
                 onClick={() => {
+                  posthog.capture("user_signed_out");
+                  posthog.reset();
                   signOut({ callbackUrl: "/" });
                 }}
                 className="w-full"

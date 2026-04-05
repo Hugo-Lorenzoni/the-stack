@@ -1,4 +1,5 @@
 import { User } from "@/app/admin/accounts-approval/columns";
+import { getPostHogClient } from "@/lib/posthog-server";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -25,6 +26,13 @@ export async function POST(request: Request) {
       );
     }
     const { role } = result;
+    const posthog = getPostHogClient();
+    posthog.capture({
+      distinctId: result.id,
+      event: "user_approved",
+      properties: { new_role: role, approved_email: body.email },
+    });
+    await posthog.shutdown();
     return new Response(JSON.stringify(role));
   } catch (error) {
     console.log(error);

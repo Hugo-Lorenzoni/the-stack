@@ -1,3 +1,4 @@
+import { getPostHogClient } from "@/lib/posthog-server";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import * as bcrypt from "bcrypt";
@@ -67,6 +68,12 @@ export async function POST(request: NextRequest) {
       where: { id: resetPasswordEntry.id },
       data: { used: true },
     });
+
+    if (user?.id) {
+      const posthog = getPostHogClient();
+      posthog.capture({ distinctId: user.id, event: "password_reset" });
+      await posthog.shutdown();
+    }
 
     return NextResponse.json(
       { message: "Password reset successful" },

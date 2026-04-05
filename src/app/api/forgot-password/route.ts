@@ -1,4 +1,5 @@
 import { sendMail } from "@/lib/email";
+import { getPostHogClient } from "@/lib/posthog-server";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
@@ -66,6 +67,13 @@ export async function POST(request: NextRequest) {
       subject: "CPV FPMs - Réinitialisation du mot de passe",
       html: emailContent,
     });
+
+    const posthog = getPostHogClient();
+    posthog.capture({
+      distinctId: user.id,
+      event: "forgot_password_requested",
+    });
+    await posthog.shutdown();
 
     return NextResponse.json(
       { message: "Password reset link sent" },

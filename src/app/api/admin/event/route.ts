@@ -1,5 +1,6 @@
 import sizeOf from "image-size";
 
+import { getPostHogClient } from "@/lib/posthog-server";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { mkdir, stat, writeFile } from "fs/promises";
@@ -11,6 +12,7 @@ import { env } from "process";
 import { getNearestMidnight } from "@/lib/time";
 import { getDirectoryPath, getFileName } from "@/lib/path";
 import { saveFile } from "@/lib/files";
+import { getNextAuthSession } from "@/utils/auth";
 
 type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
@@ -91,6 +93,23 @@ export async function POST(request: NextRequest) {
       },
     });
     //   console.log(event);
+
+    const session = await getNextAuthSession();
+    if (session?.user?.id) {
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId: session.user.id,
+        event: "event_created",
+        properties: {
+          event_id: event.id,
+          title: event.title,
+          type: event.type,
+          pinned: event.pinned,
+          date: event.date,
+        },
+      });
+      await posthog.shutdown();
+    }
 
     return NextResponse.json({ event: event }, { status: 200 });
   } catch (error) {

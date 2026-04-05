@@ -1,9 +1,11 @@
+import { getPostHogClient } from "@/lib/posthog-server";
 import prisma from "@/lib/prisma";
 import { rm } from "fs/promises";
 import { NextResponse } from "next/server";
 import { join } from "path";
 import { env } from "process";
 import { z } from "zod";
+import { getNextAuthSession } from "@/utils/auth";
 
 const idSchema = z.string().min(1);
 
@@ -57,6 +59,21 @@ export async function POST(request: Request) {
     // console.log(await stat(path));
 
     await rm(path, { recursive: true, force: true });
+
+    const session = await getNextAuthSession();
+    if (session?.user?.id) {
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId: session.user.id,
+        event: "event_deleted",
+        properties: {
+          event_title: event.title,
+          event_type: event.type,
+          event_date: event.date,
+        },
+      });
+      await posthog.shutdown();
+    }
 
     return new Response(JSON.stringify(event.title));
   } catch (error) {

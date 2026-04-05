@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 
 const FormSchema = z.object({
   search: z.string(),
@@ -24,6 +25,7 @@ export default function SearchBar() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    posthog.capture("search_performed", { query: data.search });
     router.push(`/search?q=${data.search}`);
     // router.refresh();
   }

@@ -1,8 +1,10 @@
 import { getAutreEvent } from "@/utils/getAutreEvent";
 import { getAutreEventPassword } from "@/utils/getAutreEventPassword";
+import { getPostHogClient } from "@/lib/posthog-server";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { encrypt } from "@/utils/encryption";
+import { getNextAuthSession } from "@/utils/auth";
 
 export async function POST(
   request: Request,
@@ -44,6 +46,15 @@ export async function POST(
         sameSite: "lax",
         maxAge: 60 * 60 * 24 * 30, //30j
       });
+      const session = await getNextAuthSession();
+      const distinctId = session?.user?.id ?? `anon-${id}`;
+      const posthog = getPostHogClient();
+      posthog.capture({
+        distinctId,
+        event: "password_protected_event_unlocked",
+        properties: { event_id: id },
+      });
+      await posthog.shutdown();
       return new Response(JSON.stringify(results));
     }
   } catch (error) {
