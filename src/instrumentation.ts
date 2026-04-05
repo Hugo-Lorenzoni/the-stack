@@ -44,3 +44,72 @@ export function register() {
     logs.setGlobalLoggerProvider(loggerProvider);
   }
 }
+
+function getCookieHeader(request: unknown): string | null {
+  if (!request || typeof request !== "object") {
+    return null;
+  }
+
+  // Next passes a request-like object with a Headers instance in Node runtime.
+  const maybeRequest = request as {
+    headers?: Headers | { cookie?: string | string[] };
+  };
+  if (!maybeRequest.headers) {
+    return null;
+  }
+
+  if (typeof (maybeRequest.headers as Headers).get === "function") {
+    return (maybeRequest.headers as Headers).get("cookie");
+  }
+
+  const cookieHeader = (maybeRequest.headers as { cookie?: string | string[] })
+    .cookie;
+  if (Array.isArray(cookieHeader)) {
+    return cookieHeader.join("; ");
+  }
+
+  return cookieHeader ?? null;
+}
+
+function getDistinctIdFromPostHogCookie(
+  cookieHeader: string | null,
+): string | undefined {
+  if (!cookieHeader) {
+    return undefined;
+  }
+
+  const postHogCookieMatch = cookieHeader.match(/ph_phc_.*?_posthog=([^;]+)/);
+  if (!postHogCookieMatch?.[1]) {
+    return undefined;
+  }
+
+  try {
+    const decodedCookie = decodeURIComponent(postHogCookieMatch[1]);
+    const postHogData = JSON.parse(decodedCookie) as { distinct_id?: string };
+    return postHogData.distinct_id;
+  } catch (error) {
+    console.error("Error parsing PostHog cookie:", error);
+    return undefined;
+  }
+}
+
+export const onRequestError = async (
+  err: unknown,
+  request: unknown,
+  context?: unknown,
+) => {
+  if (process.env.NEXT_RUNTIME !== "nodejs") {
+    return;
+  }
+
+  const { getPostHogServer } = await import("@/lib/posthog-server");
+  const posthog = getPostHogServer();
+
+  const cookieHeader = getCookieHeader(request);
+  const distinctId = getDistinctIdFromPostHogCookie(cookieHeader);
+
+  posthog.captureException(err, distinctId, {
+    source: "next_onRequestError",
+    has_context: Boolean(context),
+  });
+};
