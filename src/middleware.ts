@@ -1,6 +1,23 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
+const emitMiddlewareEvent = (
+  level: "info" | "warn",
+  event: Record<string, unknown>,
+) => {
+  const line = JSON.stringify({
+    timestamp: new Date().toISOString(),
+    ...event,
+  });
+
+  if (level === "warn") {
+    console.warn(line);
+    return;
+  }
+
+  console.info(line);
+};
+
 export default withAuth(
   function middleware(req) {
     // Clone request headers and inject IDs so downstream handlers and server
@@ -13,6 +30,8 @@ export default withAuth(
     const existingFlowId =
       req.cookies.get("flow_id")?.value ?? requestHeaders.get("x-flow-id");
     const flowId = existingFlowId ?? crypto.randomUUID();
+    const pathname = req.nextUrl.pathname;
+    const token = req.nextauth.token;
 
     requestHeaders.set("x-request-id", requestId);
     requestHeaders.set("x-flow-id", flowId);
@@ -34,6 +53,18 @@ export default withAuth(
       });
     }
 
+    emitMiddlewareEvent("info", {
+      event: "http.request.allowed",
+      request_id: requestId,
+      flow_id: flowId,
+      method: req.method,
+      path: pathname,
+      route_kind: pathname.startsWith("/api/") ? "api" : "page",
+      authenticated: !!token,
+      user_id: token?.id ?? null,
+      user_role: token?.role ?? null,
+    });
+
     return response;
   },
   {
@@ -54,7 +85,7 @@ export default withAuth(
             | "baptise_role_required"
             | "auth_required",
         ) => {
-          const event = {
+          emitMiddlewareEvent("warn", {
             event: "auth.access_denied",
             request_id: requestId,
             flow_id: flowId,
@@ -63,9 +94,7 @@ export default withAuth(
             reason,
             authenticated: !!token,
             user_role: token?.role ?? null,
-            timestamp: new Date().toISOString(),
-          };
-          console.warn(JSON.stringify(event));
+          });
         };
 
         const isAdminPath =
