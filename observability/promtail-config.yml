@@ -40,6 +40,7 @@ scrape_configs:
           environment:
           outcome:
           method:
+          page:
       - timestamp:
           source: time
           format: UnixMs

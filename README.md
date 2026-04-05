@@ -96,6 +96,20 @@ npm run start
 
 Then hit a few pages/API routes. Logs will appear in Grafana (pre-provisioned dashboard: **CPV Logs Overview**).
 
+An enhanced dashboard is also provisioned: **CPV Logs Overview v2**.
+
+- Adds filters (`environment`, `method`, `outcome`, `page`)
+- Adds KPI cards (requests/min, error rate, p95 latency, active pages)
+- Adds percentile latency chart (p50/p95/p99)
+- Adds top pages and slow pages panels
+- Adds focused error logs panel
+
+If Grafana is already running, restart it once to force an immediate dashboard rescan:
+
+```bash
+docker compose -f docker-compose.observability.yml restart grafana
+```
+
 ### 4. Useful Loki queries
 
 ```logql
