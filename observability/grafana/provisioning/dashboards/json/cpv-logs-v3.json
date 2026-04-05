@@ -76,7 +76,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} [1m]))",
+          "expr": "sum(count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} [1m]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -147,7 +147,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "100 * sum(count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", page=~\"$page\", outcome=\"error\"} [5m])) / (sum(count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} [5m])) + 1)",
+          "expr": "100 * sum(count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", page=~\"$page\", outcome=\"error\"} [5m])) / (sum(count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} [5m])) + 1)",
           "queryType": "instant",
           "refId": "A"
         }
@@ -218,7 +218,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "max by () (quantile_over_time(0.95, {job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json | unwrap duration_ms [5m]))",
+          "expr": "max by () (quantile_over_time(0.95, {job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json | unwrap duration_ms [5m]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -280,7 +280,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "count(sum by (page) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} [5m])))",
+          "expr": "count(sum by (page) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} [5m])))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -339,7 +339,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum by (outcome) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} [1m]))",
+          "expr": "sum by (outcome) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} [1m]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -407,7 +407,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "max by () (quantile_over_time(0.50, {job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json duration_ms=\"duration_ms\" | unwrap duration_ms [15m]))",
+          "expr": "max by () (quantile_over_time(0.50, {job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json duration_ms=\"duration_ms\" | unwrap duration_ms [15m]))",
           "legendFormat": "p50",
           "queryType": "range",
           "refId": "A"
@@ -418,7 +418,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "max by () (quantile_over_time(0.95, {job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json duration_ms=\"duration_ms\" | unwrap duration_ms [15m]))",
+          "expr": "max by () (quantile_over_time(0.95, {job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json duration_ms=\"duration_ms\" | unwrap duration_ms [15m]))",
           "legendFormat": "p95",
           "queryType": "range",
           "refId": "B"
@@ -429,7 +429,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "max by () (quantile_over_time(0.99, {job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json duration_ms=\"duration_ms\" | unwrap duration_ms [15m]))",
+          "expr": "max by () (quantile_over_time(0.99, {job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json duration_ms=\"duration_ms\" | unwrap duration_ms [15m]))",
           "legendFormat": "p99",
           "queryType": "range",
           "refId": "C"
@@ -493,7 +493,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "topk(10, sum by (page) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} [5m])))",
+          "expr": "topk(10, sum by (page) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} [5m])))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -565,7 +565,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "topk(10, quantile_over_time(0.95, {job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json | unwrap duration_ms [30m]) by (page))",
+          "expr": "topk(10, quantile_over_time(0.95, {job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json | unwrap duration_ms [30m]) by (page))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -629,7 +629,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "topk(10, sum by (error_type) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json error_type=\"error.type\" | outcome=\"error\" | error_type!=\"\" [$__range])))",
+          "expr": "topk(10, sum by (error_type) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json error_type=\"error.type\" | outcome=\"error\" | error_type!=\"\" [$__range])))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -668,7 +668,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"} | json | outcome=\"error\"",
+          "expr": "{job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json | outcome=\"error\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -707,19 +707,78 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "{job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\", page=~\"$page\"}",
+          "expr": "{job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"}",
           "queryType": "range",
           "refId": "A"
         }
       ],
       "title": "Raw App Logs (Filtered)",
       "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "description": "Request volume split by outcome over time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 100,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "11.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum by (render_type) (count_over_time({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\", page=~\"$page\"} | json [1m]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Requests by Render Type",
+      "type": "timeseries"
     }
   ],
   "refresh": "10s",
   "schemaVersion": 39,
   "style": "dark",
-  "tags": ["cpv", "loki", "v2"],
+  "tags": ["cpv", "loki", "v3"],
   "templating": {
     "list": [
       {
@@ -762,16 +821,16 @@
           "type": "loki",
           "uid": "loki"
         },
-        "definition": "label_values({job=\"cpv-app\", environment=~\"$environment\"}, method)",
+        "definition": "label_values({job=\"cpv-app\", environment=~\"$environment\"}, level)",
         "hide": 0,
         "includeAll": true,
-        "label": "Method",
+        "label": "Level",
         "multi": true,
-        "name": "method",
+        "name": "level",
         "options": [],
         "query": {
-          "query": "label_values({job=\"cpv-app\", environment=~\"$environment\"}, method)",
-          "refId": "LokiVariableQueryEditor-Method",
+          "query": "label_values({job=\"cpv-app\", environment=~\"$environment\"}, level)",
+          "refId": "LokiVariableQueryEditor-Level",
           "type": 1
         },
         "refresh": 1,
@@ -791,7 +850,7 @@
           "type": "loki",
           "uid": "loki"
         },
-        "definition": "label_values({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\"}, outcome)",
+        "definition": "label_values({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\"}, outcome)",
         "hide": 0,
         "includeAll": true,
         "label": "Outcome",
@@ -799,7 +858,7 @@
         "name": "outcome",
         "options": [],
         "query": {
-          "query": "label_values({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\"}, outcome)",
+          "query": "label_values({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\"}, outcome)",
           "refId": "LokiVariableQueryEditor-Outcome",
           "type": 1
         },
@@ -820,7 +879,7 @@
           "type": "loki",
           "uid": "loki"
         },
-        "definition": "label_values({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\"}, page)",
+        "definition": "label_values({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\"}, page)",
         "hide": 0,
         "includeAll": true,
         "label": "Page",
@@ -828,7 +887,7 @@
         "name": "page",
         "options": [],
         "query": {
-          "query": "label_values({job=\"cpv-app\", environment=~\"$environment\", method=~\"$method\", outcome=~\"$outcome\"}, page)",
+          "query": "label_values({job=\"cpv-app\", environment=~\"$environment\", level=~\"$level\", outcome=~\"$outcome\"}, page)",
           "refId": "LokiVariableQueryEditor-Page",
           "type": 1
         },
@@ -846,8 +905,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "CPV Logs Overview v2",
-  "uid": "cpv-logs-overview-v2",
+  "title": "CPV Logs Overview v3",
+  "uid": "cpv-logs-overview-v3",
   "version": 6,
   "weekStart": ""
 }
