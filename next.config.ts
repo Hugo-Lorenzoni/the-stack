@@ -1,4 +1,10 @@
 import type { NextConfig } from "next";
+import { loadEnvConfig } from "@next/env";
+import { withPostHogConfig } from "@posthog/nextjs-config";
+
+const posthogApiKey = process.env.POSTHOG_API_KEY;
+const posthogProjectId = process.env.POSTHOG_PROJECT_ID;
+const enableSourcemapUpload = Boolean(posthogApiKey && posthogProjectId);
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -32,4 +38,12 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withPostHogConfig(nextConfig, {
+  personalApiKey: posthogApiKey ?? "",
+  projectId: posthogProjectId ?? "",
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+  sourcemaps: {
+    enabled: enableSourcemapUpload,
+    deleteAfterUpload: true,
+  },
+});

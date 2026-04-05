@@ -3,6 +3,8 @@ import { z } from "zod";
 const EnvSchema = z.object({
   DATA_FOLDER: z.string().default("data"),
   POSTHOG_PROJECT_TOKEN: z.string().optional(),
+  POSTHOG_API_KEY: z.string().optional(),
+  POSTHOG_PROJECT_ID: z.string().optional(),
   POSTHOG_OTLP_LOGS_URL: z.string().url().optional(),
   OTEL_SERVICE_NAME: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().optional(),
