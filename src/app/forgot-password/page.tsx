@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useClientPageViewLogging } from "@/lib/client-log";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -31,6 +32,8 @@ export default function ForgotPasswordPage() {
 }
 
 function ForgotPassword() {
+  useClientPageViewLogging("/forgot-password");
+
   const params = useSearchParams();
 
   const email = params.get("email") || "";

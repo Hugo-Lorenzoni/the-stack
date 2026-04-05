@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { Event } from "@prisma/client";
 
+import { useClientPageViewLogging } from "@/lib/client-log";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -132,6 +133,8 @@ const formSchema = z
   });
 
 export default function NewEventPage() {
+  useClientPageViewLogging("/admin/new-event");
+
   const [isLoading, setLoading] = useState<boolean>(false);
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
 

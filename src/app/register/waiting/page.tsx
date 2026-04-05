@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { useClientPageViewLogging } from "@/lib/client-log";
 import { Check, Copy } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -7,6 +8,8 @@ import { useState } from "react";
 export default function Waiting() {
   const { data: session } = useSession();
   const [clicked, setClicked] = useState(false);
+
+  useClientPageViewLogging("/register/waiting");
 
   function handelClick(validationCode: string) {
     navigator.clipboard.writeText(validationCode);

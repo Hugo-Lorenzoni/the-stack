@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useClientPageViewLogging } from "@/lib/client-log";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,8 @@ export default function ResetPasswordPage({
 }: {
   params: Promise<{ token: string }>;
 }) {
+  useClientPageViewLogging("/reset-password/[token]");
+
   const { token } = use(params);
 
   const [showPassword, setShowPassword] = useState("password");

@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "@/components/Link";
+import { logClientEvent, useClientPageViewLogging } from "@/lib/client-log";
 
 const formSchema = z.object({
   email: z.string(),
@@ -42,6 +43,8 @@ export default function ConnectionPage() {
     },
   });
 
+  useClientPageViewLogging("/connexion");
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     // Do something with the form values.
@@ -53,9 +56,13 @@ export default function ConnectionPage() {
         redirect: false,
         callbackUrl: "/",
       });
-      console.log(results);
       if (results) {
         if (results.ok && results.url) {
+          logClientEvent({
+            event: "connexion.submit",
+            page: "/connexion",
+            client_outcome: "success",
+          });
           const res = await getSession();
           toast.info("Vous êtes maintenant connecté");
           if (res?.user?.role == "ADMIN") {
@@ -69,10 +76,22 @@ export default function ConnectionPage() {
             router.refresh();
           }
         } else if (results.error == "CredentialsSignin") {
+          logClientEvent({
+            event: "connexion.submit",
+            page: "/connexion",
+            client_outcome: "error",
+            reason_code: "credentials_signin",
+          });
           toast.error("Erreur lors de la connexion", {
             description: "Nom d'utilisateur ou mot de passe incorrect",
           });
         } else {
+          logClientEvent({
+            event: "connexion.submit",
+            page: "/connexion",
+            client_outcome: "error",
+            reason_code: "unexpected_signin_result",
+          });
           toast.error(results.status.toString(), {
             description: results.error
               ? results.error.toString()
@@ -81,7 +100,12 @@ export default function ConnectionPage() {
         }
       }
     } catch (error) {
-      console.log(error);
+      logClientEvent({
+        event: "connexion.submit",
+        page: "/connexion",
+        client_outcome: "error",
+        reason_code: "exception",
+      });
     }
     setLoading(false);
   }

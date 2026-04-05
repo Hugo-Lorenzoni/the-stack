@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { useClientPageViewLogging } from "@/lib/client-log";
 import {
   Popover,
   PopoverContent,
@@ -46,6 +47,8 @@ const formSchema = z.object({
 export type Video = z.infer<typeof formSchema>;
 
 export default function NewVideoPage() {
+  useClientPageViewLogging("/admin/new-video");
+
   const [isLoading, setLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({

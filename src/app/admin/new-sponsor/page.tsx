@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useClientPageViewLogging } from "@/lib/client-log";
 
 import { toast } from "sonner";
 
@@ -55,6 +56,8 @@ const formSchema = z.object({
 });
 
 export default function NewSponsorPage() {
+  useClientPageViewLogging("/admin/new-sponsor");
+
   const [isLoading, setLoading] = useState<boolean>(false);
 
   const [image, setImage] = useState<string | null>();

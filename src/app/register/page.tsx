@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useClientPageViewLogging } from "@/lib/client-log";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -94,6 +95,8 @@ const formSchema = z
 //type FormData =z.infer<typeof formSchema>
 
 export default function RegisterPage() {
+  useClientPageViewLogging("/register");
+
   const [showPassword, setShowPassword] = useState("password");
 
   const router = useRouter();
