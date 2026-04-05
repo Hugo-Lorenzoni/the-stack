@@ -77,3 +77,26 @@ To update all shadcn/ui components, run:
 ```bash
 for file in src/components/ui/*.tsx; do npx shadcn@latest add -y -o $(basename "$file" .tsx); done
 ```
+
+## PostHog OpenTelemetry Logs
+
+The app is configured to export server-side OpenTelemetry logs to PostHog.
+
+Required environment variables:
+
+- `POSTHOG_PROJECT_TOKEN`: your PostHog project token (`phc_...`)
+- `POSTHOG_OTLP_LOGS_URL`: defaults to `https://eu.i.posthog.com/i/v1/logs`
+- `OTEL_SERVICE_NAME`: defaults to `the-stack`
+
+Notes:
+
+- Next.js 15+ enables the instrumentation hook by default.
+- The logger provider is exposed from `src/instrumentation.ts` so route handlers can call `forceFlush()` via `after()`.
+
+Test quickly:
+
+```bash
+curl -i http://localhost:3000/api/logs-test
+```
+
+Then verify the log appears in the PostHog Logs interface for your project.

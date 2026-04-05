@@ -2,6 +2,11 @@ import { z } from "zod";
 
 const EnvSchema = z.object({
   DATA_FOLDER: z.string().default("data"),
+  POSTHOG_PROJECT_TOKEN: z.string().optional(),
+  POSTHOG_OTLP_LOGS_URL: z.string().url().optional(),
+  OTEL_SERVICE_NAME: z.string().optional(),
+  NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: z.string().optional(),
+  NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
   MYSQL_ROOT_PASSWORD: z.string(),
   MYSQL_DATABASE: z.string(),
   MYSQL_USER: z.string(),
