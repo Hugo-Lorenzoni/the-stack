@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className="bg-orange-600">
       <body className={inter.className}>
         <Providers>
           <Nav />
