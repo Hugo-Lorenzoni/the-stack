@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     },
   });
 
-  if (user && (await bcrypt.compare(body.password, user.password))) {
+  if (user?.password && (await bcrypt.compare(body.password, user.password))) {
     const { password, cercle, cercleVille, autreCercle, promo, ...userOnly } =
       user;
     //const accessToken = signJwtAccessToken(userWithoutPass);

@@ -1,6 +1,5 @@
 "use client";
-import { Session } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
+import { LegacySession } from "@/utils/auth-session";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import {
@@ -13,8 +12,13 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "@/components/Link";
 import { Copy } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
-export default function AuthButton({ session }: { session: Session | null }) {
+export default function AuthButton({
+  session,
+}: {
+  session: LegacySession | null;
+}) {
   if (session && session.user) {
     const validationCode = session.user.id.substring(0, 8);
     return (
@@ -36,7 +40,13 @@ export default function AuthButton({ session }: { session: Session | null }) {
             <DropdownMenuItem>
               <Button
                 onClick={() => {
-                  signOut({ callbackUrl: "/" });
+                  void authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        window.location.href = "/";
+                      },
+                    },
+                  });
                 }}
                 className="w-full"
               >
@@ -70,7 +80,9 @@ export default function AuthButton({ session }: { session: Session | null }) {
     <div className="flex flex-wrap gap-4">
       <Button
         className="hover:bg-opacity-90 bg-white font-semibold text-orange-600 hover:bg-white"
-        onClick={() => signIn()}
+        onClick={() => {
+          window.location.href = "/connexion";
+        }}
       >
         Se connecter
       </Button>

@@ -11,18 +11,67 @@ datasource db {
 model User {
   id              String      @id @default(uuid())
   email           String      @unique
+  emailVerified   Boolean     @default(false)
   name            String
+  image           String?
   surname         String
   role            Role        @default(USER)
   cercle          Cercle?
   cercleVille     String?
   autreCercle     String?
   promo           Int?
-  password        String
+  password        String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt @default(now())
 
+  accounts        Account[]
+  sessions        Session[]
   resetPassword   ResetPassword[]
+}
+
+model Session {
+  id          String   @id
+  expiresAt   DateTime
+  token       String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ipAddress   String?
+  userAgent   String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@unique([providerId, accountId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
 }
 
 model Event {

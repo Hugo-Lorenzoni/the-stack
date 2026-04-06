@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const result = formSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { message: "Invalid input", errors: result.error.errors },
+        { message: "Invalid input", errors: result.error.issues },
         { status: 400 },
       );
     }
@@ -61,6 +61,16 @@ export async function POST(request: NextRequest) {
     await prisma.user.update({
       where: { id: user?.id },
       data: { password: hashedPassword },
+    });
+
+    await prisma.account.updateMany({
+      where: {
+        userId: resetPasswordEntry.userId,
+        providerId: "credential",
+      },
+      data: {
+        password: hashedPassword,
+      },
     });
 
     await prisma.resetPassword.update({

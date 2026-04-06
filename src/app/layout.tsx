@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "CPV FPMs",
   description:
     "Photos des événements de la Faculté Polytechnique de Mons (FPMs)",
-  ...(env.NEXTAUTH_URL === "https://cpv-test.magellan.fpms.ac.be/" && {
+  ...(env.BETTER_AUTH_URL === "https://cpv-test.magellan.fpms.ac.be/" && {
     robots: {
       index: false,
       follow: false,

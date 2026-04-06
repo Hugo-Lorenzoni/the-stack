@@ -1,5 +1,4 @@
 import AuthButton from "./AuthButton";
-// import { useSession } from "next-auth/react";
 import SearchBar from "./SearchBar";
 import { getNextAuthSession } from "@/utils/auth";
 import { HTMLAttributes } from "react";
@@ -9,7 +8,6 @@ import Link from "@/components/Link";
 type Props = HTMLAttributes<HTMLUListElement>;
 
 export default async function NavLinks({ className }: Props) {
-  // const { data: session } = useSession();
   const session = await getNextAuthSession();
 
   const linkStyle =

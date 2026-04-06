@@ -19,9 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "@/components/Link";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   email: z.string(),
@@ -44,42 +44,35 @@ export default function ConnectionPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     try {
-      const results = await signIn("credentials", {
+      const results = await authClient.signIn.email({
         email: values.email,
         password: values.password,
-        redirect: false,
-        callbackUrl: "/",
+        rememberMe: true,
       });
-      console.log(results);
-      if (results) {
-        if (results.ok && results.url) {
-          const res = await getSession();
-          toast.info("Vous êtes maintenant connecté");
-          if (res?.user?.role == "ADMIN") {
-            router.push("/admin");
-            router.refresh();
-          } else if (res?.user?.role == "WAITING") {
-            router.push("/register/waiting");
-            router.refresh();
-          } else {
-            router.push(results.url);
-            router.refresh();
-          }
-        } else if (results.error == "CredentialsSignin") {
-          toast.error("Erreur lors de la connexion", {
-            description: "Nom d'utilisateur ou mot de passe incorrect",
-          });
-        } else {
-          toast.error(results.status.toString(), {
-            description: results.error
-              ? results.error.toString()
-              : results.url?.toString(),
-          });
-        }
+
+      if (results.error) {
+        toast.error("Erreur lors de la connexion", {
+          description: results.error.message,
+        });
+        setLoading(false);
+        return;
       }
+
+      const currentSession = await authClient.getSession();
+      const currentRole = (
+        currentSession.data?.user as { role?: string } | undefined
+      )?.role;
+
+      toast.info("Vous êtes maintenant connecté");
+      if (currentRole === "ADMIN") {
+        router.push("/admin");
+      } else if (currentRole === "WAITING") {
+        router.push("/register/waiting");
+      } else {
+        router.push("/");
+      }
+      router.refresh();
     } catch (error) {
       console.log(error);
     }

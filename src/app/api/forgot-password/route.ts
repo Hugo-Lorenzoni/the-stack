@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const result = formSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { message: "Invalid input", errors: result.error.errors },
+        { message: "Invalid input", errors: result.error.issues },
         { status: 400 },
       );
     }
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const resetLink = `${env.NEXTAUTH_URL}/reset-password/${token}`;
+    const resetLink = `${env.BETTER_AUTH_URL}/reset-password/${token}`;
 
     const emailContent = `
         <h3>Bonjour ${user.name},</h3>

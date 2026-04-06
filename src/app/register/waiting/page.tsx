@@ -1,11 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export default function Waiting() {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
+  const sessionRole = (session?.user as { role?: string } | undefined)?.role;
   const [clicked, setClicked] = useState(false);
 
   function handelClick(validationCode: string) {
@@ -13,7 +14,7 @@ export default function Waiting() {
     setClicked(true);
   }
 
-  if (session && session.user && session.user.role == "WAITING") {
+  if (session && session.user && sessionRole == "WAITING") {
     const validationCode = session.user.id.substring(0, 8);
 
     return (
