@@ -24,14 +24,14 @@ export default function AuthButton({
     return (
       <div className="flex gap-4">
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center duration-150 ease-in-out hover:opacity-80">
+          <DropdownMenuTrigger className="flex items-center gap-2 duration-150 ease-in-out hover:opacity-80">
             <Avatar>
               <AvatarFallback className="text-xs font-semibold text-orange-600">
                 {Array.from(`${session.user.name}`)[0].toUpperCase() +
                   Array.from(`${session.user.surname}`)[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <span className="ml-4 xl:hidden">
+            <span className="xl:hidden">
               {session.user.name} {session.user.surname}
             </span>
           </DropdownMenuTrigger>
