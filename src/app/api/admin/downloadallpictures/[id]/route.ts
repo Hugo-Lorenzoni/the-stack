@@ -10,6 +10,7 @@ import { access, readFile } from "node:fs/promises";
 import z from "zod";
 import { existsSync } from "node:fs";
 import { getFormattedString } from "@/lib/path";
+import { postHogServerClient } from "@/lib/posthog";
 
 const idSchema = z.string().uuid().min(1);
 
@@ -23,8 +24,7 @@ export async function GET(
     const result = idSchema.safeParse(id);
 
     if (!result.success) {
-      // handle error then return
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -36,6 +36,7 @@ export async function GET(
     // Check permissions or authentication of the user
     const session = await getNextAuthSession();
     if (session?.user?.role !== "ADMIN") {
+      postHogServerClient.captureException(new Error("Unauthorized access"));
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     // Fetch the event data from the database
@@ -48,6 +49,9 @@ export async function GET(
     });
     // Get the photos and create a zip file
     if (!event || !event.photos || event.photos.length === 0) {
+      postHogServerClient.captureException(
+        new Error("No photos found for this event"),
+      );
       return NextResponse.json(
         { error: "No photos found for this event" },
         { status: 404 },
@@ -73,10 +77,17 @@ export async function GET(
           const fileName = photo.name;
           photoFolder?.file(fileName, photoBuffer);
         } else {
+          postHogServerClient.captureException(
+            new Error(`Photo file not found at path: ${photoPath}`),
+          );
           console.warn(`Photo file not found: ${photoPath}`);
           // Continue with other photos even if one fails
         }
       } catch (fileError) {
+        postHogServerClient.captureException(
+          fileError,
+          "Failed to add photo to zip",
+        );
         console.error(`Failed to add photo ${photo.name} to zip:`, fileError);
         // Continue with other photos even if one fails
       }
@@ -100,7 +111,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Error downloading pictures:", error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { error: "Failed to download pictures" },
       { status: 500 },

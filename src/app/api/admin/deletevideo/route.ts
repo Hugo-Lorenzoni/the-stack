@@ -1,3 +1,4 @@
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
 
     if (!result.success) {
       // handle error then return
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -26,6 +27,9 @@ export async function POST(request: Request) {
     });
     console.log(video);
     if (!video) {
+      postHogServerClient.captureException(
+        new Error(`Failed to delete video with id: ${result.data}`),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -34,7 +38,7 @@ export async function POST(request: Request) {
 
     return new Response(JSON.stringify(video.name));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

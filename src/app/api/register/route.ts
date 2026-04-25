@@ -1,3 +1,4 @@
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { Cercle } from "@prisma/client";
 import * as bcrypt from "bcrypt";
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify(result));
     }
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
 
     return NextResponse.json(
       { message: "Something went wrong !" },

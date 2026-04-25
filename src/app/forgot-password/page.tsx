@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import posthog from "posthog-js";
 import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -72,7 +73,7 @@ function ForgotPassword() {
         });
       }
     } catch (error) {
-      console.log(error);
+      posthog.captureException(error);
     }
     setLoading(false);
   }

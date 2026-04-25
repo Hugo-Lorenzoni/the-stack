@@ -1,4 +1,5 @@
 import { getDirectoryPath } from "@/lib/path";
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
 import { move } from "fs-extra";
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     const result = valuesSchema.safeParse(body);
 
     if (!result.success) {
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -57,6 +58,9 @@ export async function POST(request: NextRequest) {
     // console.log(oldEvent);
 
     if (!oldEvent) {
+      postHogServerClient.captureException(
+        new Error(`Event with id ${id} not found`),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -91,12 +95,12 @@ export async function POST(request: NextRequest) {
         console.log(`Type changed from ${oldEvent.type} to ${type}`);
         move(src, dest, (err) => {
           if (err) {
-            return (
-              console.error(err),
-              NextResponse.json(
-                { error: "Failed to move the files" },
-                { status: 500 },
-              )
+            postHogServerClient.captureException(
+              new Error(`Failed to move files for event ${id}`),
+            );
+            return NextResponse.json(
+              { error: "Failed to move the files" },
+              { status: 500 },
             );
           }
           console.log(`${id} - ${title} - Move successful !`);
@@ -109,7 +113,9 @@ export async function POST(request: NextRequest) {
           await rename(src, dest);
           console.log(`${id} - ${title} - Rename successful !`);
         } catch (error) {
-          console.error(error);
+          postHogServerClient.captureException(
+            new Error(`Failed to rename directory for event ${id}`),
+          );
           return NextResponse.json(
             { error: "Failed to rename the directory" },
             { status: 500 },
@@ -173,7 +179,7 @@ export async function POST(request: NextRequest) {
     // console.log(data);
     return NextResponse.json({ event: data[0] }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },

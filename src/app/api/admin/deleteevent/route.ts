@@ -1,3 +1,4 @@
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { rm } from "fs/promises";
 import { NextResponse } from "next/server";
@@ -14,8 +15,7 @@ export async function POST(request: Request) {
     const result = idSchema.safeParse(body);
 
     if (!result.success) {
-      // handle error then return
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -32,8 +32,8 @@ export async function POST(request: Request) {
         type: true,
       },
     });
-    console.log(event);
     if (!event) {
+      postHogServerClient.captureException(new Error("Event not found"));
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 
     return new Response(JSON.stringify(event.title));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

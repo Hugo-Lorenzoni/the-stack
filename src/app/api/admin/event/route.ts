@@ -2,15 +2,10 @@ import sizeOf from "image-size";
 
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { mkdir, stat, writeFile } from "fs/promises";
-import { Type } from "@prisma/client";
-import { join } from "path";
-import mime from "mime";
 import * as z from "zod";
-import { env } from "process";
 import { getNearestMidnight } from "@/lib/time";
-import { getDirectoryPath, getFileName } from "@/lib/path";
 import { saveFile } from "@/lib/files";
+import { postHogServerClient } from "@/lib/posthog";
 
 type Values = {
   type: "BAPTISE" | "OUVERT" | "AUTRE";
@@ -34,6 +29,9 @@ export async function POST(request: NextRequest) {
 
     const values = data.get("values") as string;
     if (!values) {
+      postHogServerClient.captureException(
+        new Error("No values provided in the request"),
+      );
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
     const { title, date, notes, pinned, type, password }: Values =
@@ -44,6 +42,9 @@ export async function POST(request: NextRequest) {
     // console.log(nearestDate);
 
     if (!password && type == "AUTRE") {
+      postHogServerClient.captureException(
+        new Error("No password provided for AUTRE event"),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -71,6 +72,9 @@ export async function POST(request: NextRequest) {
       height: coverDismensions.height,
     });
     if (!parsedCover) {
+      postHogServerClient.captureException(
+        new Error("Failed parsing the cover photo"),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -94,7 +98,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ event: event }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },

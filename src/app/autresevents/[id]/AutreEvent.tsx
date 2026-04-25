@@ -24,6 +24,7 @@ import Gallery from "@/components/Gallery";
 
 import { Eye, EyeOff } from "lucide-react";
 import ImageComponent from "@/components/ImageComponent";
+import posthog from "posthog-js";
 
 const formSchema = z
   .object({
@@ -95,16 +96,23 @@ export default function AutreEvent(props: { info: Info; event: Event }) {
         setForbidden(false);
         setEvent(res);
       } else if (response.status == 403) {
+        posthog.capture("Incorrect password attempt", {
+          eventId: info?.id,
+        });
         toast.error("Mot de passe incorrect");
         setForbidden(true);
       } else {
+        posthog.capture("Unexpected error occurred", {
+          eventId: info?.id,
+          status: response.status,
+        });
         toast.error(response.status.toString(), {
           description: response.statusText,
         });
         setForbidden(false);
       }
     } catch (error) {
-      console.log(error);
+      posthog.captureException(error);
     }
   }
 

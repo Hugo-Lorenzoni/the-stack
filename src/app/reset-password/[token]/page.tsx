@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -87,7 +88,7 @@ export default function ResetPasswordPage({
         });
       }
     } catch (error) {
-      console.log(error);
+      posthog.captureException(error);
     }
     setLoading(false);
   }

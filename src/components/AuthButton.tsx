@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "@/components/Link";
 import { Copy } from "lucide-react";
+import posthog from "posthog-js";
 
 export default function AuthButton({ session }: { session: Session | null }) {
   if (session && session.user) {
@@ -36,6 +37,10 @@ export default function AuthButton({ session }: { session: Session | null }) {
             <DropdownMenuItem>
               <Button
                 onClick={() => {
+                  posthog.capture("User signed out", {
+                    user_id: session.user?.id,
+                    user_email: session.user?.email,
+                  });
                   signOut({ callbackUrl: "/" });
                 }}
                 className="w-full"
@@ -50,9 +55,13 @@ export default function AuthButton({ session }: { session: Session | null }) {
                 <DropdownMenuItem>
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      navigator.clipboard.writeText(validationCode)
-                    }
+                    onClick={() => {
+                      posthog.capture("Validation code copied", {
+                        user_id: session.user?.id,
+                        user_email: session.user?.email,
+                      });
+                      navigator.clipboard.writeText(validationCode);
+                    }}
                     className="w-full"
                   >
                     <Copy />
@@ -70,7 +79,13 @@ export default function AuthButton({ session }: { session: Session | null }) {
     <div className="flex flex-wrap gap-4">
       <Button
         className="hover:bg-opacity-90 bg-white font-semibold text-orange-600 hover:bg-white"
-        onClick={() => signIn()}
+        onClick={() => {
+          posthog.capture("User initiated sign in", {
+            user_id: session?.user?.id,
+            user_email: session?.user?.email,
+          });
+          signIn();
+        }}
       >
         Se connecter
       </Button>

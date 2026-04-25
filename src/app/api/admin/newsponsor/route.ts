@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
 import { env } from "process";
 import * as z from "zod";
+import { postHogServerClient } from "@/lib/posthog";
 
 type Values = {
   name: string;
@@ -26,6 +27,9 @@ export async function POST(request: NextRequest) {
 
     const values = data.get("values") as string;
     if (!values) {
+      postHogServerClient.captureException(
+        new Error("No values provided in the request"),
+      );
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
     const { name, url }: Values = JSON.parse(values);
@@ -41,6 +45,9 @@ export async function POST(request: NextRequest) {
       height: logoDismensions.height,
     });
     if (!parsedlogo) {
+      postHogServerClient.captureException(
+        new Error("Error while parsing the logo file"),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -61,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ sponsor: sponsor }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },
@@ -82,9 +89,10 @@ const saveFile = async (file: File, name: string) => {
     if (e.code === "ENOENT") {
       await mkdir(uploadDir, { recursive: true });
     } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e,
+      postHogServerClient.captureException(
+        new Error(
+          "Error while trying to create directory when uploading a file\n",
+        ),
       );
       return NextResponse.json(
         { error: "Something went wrong." },
@@ -97,7 +105,9 @@ const saveFile = async (file: File, name: string) => {
     await writeFile(`${uploadDir}/${filename}`, buffer);
     return `${relativeUploadDir}/${filename}`;
   } catch (e) {
-    console.error("Error while trying to upload a file\n", e);
+    postHogServerClient.captureException(
+      new Error("Error while trying to upload a file\n"),
+    );
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },

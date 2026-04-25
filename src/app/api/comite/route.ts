@@ -2,6 +2,7 @@ import path from "path";
 import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import { env } from "process";
+import { postHogServerClient } from "@/lib/posthog";
 
 export async function GET() {
   try {
@@ -19,8 +20,7 @@ export async function GET() {
     //Return the content of the data file in json format
     return new Response(fileContents);
   } catch (error) {
-    console.log(error);
-
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

@@ -1,3 +1,4 @@
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { Photo } from "@prisma/client";
 import { existsSync } from "fs";
@@ -14,6 +15,9 @@ export async function DELETE(request: Request) {
     // console.log(await stat(filePath));
 
     if (!existsSync(filePath)) {
+      postHogServerClient.captureException(
+        new Error(`File not found at path: ${filePath}`),
+      );
       return NextResponse.json({ message: "File not found" }, { status: 404 });
     }
     await unlink(filePath);
@@ -45,6 +49,9 @@ export async function DELETE(request: Request) {
     });
     // console.log(result);
     if (!result) {
+      postHogServerClient.captureException(
+        new Error(`Failed to delete photo with id: ${body.id}`),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -53,7 +60,7 @@ export async function DELETE(request: Request) {
     const { name } = result;
     return new Response(JSON.stringify(name));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

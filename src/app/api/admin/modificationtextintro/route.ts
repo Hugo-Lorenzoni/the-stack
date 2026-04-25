@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
 import { env } from "process";
+import { postHogServerClient } from "@/lib/posthog";
 
 const textFormSchema = z.object({
   title: z.string(),
@@ -19,9 +20,8 @@ export async function POST(request: NextRequest) {
     const result = textFormSchema.safeParse(body);
     if (!result.success) {
       // handle error then return
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
 
-      result.error;
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -36,14 +36,12 @@ export async function POST(request: NextRequest) {
         // Write the updated data to the JSON file
         await fs.writeFile(jsonDirectory + "/text-intro.json", updatedData);
 
-        // Send an error response
         return NextResponse.json(
           { message: "Texte d'introduction mis à jour !" },
           { status: 200 },
         );
       } catch (error) {
-        console.log(error);
-        // Send an error response
+        postHogServerClient.captureException(error);
         return NextResponse.json(
           { message: "Something went wrong !" },
           { status: 500 },
@@ -51,8 +49,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.log(error);
-    // Send an error response
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },
