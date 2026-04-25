@@ -1,7 +1,6 @@
 import ImageComponent from "@/components/ImageComponent";
 import { getTextIntro } from "@/utils/getTextIntro";
 import { Info } from "lucide-react";
-import Image from "next/image";
 
 // export const revalidate = 60 * 60 * 24; // revalidate at most every day
 
@@ -19,14 +18,14 @@ export default async function Home() {
     <main>
       <section className="relative h-[calc(100vh-10rem)] overflow-hidden">
         <ImageComponent
-          className="relative -z-10 h-full w-full object-cover"
+          className="h-full w-full object-cover"
           src="/statue-houdain.jpg"
           width={4000}
           height={2667}
           alt="Statue de Houdain FPMs"
           quality="full"
         />
-        <h1 className="drop-shadow-title absolute right-[15%] bottom-12 left-[15%] z-0 pr-[15%] text-4xl font-bold text-white">
+        <h1 className="drop-shadow-title absolute right-[15%] bottom-12 left-[15%] z-10 pr-[15%] text-4xl font-bold text-white">
           Bienvenue sur le site du Cercle Photo-Vidéo de la Faculté
           Polytechnique de Mons !
         </h1>
