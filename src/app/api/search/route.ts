@@ -42,13 +42,6 @@ export async function GET(request: Request) {
         },
         orderBy: [{ date: "desc" }],
       });
-      if (!results) {
-        postHogServerClient.captureException(new Error("No results found"));
-        return NextResponse.json(
-          { message: "Something went wrong !" },
-          { status: 500 },
-        );
-      }
       // Add 12 hours to each event's date
       results.forEach((event) => {
         event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
@@ -88,13 +81,6 @@ export async function GET(request: Request) {
         },
         orderBy: [{ date: "desc" }],
       });
-      if (!results) {
-        postHogServerClient.captureException(new Error("No results found"));
-        return NextResponse.json(
-          { message: "Something went wrong !" },
-          { status: 500 },
-        );
-      }
       // Add 12 hours to each event's date
       results.forEach((event) => {
         event.date = new Date(event.date.getTime() + 12 * 60 * 60 * 1000);
