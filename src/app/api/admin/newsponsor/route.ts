@@ -38,16 +38,14 @@ export async function POST(request: NextRequest) {
     const logoUrl = await saveFile(logoFile, name);
     const logoArray = await logoFile.arrayBuffer();
     const logoDismensions = sizeOf(Buffer.from(logoArray));
-    const parsedlogo = photoSchema.parse({
+    const parsedlogo = photoSchema.safeParse({
       name: logoFile.name,
       url: logoUrl,
       width: logoDismensions.width,
       height: logoDismensions.height,
     });
-    if (!parsedlogo) {
-      postHogServerClient.captureException(
-        new Error("Error while parsing the logo file"),
-      );
+    if (!parsedlogo.success) {
+      postHogServerClient.captureException(parsedlogo.error);
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -58,10 +56,10 @@ export async function POST(request: NextRequest) {
       data: {
         name: name,
         url: url,
-        logoName: parsedlogo.name,
-        logoUrl: parsedlogo.url,
-        logoWidth: parsedlogo.width,
-        logoHeight: parsedlogo.height,
+        logoName: parsedlogo.data.name,
+        logoUrl: parsedlogo.data.url,
+        logoWidth: parsedlogo.data.width,
+        logoHeight: parsedlogo.data.height,
       },
     });
     console.log(sponsor);
