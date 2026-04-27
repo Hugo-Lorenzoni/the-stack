@@ -42,6 +42,8 @@ jobs:
           echo "GOOGLE_REFRESH_TOKEN"=${{ secrets.GOOGLE_REFRESH_TOKEN }} >> .env
           echo "GOOGLE_CLIENT_SECRET"=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
           echo "GOOGLE_CLIENT_ID"=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+          echo "NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=${{ secrets.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN }}" >> .env
+          echo "NEXT_PUBLIC_POSTHOG_HOST_URL=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST_URL }}" >> .env
 
       - name: Create folders in data folder
         run: |
