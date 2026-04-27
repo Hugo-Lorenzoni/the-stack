@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     if (!resetPasswordEntry) {
       postHogServerClient.captureException(
-        new Error(`Invalid or expired token: ${token}`),
+        new Error("Invalid or expired reset token"),
       );
       return NextResponse.json(
         { message: "Invalid or expired token" },
