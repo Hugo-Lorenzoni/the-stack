@@ -1,4 +1,5 @@
 import { sendMail } from "@/lib/email";
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,6 +16,7 @@ export async function POST(request: NextRequest) {
 
     const result = formSchema.safeParse(body);
     if (!result.success) {
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Invalid input", errors: result.error.errors },
         { status: 400 },
@@ -28,6 +30,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
+      postHogServerClient.captureException(
+        new Error(`No user found with email: ${email}`),
+      );
       return NextResponse.json(
         { message: "Cet email n'existe pas" },
         { status: 404 },
@@ -72,7 +77,7 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error sending forgot password email:", error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },

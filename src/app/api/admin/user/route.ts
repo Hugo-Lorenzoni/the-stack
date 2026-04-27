@@ -1,3 +1,4 @@
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -25,6 +26,9 @@ export async function POST(request: Request) {
     });
     console.log(result);
     if (!result) {
+      postHogServerClient.captureException(
+        new Error(`Failed to update user with email: ${body.email}`),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -32,7 +36,7 @@ export async function POST(request: Request) {
     }
     return new Response(JSON.stringify(result));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },
@@ -43,15 +47,16 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const email: string = await request.json();
-    // return new Response(JSON.stringify(body.email));
 
     const result = await prisma.user.delete({
       where: {
         email: email,
       },
     });
-    // console.log(result);
     if (!result) {
+      postHogServerClient.captureException(
+        new Error(`Failed to delete user with email: ${email}`),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -59,7 +64,7 @@ export async function DELETE(request: Request) {
     }
     return new Response(JSON.stringify(result));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

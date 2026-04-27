@@ -1,4 +1,5 @@
 import { saveFile } from "@/lib/files";
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { existsSync } from "fs";
 import { unlink } from "fs/promises";
@@ -21,21 +22,21 @@ export async function POST(request: NextRequest) {
 
     const values = data.get("values") as string;
     if (!values) {
+      postHogServerClient.captureException(
+        new Error("No values provided in the request"),
+      );
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
 
     const parsedValues = JSON.parse(values);
     const result = z.object({ id: z.string().min(1) }).safeParse(parsedValues);
     if (!result.success) {
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong!" },
         { status: 500 },
       );
     }
-
-    console.log("Event ID:", result.data.id);
-
     const coverFile = data.get("cover") as File;
     const coverArray = await coverFile.arrayBuffer();
     const coverDismensions = sizeOf(Buffer.from(coverArray));
@@ -44,13 +45,14 @@ export async function POST(request: NextRequest) {
       coverDismensions.width &&
       coverDismensions.height >= coverDismensions.width
     ) {
+      postHogServerClient.captureException(
+        new Error("Invalid cover dimensions: height must be less than width"),
+      );
       return NextResponse.json(
         { error: "Unsupported Media Type" },
         { status: 415 },
       );
     }
-
-    console.log("Cover dimensions:", coverDismensions);
 
     const currentEvent = await prisma.event.findUnique({
       where: { id: result.data.id },
@@ -63,13 +65,12 @@ export async function POST(request: NextRequest) {
       },
     });
     if (!currentEvent) {
+      postHogServerClient.captureException(new Error("Event not found"));
       return NextResponse.json(
         { error: "Could not find the event" },
         { status: 500 },
       );
     }
-
-    console.log("Current event:", currentEvent);
 
     const coverUrl = await saveFile(
       coverFile,
@@ -79,8 +80,6 @@ export async function POST(request: NextRequest) {
       true,
     );
 
-    console.log("Cover URL:", coverUrl);
-
     const parsedCover = photoSchema.parse({
       name: coverFile.name,
       url: coverUrl,
@@ -88,13 +87,14 @@ export async function POST(request: NextRequest) {
       height: coverDismensions.height,
     });
     if (!parsedCover) {
+      postHogServerClient.captureException(
+        new Error("Parsed cover validation failed"),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
       );
     }
-
-    console.log("Parsed cover:", parsedCover);
 
     const updatedEvent = await prisma.event.update({
       where: { id: currentEvent.id },
@@ -106,11 +106,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("Updated event:", updatedEvent);
-
     const oldCoverPath = join(env.DATA_FOLDER, "photos", currentEvent.coverUrl);
 
     if (!existsSync(oldCoverPath)) {
+      postHogServerClient.captureException(
+        new Error("Old cover file not found"),
+      );
       return NextResponse.json({ message: "File not found" }, { status: 404 });
     }
     await unlink(oldCoverPath);
@@ -133,13 +134,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!existsSync(oldCoverPath)) {
-      console.log("Old cover deleted");
-    }
-
     return NextResponse.json({ event: updatedEvent }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },

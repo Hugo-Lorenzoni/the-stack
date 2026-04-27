@@ -3,6 +3,7 @@ import z from "zod";
 import * as bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
+import { postHogServerClient } from "@/lib/posthog";
 
 const formSchema = z.object({
   token: z.string(),
@@ -48,6 +49,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!resetPasswordEntry) {
+      postHogServerClient.captureException(
+        new Error("Invalid or expired reset token"),
+      );
       return NextResponse.json(
         { message: "Invalid or expired token" },
         { status: 400 },
@@ -73,7 +77,7 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error("Error resetting password:", error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },

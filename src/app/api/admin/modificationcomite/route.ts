@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { z } from "zod";
 import { env } from "process";
+import { postHogServerClient } from "@/lib/posthog";
 
 const comiteFormSchema = z.object({
   president: z.string(),
@@ -19,10 +20,7 @@ export async function POST(request: NextRequest) {
 
     const result = comiteFormSchema.safeParse(body);
     if (!result.success) {
-      // handle error then return
-      console.log(result.error);
-
-      result.error;
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -43,8 +41,7 @@ export async function POST(request: NextRequest) {
           { status: 200 },
         );
       } catch (error) {
-        console.log(error);
-        // Send an error response
+        postHogServerClient.captureException(error);
         return NextResponse.json(
           { message: "Something went wrong !" },
           { status: 500 },
@@ -52,8 +49,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.log(error);
-    // Send an error response
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

@@ -3,15 +3,20 @@ import { getAutreEventPassword } from "@/utils/getAutreEventPassword";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { encrypt } from "@/utils/encryption";
+import { postHogServerClient } from "@/lib/posthog";
 
 export async function POST(
   request: Request,
   props: { params: Promise<{ id: string }> },
 ) {
-  const params = await props.params;
   try {
+    const params = await props.params;
+
     const id = params.id;
     if (!id) {
+      postHogServerClient.captureException(
+        new Error("No id provided in request parameters"),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -23,6 +28,9 @@ export async function POST(
     if (password) {
       const res = await getAutreEventPassword(id);
       if (!res) {
+        postHogServerClient.captureException(
+          new Error(`No password found for event with id: ${id}`),
+        );
         return NextResponse.json(
           { message: "Something went wrong !" },
           { status: 500 },
@@ -33,6 +41,9 @@ export async function POST(
       }
       const results = await getAutreEvent(id);
       if (!results) {
+        postHogServerClient.captureException(
+          new Error(`No event found for id: ${id}`),
+        );
         return NextResponse.json(
           { message: "Something went wrong !" },
           { status: 500 },
@@ -47,7 +58,7 @@ export async function POST(
       return new Response(JSON.stringify(results));
     }
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
 
     return NextResponse.json(
       { message: "Something went wrong !" },

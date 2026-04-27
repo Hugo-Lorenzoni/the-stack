@@ -1,4 +1,5 @@
 import { Event } from "@/app/admin/drafted-events/columns";
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -18,8 +19,10 @@ export async function POST(request: Request) {
         published: true,
       },
     });
-    console.log(result);
     if (!result) {
+      postHogServerClient.captureException(
+        new Error(`Failed to publish event with id: ${body.id}`),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -28,7 +31,7 @@ export async function POST(request: Request) {
     const { published } = result;
     return new Response(JSON.stringify(published));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

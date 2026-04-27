@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "process";
 import { Session, SessionStrategy, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { postHogServerClient } from "@/lib/posthog";
 
 export const OPTIONS = {
   providers: [
@@ -66,6 +67,11 @@ export const OPTIONS = {
 };
 
 export async function getNextAuthSession() {
-  const session = await getServerSession(OPTIONS);
-  return session;
+  try {
+    const session = await getServerSession(OPTIONS);
+    return session;
+  } catch (error) {
+    postHogServerClient.captureException(error);
+    return null;
+  }
 }

@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "@/components/Link";
+import posthog from "posthog-js";
 
 const formSchema = z.object({
   email: z.string(),
@@ -69,6 +70,9 @@ export default function ConnectionPage() {
             router.refresh();
           }
         } else if (results.error == "CredentialsSignin") {
+          posthog.capture("Failed login attempt", {
+            email: values.email,
+          });
           toast.error("Erreur lors de la connexion", {
             description: "Nom d'utilisateur ou mot de passe incorrect",
           });
@@ -81,7 +85,7 @@ export default function ConnectionPage() {
         }
       }
     } catch (error) {
-      console.log(error);
+      posthog.captureException(error);
     }
     setLoading(false);
   }

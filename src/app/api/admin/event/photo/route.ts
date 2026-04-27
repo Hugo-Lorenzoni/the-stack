@@ -4,6 +4,7 @@ import { saveFile } from "@/lib/files";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
+import { postHogServerClient } from "@/lib/posthog";
 
 const photoSchema = z.object({
   name: z.string(),
@@ -27,14 +28,16 @@ export async function POST(request: NextRequest) {
 
     const values = data.get("values") as string;
     if (!values) {
-      console.log("No values");
+      postHogServerClient.captureException(
+        new Error("No values provided in the request"),
+      );
       return NextResponse.json({ message: "No values" }, { status: 500 });
     }
 
     const result = valuesSchema.safeParse(JSON.parse(values));
 
     if (!result.success) {
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -64,7 +67,9 @@ export async function POST(request: NextRequest) {
 
     const parsedPhoto = photoSchema.parse(photo);
     if (!parsedPhoto) {
-      console.log("Failed parsing the photo");
+      postHogServerClient.captureException(
+        new Error("Failed parsing the photo"),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -86,8 +91,9 @@ export async function POST(request: NextRequest) {
       },
     });
     if (!event) {
-      console.log(`${photo.name} - db query failed`);
-
+      postHogServerClient.captureException(
+        new Error(`${photo.name} - db query failed`),
+      );
       return NextResponse.json(
         { error: "Something went wrong." },
         { status: 500 },
@@ -98,7 +104,7 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { error: "Something went wrong." },
       { status: 500 },

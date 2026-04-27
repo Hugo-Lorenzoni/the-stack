@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
+import posthog from "posthog-js";
 
 const CercleList = [
   "FPMS",
@@ -142,7 +143,7 @@ export default function RegisterPage() {
         });
       }
     } catch (error) {
-      console.log(error);
+      posthog.captureException(error);
     }
   }
 

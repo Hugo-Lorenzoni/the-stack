@@ -5,6 +5,7 @@ import { env } from "process";
 import path from "path";
 import fs, { existsSync } from "fs";
 import { writeFile } from "fs/promises";
+import { postHogServerClient } from "@/lib/posthog";
 
 // Array of quality options with their corresponding values
 const qualityOptions = {
@@ -21,132 +22,150 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ relativePath: string[] }> },
 ) {
-  const { relativePath } = await params;
+  try {
+    const { relativePath } = await params;
 
-  if (!relativePath) {
-    return NextResponse.json(
-      { error: "File name is required" },
-      { status: 400 },
-    );
-  }
+    if (!relativePath) {
+      postHogServerClient.captureException(
+        new Error("No relative path provided"),
+      );
+      return NextResponse.json(
+        { error: "File name is required" },
+        { status: 400 },
+      );
+    }
 
-  const searchParams = request.nextUrl.searchParams;
-  const isPlaceholder = searchParams.get("placeholder") === "true";
-  const quality = searchParams.get("quality");
+    const searchParams = request.nextUrl.searchParams;
+    const isPlaceholder = searchParams.get("placeholder") === "true";
+    const quality = searchParams.get("quality");
 
-  let data: fs.ReadStream | null = null;
+    let data: fs.ReadStream | null = null;
 
-  if (isPlaceholder) {
-    const placeholderFilename = path
-      .format({
-        ...path.parse(path.join(...relativePath)),
-        base: undefined, // so it uses name + ext instead of base
-        ext: "webp",
-      })
-      .replace(/\.(?=[^.]*$)/, "_placeholder.");
+    if (isPlaceholder) {
+      const placeholderFilename = path
+        .format({
+          ...path.parse(path.join(...relativePath)),
+          base: undefined, // so it uses name + ext instead of base
+          ext: "webp",
+        })
+        .replace(/\.(?=[^.]*$)/, "_placeholder.");
 
-    const placeholderFilePath = path.join(
-      env.DATA_FOLDER,
-      "photos",
-      placeholderFilename,
-    );
+      const placeholderFilePath = path.join(
+        env.DATA_FOLDER,
+        "photos",
+        placeholderFilename,
+      );
 
-    if (!existsSync(placeholderFilePath)) {
+      if (!existsSync(placeholderFilePath)) {
+        const originalPath = path.join(
+          env.DATA_FOLDER,
+          "photos",
+          ...relativePath,
+        );
+        const originalStream = fs.createReadStream(originalPath);
+        const originalBuffer = await streamToBuffer(originalStream);
+        const placeholderBuffer = await sharp(originalBuffer)
+          .blur(1)
+          .resize(50)
+          .toFormat("webp")
+          .toBuffer();
+
+        // log the size in bytes of the blurBuffer and the % difference
+        // console.log(
+        //   `Blurred image size: ${placeholderBuffer.length} bytes (original: ${
+        //     imageBuffer.length
+        //   } bytes) > ${(
+        //     (placeholderBuffer.length / imageBuffer.length) *
+        //     100
+        //   ).toFixed(2)}% of original size`,
+        // );
+
+        await writeFile(placeholderFilePath, placeholderBuffer);
+
+        const placeholderStream = new ReadableStream({
+          async pull(controller) {
+            controller.enqueue(placeholderBuffer);
+            controller.close();
+          },
+        });
+
+        return new NextResponse(placeholderStream);
+      } else {
+        data = fs.createReadStream(placeholderFilePath);
+      }
+    } else {
       const originalPath = path.join(
         env.DATA_FOLDER,
         "photos",
         ...relativePath,
       );
-      const originalStream = fs.createReadStream(originalPath);
-      const originalBuffer = await streamToBuffer(originalStream);
-      const placeholderBuffer = await sharp(originalBuffer)
-        .blur(1)
-        .resize(50)
-        .toFormat("webp")
-        .toBuffer();
+      let filePath = originalPath;
 
-      // log the size in bytes of the blurBuffer and the % difference
-      // console.log(
-      //   `Blurred image size: ${placeholderBuffer.length} bytes (original: ${
-      //     imageBuffer.length
-      //   } bytes) > ${(
-      //     (placeholderBuffer.length / imageBuffer.length) *
-      //     100
-      //   ).toFixed(2)}% of original size`,
-      // );
+      if (quality && isQualityKey(quality)) {
+        filePath = path
+          .format({
+            ...path.parse(filePath),
+            base: undefined, // so it uses name + ext instead of base
+            ext: "webp",
+          })
+          .replace(/\.(?=[^.]*$)/, `_${quality}.`);
 
-      await writeFile(placeholderFilePath, placeholderBuffer);
+        if (!existsSync(filePath)) {
+          const { qualityValue, width } = qualityOptions[quality];
 
-      const placeholderStream = new ReadableStream({
-        async pull(controller) {
-          controller.enqueue(placeholderBuffer);
-          controller.close();
-        },
-      });
+          const originalStream = fs.createReadStream(originalPath);
+          const originalBuffer = await streamToBuffer(originalStream);
+          const compressedBuffer = await sharp(originalBuffer)
+            .resize(width)
+            .webp({ quality: qualityValue })
+            .toBuffer();
 
-      return new NextResponse(placeholderStream);
-    } else {
-      data = fs.createReadStream(placeholderFilePath);
-    }
-  } else {
-    const originalPath = path.join(env.DATA_FOLDER, "photos", ...relativePath);
-    let filePath = originalPath;
+          // console.log(
+          //   `Compressed image size: ${compressedBuffer.length} bytes (original: ${
+          //     originalBuffer.length
+          //   } bytes) > ${(
+          //     (compressedBuffer.length / originalBuffer.length) *
+          //     100
+          //   ).toFixed(2)}% of original size`,
+          // );
 
-    if (quality && isQualityKey(quality)) {
-      filePath = path
-        .format({
-          ...path.parse(filePath),
-          base: undefined, // so it uses name + ext instead of base
-          ext: "webp",
-        })
-        .replace(/\.(?=[^.]*$)/, `_${quality}.`);
-
-      if (!existsSync(filePath)) {
-        const { qualityValue, width } = qualityOptions[quality];
-
-        const originalStream = fs.createReadStream(originalPath);
-        const originalBuffer = await streamToBuffer(originalStream);
-        const compressedBuffer = await sharp(originalBuffer)
-          .resize(width)
-          .webp({ quality: qualityValue })
-          .toBuffer();
-
-        // console.log(
-        //   `Compressed image size: ${compressedBuffer.length} bytes (original: ${
-        //     originalBuffer.length
-        //   } bytes) > ${(
-        //     (compressedBuffer.length / originalBuffer.length) *
-        //     100
-        //   ).toFixed(2)}% of original size`,
-        // );
-
-        await writeFile(filePath, compressedBuffer);
-        const compressedStream = new ReadableStream({
-          async pull(controller) {
-            controller.enqueue(compressedBuffer);
-            controller.close();
-          },
-        });
-        return new NextResponse(compressedStream);
+          await writeFile(filePath, compressedBuffer);
+          const compressedStream = new ReadableStream({
+            async pull(controller) {
+              controller.enqueue(compressedBuffer);
+              controller.close();
+            },
+          });
+          return new NextResponse(compressedStream);
+        }
       }
+
+      data = fs.createReadStream(filePath);
     }
 
-    data = fs.createReadStream(filePath);
+    if (!data) {
+      postHogServerClient.captureException(
+        new Error("File not found at path: " + relativePath.join("/")),
+      );
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+
+    const stream = new ReadableStream({
+      start(controller) {
+        if (data) {
+          data.on("data", (chunk) => controller.enqueue(chunk));
+          data.on("end", () => controller.close());
+          data.on("error", (err) => controller.error(err));
+        }
+      },
+    });
+
+    return new NextResponse(stream);
+  } catch (error) {
+    postHogServerClient.captureException(error);
+    return NextResponse.json(
+      { message: "Something went wrong !" },
+      { status: 500 },
+    );
   }
-
-  if (!data) {
-    return NextResponse.json({ error: "File not found" }, { status: 404 });
-  }
-
-  const stream = new ReadableStream({
-    start(controller) {
-      if (data) {
-        data.on("data", (chunk) => controller.enqueue(chunk));
-        data.on("end", () => controller.close());
-        data.on("error", (err) => controller.error(err));
-      }
-    },
-  });
-
-  return new NextResponse(stream);
 }

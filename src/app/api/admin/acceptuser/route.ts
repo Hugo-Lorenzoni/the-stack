@@ -1,4 +1,5 @@
 import { User } from "@/app/admin/accounts-approval/columns";
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -17,17 +18,10 @@ export async function POST(request: Request) {
         role: true,
       },
     });
-    console.log(result);
-    if (!result) {
-      return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
-      );
-    }
     const { role } = result;
     return new Response(JSON.stringify(role));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },

@@ -1,3 +1,4 @@
+import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
 import { NextResponse } from "next/server";
@@ -22,13 +23,11 @@ const formSchema = z.object({
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log(body);
 
     const result = formSchema.safeParse(body);
 
     if (!result.success) {
-      // handle error then return
-      console.log(result.error);
+      postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -48,8 +47,10 @@ export async function POST(request: Request) {
         ...updatedData,
       },
     });
-    console.log(res);
     if (!res) {
+      postHogServerClient.captureException(
+        new Error(`Failed to update video with id: ${result.data.id}`),
+      );
       return NextResponse.json(
         { message: "Something went wrong !" },
         { status: 500 },
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
     }
     return new Response(JSON.stringify(res));
   } catch (error) {
-    console.log(error);
+    postHogServerClient.captureException(error);
     return NextResponse.json(
       { message: "Something went wrong !" },
       { status: 500 },
