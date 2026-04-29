@@ -3,9 +3,8 @@ import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
 import { move } from "fs-extra";
-import { rename } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import { basename, join } from "path";
+import { join } from "path";
 import { env } from "process";
 import * as z from "zod";
 
@@ -86,69 +85,34 @@ export async function POST(request: NextRequest) {
 
     const dest = join(env.DATA_FOLDER, "photos", newPath);
     // console.log(src, dest);
-    if (
-      type !== oldEvent.type ||
-      title !== oldEvent.title ||
-      date !== oldEvent.date.toISOString()
-    ) {
-      if (type !== oldEvent.type) {
-        console.log(`Type changed from ${oldEvent.type} to ${type}`);
-        move(src, dest, (err) => {
-          if (err) {
-            postHogServerClient.captureException(
-              new Error(`Failed to move files for event ${id}`),
-            );
-            return NextResponse.json(
-              { error: "Failed to move the files" },
-              { status: 500 },
-            );
-          }
-          console.log(`${id} - ${title} - Move successful !`);
-        });
-      } else if (
-        title !== oldEvent.title ||
-        date !== oldEvent.date.toISOString()
-      ) {
-        try {
-          await rename(src, dest);
-          console.log(`${id} - ${title} - Rename successful !`);
-        } catch (error) {
-          postHogServerClient.captureException(
-            new Error(`Failed to rename directory for event ${id}`),
-          );
-          return NextResponse.json(
-            { error: "Failed to rename the directory" },
-            { status: 500 },
-          );
-        }
-      } else {
-        // Logging everything for debugging purposes
-        console.log(
-          `No files were moved or renamed for ${title}, ${type}, ${date}`,
+    const shouldRelocateFiles = oldPath !== newPath;
+
+    if (shouldRelocateFiles) {
+      try {
+        await move(src, dest);
+        console.log(`${id} - ${title} - Move successful !`);
+      } catch (error) {
+        postHogServerClient.captureException(
+          new Error(`Failed to move files for event ${id}`),
+        );
+        return NextResponse.json(
+          { error: "Failed to move the files" },
+          { status: 500 },
         );
       }
-    } else {
-      const event = await prisma.event.update({
-        where: {
-          id: id,
-        },
-        data: {
-          pinned: pinned,
-          password: type === "AUTRE" ? password : null,
-          notes: notes,
-        },
-      });
-      // console.log(event);
-      return NextResponse.json({ event: event }, { status: 200 });
     }
 
-    const photos = oldEvent.photos.map((photo) => {
-      const url = photo.url.replace(oldPath, newPath);
-      const { createdAt, updatedAt, ...data } = photo;
-      return { ...data, url };
-    });
+    const photos = shouldRelocateFiles
+      ? oldEvent.photos.map((photo) => {
+          const url = photo.url.replace(oldPath, newPath);
+          const { createdAt, updatedAt, ...data } = photo;
+          return { ...data, url };
+        })
+      : oldEvent.photos;
 
-    const coverUrl = oldEvent.coverUrl.replace(oldPath, newPath);
+    const coverUrl = shouldRelocateFiles
+      ? oldEvent.coverUrl.replace(oldPath, newPath)
+      : oldEvent.coverUrl;
 
     const data = await prisma.$transaction([
       prisma.event.update({
@@ -165,16 +129,18 @@ export async function POST(request: NextRequest) {
           coverUrl: coverUrl,
         },
       }),
-      ...photos.map((photo) =>
-        prisma.photo.update({
-          where: {
-            id: photo.id,
-          },
-          data: {
-            url: photo.url,
-          },
-        }),
-      ),
+      ...(shouldRelocateFiles
+        ? photos.map((photo) =>
+            prisma.photo.update({
+              where: {
+                id: photo.id,
+              },
+              data: {
+                url: photo.url,
+              },
+            }),
+          )
+        : []),
     ]);
     // console.log(data);
     return NextResponse.json({ event: data[0] }, { status: 200 });
