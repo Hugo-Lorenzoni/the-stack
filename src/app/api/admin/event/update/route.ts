@@ -2,6 +2,7 @@ import { getDirectoryPath } from "@/lib/path";
 import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
+import { stat } from "fs/promises";
 import { move } from "fs-extra";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
@@ -35,8 +36,8 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       postHogServerClient.captureException(result.error);
       return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
+        { error: "Valeurs invalides", details: result.error.format() },
+        { status: 400 },
       );
     }
     // console.log(result.data);
@@ -58,11 +59,11 @@ export async function POST(request: NextRequest) {
 
     if (!oldEvent) {
       postHogServerClient.captureException(
-        new Error(`Event with id ${id} not found`),
+        new Error(`Événement avec l'ID ${id} non trouvé`),
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
+        { error: "Événement non trouvé" },
+        { status: 404 },
       );
     }
 
@@ -80,6 +81,29 @@ export async function POST(request: NextRequest) {
     const nearestDate = getNearestMidnight(date);
     console.log(nearestDate);
 
+    const existingEvent = await prisma.event.findFirst({
+      where: {
+        title,
+        date: nearestDate,
+        type,
+        NOT: {
+          id: id,
+        },
+      },
+    });
+
+    if (existingEvent) {
+      postHogServerClient.captureException(
+        new Error("Un événement avec le même nom et la même date existe déjà"),
+      );
+      return NextResponse.json(
+        {
+          error: "Un événement avec le même nom et la même date existe déjà",
+        },
+        { status: 409 },
+      );
+    }
+
     const newPath = getDirectoryPath(type, nearestDate, title);
     // console.log(newPath);
 
@@ -89,14 +113,33 @@ export async function POST(request: NextRequest) {
 
     if (shouldRelocateFiles) {
       try {
+        await stat(dest);
+        postHogServerClient.captureException(
+          new Error("Le dossier cible de l'événement existe déjà"),
+        );
+        return NextResponse.json(
+          { error: "Le dossier cible de l'événement existe déjà" },
+          { status: 409 },
+        );
+      } catch (error: any) {
+        if (error?.code !== "ENOENT") {
+          postHogServerClient.captureException(error);
+          return NextResponse.json(
+            { error: "Une erreur est survenue." },
+            { status: 500 },
+          );
+        }
+      }
+
+      try {
         await move(src, dest);
         console.log(`${id} - ${title} - Move successful !`);
       } catch (error) {
         postHogServerClient.captureException(
-          new Error(`Failed to move files for event ${id}`),
+          new Error(`Échec du déplacement des fichiers pour l'événement ${id}`),
         );
         return NextResponse.json(
-          { error: "Failed to move the files" },
+          { error: "Échec du déplacement des fichiers" },
           { status: 500 },
         );
       }
@@ -147,7 +190,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Une erreur est survenue." },
       { status: 500 },
     );
   }
