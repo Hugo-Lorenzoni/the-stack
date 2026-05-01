@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         pinned: true,
         type: true,
         password: true,
+        notes: true,
         photos: true,
         coverUrl: true,
       },
@@ -130,19 +131,6 @@ export async function POST(request: NextRequest) {
           );
         }
       }
-
-      try {
-        await move(src, dest);
-        console.log(`${id} - ${title} - Move successful !`);
-      } catch (error) {
-        postHogServerClient.captureException(
-          new Error(`Échec du déplacement des fichiers pour l'événement ${id}`),
-        );
-        return NextResponse.json(
-          { error: "Échec du déplacement des fichiers" },
-          { status: 500 },
-        );
-      }
     }
 
     const photos = shouldRelocateFiles
@@ -157,36 +145,86 @@ export async function POST(request: NextRequest) {
       ? oldEvent.coverUrl.replace(oldPath, newPath)
       : oldEvent.coverUrl;
 
-    const data = await prisma.$transaction([
-      prisma.event.update({
-        where: {
-          id: id,
-        },
-        data: {
-          title: title,
-          date: nearestDate,
-          pinned: pinned,
-          type: type,
-          password: type === "AUTRE" ? password : null,
-          notes: notes,
-          coverUrl: coverUrl,
-        },
-      }),
-      ...(shouldRelocateFiles
-        ? photos.map((photo) =>
-            prisma.photo.update({
-              where: {
-                id: photo.id,
-              },
+    let dbData;
+    try {
+      dbData = await prisma.$transaction([
+        prisma.event.update({
+          where: {
+            id: id,
+          },
+          data: {
+            title: title,
+            date: nearestDate,
+            pinned: pinned,
+            type: type,
+            password: type === "AUTRE" ? password : null,
+            notes: notes,
+            coverUrl: coverUrl,
+          },
+        }),
+        ...(shouldRelocateFiles
+          ? photos.map((photo) =>
+              prisma.photo.update({
+                where: {
+                  id: photo.id,
+                },
+                data: {
+                  url: photo.url,
+                },
+              }),
+            )
+          : []),
+      ]);
+    } catch (dbError) {
+      postHogServerClient.captureException(dbError);
+      return NextResponse.json(
+        { error: "Échec de la mise à jour de l'événement" },
+        { status: 500 },
+      );
+    }
+
+    if (shouldRelocateFiles) {
+      try {
+        await move(src, dest);
+        console.log(`${id} - ${title} - Move successful !`);
+      } catch (moveError) {
+        postHogServerClient.captureException(
+          new Error(`Échec du déplacement des fichiers pour l'événement ${id}`),
+        );
+        // Compensating rollback: restore DB to original state
+        try {
+          await prisma.$transaction([
+            prisma.event.update({
+              where: { id: id },
               data: {
-                url: photo.url,
+                title: oldEvent.title,
+                date: oldEvent.date,
+                pinned: oldEvent.pinned,
+                type: oldEvent.type,
+                password: oldEvent.password,
+                notes: oldEvent.notes,
+                coverUrl: oldEvent.coverUrl,
               },
             }),
-          )
-        : []),
-    ]);
+            ...oldEvent.photos.map((photo) =>
+              prisma.photo.update({
+                where: { id: photo.id },
+                data: { url: photo.url },
+              }),
+            ),
+          ]);
+        } catch (rollbackError) {
+          postHogServerClient.captureException(rollbackError);
+        }
+        return NextResponse.json(
+          { error: "Échec du déplacement des fichiers" },
+          { status: 500 },
+        );
+      }
+    }
+
     // console.log(data);
-    return NextResponse.json({ event: data[0] }, { status: 200 });
+    return NextResponse.json({ event: dbData[0] }, { status: 200 });
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
