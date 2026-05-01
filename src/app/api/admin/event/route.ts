@@ -122,7 +122,9 @@ export async function POST(request: NextRequest) {
 
     if (!password && type == "AUTRE") {
       return NextResponse.json(
-        { error: "Un mot de passe est requis pour les événements de type AUTRE" },
+        {
+          error: "Un mot de passe est requis pour les événements de type AUTRE",
+        },
         { status: 422 },
       );
     }
@@ -180,8 +182,7 @@ export async function POST(request: NextRequest) {
         postHogServerClient.captureException(dbError);
         return NextResponse.json(
           {
-            error:
-              "Un événement avec le même nom et la même date existe déjà",
+            error: "Un événement avec le même nom et la même date existe déjà",
           },
           { status: 409 },
         );

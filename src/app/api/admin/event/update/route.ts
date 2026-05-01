@@ -184,8 +184,7 @@ export async function POST(request: NextRequest) {
       ) {
         return NextResponse.json(
           {
-            error:
-              "Un événement avec le même nom et la même date existe déjà",
+            error: "Un événement avec le même nom et la même date existe déjà",
           },
           { status: 409 },
         );
