@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         {
           error: "Un mot de passe est requis pour les événements de type AUTRE",
         },
-        { status: 500 },
+        { status: 400 },
       );
     }
     const coverFile = data.get("cover") as File;
