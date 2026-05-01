@@ -153,9 +153,9 @@ export async function POST(request: NextRequest) {
       );
     }
     const parsedCover = parsedCoverResult.data;
-    let event;
+
     try {
-      event = await prisma.event.create({
+      const event = await prisma.event.create({
         data: {
           title: title,
           date: nearestDate,
@@ -169,6 +169,8 @@ export async function POST(request: NextRequest) {
           coverHeight: parsedCover.height,
         },
       });
+      //   console.log(event);
+      return NextResponse.json({ event: event }, { status: 200 });
     } catch (dbError) {
       if (
         dbError instanceof Prisma.PrismaClientKnownRequestError &&
@@ -184,9 +186,6 @@ export async function POST(request: NextRequest) {
       }
       throw dbError;
     }
-    //   console.log(event);
-
-    return NextResponse.json({ event: event }, { status: 200 });
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
