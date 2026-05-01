@@ -137,13 +137,13 @@ export async function POST(request: NextRequest) {
     }
     const coverUrl = await saveFile(coverFile, title, nearestDate, type, true);
 
-    const parsedCover = photoSchema.parse({
+    const parsedCoverResult = photoSchema.safeParse({
       name: coverFile.name,
       url: coverUrl,
       width: coverDismensions.width,
       height: coverDismensions.height,
     });
-    if (!parsedCover) {
+    if (!parsedCoverResult.success) {
       postHogServerClient.captureException(
         new Error("Échec de l'analyse de la photo de couverture"),
       );
@@ -152,6 +152,7 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
+    const parsedCover = parsedCoverResult.data;
     let event;
     try {
       event = await prisma.event.create({
