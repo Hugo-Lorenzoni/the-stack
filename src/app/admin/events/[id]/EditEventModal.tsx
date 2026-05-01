@@ -143,6 +143,7 @@ const EditEventModal = memo(function EditEventModal({
         window.location.reload();
         // router.refresh();
         toast.success("Modification de l'événement réussie");
+        setModalOpen(false);
       } else if (response.status == 409) {
         toast.error("Impossible de modifier l'événement", {
           description: await getResponseMessage(
@@ -172,7 +173,6 @@ const EditEventModal = memo(function EditEventModal({
       });
     }
     setLoading(false);
-    setModalOpen(false);
   }
 
   return (
