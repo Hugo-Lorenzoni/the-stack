@@ -121,11 +121,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (!password && type == "AUTRE") {
+      postHogServerClient.captureException(
+        new Error("Aucun mot de passe fourni pour un événement AUTRE"),
+      );
       return NextResponse.json(
         {
           error: "Un mot de passe est requis pour les événements de type AUTRE",
         },
-        { status: 422 },
+        { status: 500 },
       );
     }
     const coverFile = data.get("cover") as File;
