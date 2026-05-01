@@ -145,9 +145,9 @@ export async function POST(request: NextRequest) {
       ? oldEvent.coverUrl.replace(oldPath, newPath)
       : oldEvent.coverUrl;
 
-    let dbData;
+    let updateResult;
     try {
-      dbData = await prisma.$transaction([
+      updateResult = await prisma.$transaction([
         prisma.event.update({
           where: {
             id: id,
@@ -215,6 +215,13 @@ export async function POST(request: NextRequest) {
           ]);
         } catch (rollbackError) {
           postHogServerClient.captureException(rollbackError);
+          return NextResponse.json(
+            {
+              error:
+                "Échec du déplacement des fichiers et de la restauration des données - l'état peut être incohérent",
+            },
+            { status: 500 },
+          );
         }
         return NextResponse.json(
           { error: "Échec du déplacement des fichiers" },
@@ -224,7 +231,7 @@ export async function POST(request: NextRequest) {
     }
 
     // console.log(data);
-    return NextResponse.json({ event: dbData[0] }, { status: 200 });
+    return NextResponse.json({ event: updateResult[0] }, { status: 200 });
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
