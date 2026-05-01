@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    let parsedValues;
+    let parsedValues: z.infer<typeof valuesSchema> | null = null;
     try {
       const json = JSON.parse(values);
       const result = valuesSchema.safeParse(json);
