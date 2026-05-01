@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Event } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
+import { getResponseMessage } from "@/lib/http";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -56,15 +57,6 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/png",
   "image/webp",
 ];
-
-async function getResponseMessage(response: Response, fallback: string) {
-  try {
-    const body = await response.json();
-    return body?.error ?? body?.message ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
 
 function handleFiles(files: FileList, key: string) {
   switch (key) {
