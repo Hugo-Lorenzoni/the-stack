@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
         new Error("Échec de l'analyse de la photo de couverture"),
       );
       return NextResponse.json(
-        { error: "Une erreur est survenue." },
+        { error: "Échec de l'analyse de la photo de couverture" },
         { status: 500 },
       );
     }
