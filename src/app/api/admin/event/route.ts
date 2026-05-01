@@ -23,7 +23,7 @@ type Values = {
 const valuesSchema = z.object({
   type: z.enum(["BAPTISE", "OUVERT", "AUTRE"]),
   title: z.string(),
-  notes: z.string().optional(),
+  notes: z.string().max(750).optional(),
   date: z.string(),
   pinned: z.boolean(),
   password: z.string().optional(),
