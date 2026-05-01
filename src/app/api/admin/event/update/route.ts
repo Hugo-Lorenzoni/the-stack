@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
 import { env } from "process";
 import * as z from "zod";
+import { Prisma } from "@prisma/client";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
@@ -177,6 +178,18 @@ export async function POST(request: NextRequest) {
       ]);
     } catch (dbError) {
       postHogServerClient.captureException(dbError);
+      if (
+        dbError instanceof Prisma.PrismaClientKnownRequestError &&
+        dbError.code === "P2002"
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              "Un événement avec le même nom et la même date existe déjà",
+          },
+          { status: 409 },
+        );
+      }
       return NextResponse.json(
         { error: "Échec de la mise à jour de l'événement" },
         { status: 500 },

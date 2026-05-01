@@ -44,6 +44,8 @@ model Event {
   sponsors        Sponsor[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt @default(now())
+
+  @@unique([type, date, title])
 }
 
 model Photo {

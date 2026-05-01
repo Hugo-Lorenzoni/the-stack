@@ -6,6 +6,7 @@ import { env } from "process";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
+import { Prisma } from "@prisma/client";
 import { getNearestMidnight } from "@/lib/time";
 import { saveFile } from "@/lib/files";
 import { getDirectoryPath } from "@/lib/path";
@@ -120,12 +121,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (!password && type == "AUTRE") {
-      postHogServerClient.captureException(
-        new Error("Aucun mot de passe fourni pour un événement AUTRE"),
-      );
       return NextResponse.json(
-        { error: "Une erreur est survenue." },
-        { status: 500 },
+        { error: "Un mot de passe est requis pour les événements de type AUTRE" },
+        { status: 422 },
       );
     }
     const coverFile = data.get("cover") as File;
@@ -158,20 +156,38 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const event = await prisma.event.create({
-      data: {
-        title: title,
-        date: nearestDate,
-        notes: notes,
-        pinned: pinned,
-        type: type,
-        password: password,
-        coverName: parsedCover.name,
-        coverUrl: parsedCover.url,
-        coverWidth: parsedCover.width,
-        coverHeight: parsedCover.height,
-      },
-    });
+    let event;
+    try {
+      event = await prisma.event.create({
+        data: {
+          title: title,
+          date: nearestDate,
+          notes: notes,
+          pinned: pinned,
+          type: type,
+          password: password,
+          coverName: parsedCover.name,
+          coverUrl: parsedCover.url,
+          coverWidth: parsedCover.width,
+          coverHeight: parsedCover.height,
+        },
+      });
+    } catch (dbError) {
+      if (
+        dbError instanceof Prisma.PrismaClientKnownRequestError &&
+        dbError.code === "P2002"
+      ) {
+        postHogServerClient.captureException(dbError);
+        return NextResponse.json(
+          {
+            error:
+              "Un événement avec le même nom et la même date existe déjà",
+          },
+          { status: 409 },
+        );
+      }
+      throw dbError;
+    }
     //   console.log(event);
 
     return NextResponse.json({ event: event }, { status: 200 });
