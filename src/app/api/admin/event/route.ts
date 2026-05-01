@@ -12,15 +12,6 @@ import { saveFile } from "@/lib/files";
 import { getDirectoryPath } from "@/lib/path";
 import { postHogServerClient } from "@/lib/posthog";
 
-type Values = {
-  type: "BAPTISE" | "OUVERT" | "AUTRE";
-  title: string;
-  notes?: string | undefined;
-  date: string;
-  pinned: boolean;
-  password?: string | undefined;
-};
-
 const valuesSchema = z.object({
   type: z.enum(["BAPTISE", "OUVERT", "AUTRE"]),
   title: z.string(),
