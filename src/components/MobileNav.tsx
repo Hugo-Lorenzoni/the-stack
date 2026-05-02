@@ -6,6 +6,7 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetDescription,
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
@@ -28,6 +29,9 @@ export default function MobileNav({ children }: { children: React.ReactNode }) {
       <SheetContent className="border-orange-600 bg-orange-600 text-white xl:hidden">
         <SheetHeader>
           <SheetTitle className="mb-8 text-white">Menu</SheetTitle>
+          <SheetDescription className="sr-only">
+            Navigation menu
+          </SheetDescription>
         </SheetHeader>
         <div className="px-4">{children}</div>
       </SheetContent>
