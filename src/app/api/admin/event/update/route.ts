@@ -2,12 +2,13 @@ import { getDirectoryPath } from "@/lib/path";
 import { postHogServerClient } from "@/lib/posthog";
 import prisma from "@/lib/prisma";
 import { getNearestMidnight } from "@/lib/time";
+import { stat } from "fs/promises";
 import { move } from "fs-extra";
-import { rename } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import { basename, join } from "path";
+import { join } from "path";
 import { env } from "process";
 import * as z from "zod";
+import { Prisma } from "@prisma/client";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
@@ -36,8 +37,8 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       postHogServerClient.captureException(result.error);
       return NextResponse.json(
-        { message: "Something went wrong !" },
-        { status: 500 },
+        { error: "Valeurs invalides", details: result.error.format() },
+        { status: 400 },
       );
     }
     // console.log(result.data);
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
         pinned: true,
         type: true,
         password: true,
+        notes: true,
         photos: true,
         coverUrl: true,
       },
@@ -59,11 +61,11 @@ export async function POST(request: NextRequest) {
 
     if (!oldEvent) {
       postHogServerClient.captureException(
-        new Error(`Event with id ${id} not found`),
+        new Error(`Événement avec l'ID ${id} non trouvé`),
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
+        { error: "Événement non trouvé" },
+        { status: 404 },
       );
     }
 
@@ -81,107 +83,171 @@ export async function POST(request: NextRequest) {
     const nearestDate = getNearestMidnight(date);
     console.log(nearestDate);
 
+    const existingEvent = await prisma.event.findFirst({
+      where: {
+        title,
+        date: nearestDate,
+        type,
+        NOT: {
+          id: id,
+        },
+      },
+    });
+
+    if (existingEvent) {
+      postHogServerClient.captureException(
+        new Error("Un événement avec le même nom et la même date existe déjà"),
+      );
+      return NextResponse.json(
+        {
+          error: "Un événement avec le même nom et la même date existe déjà",
+        },
+        { status: 409 },
+      );
+    }
+
     const newPath = getDirectoryPath(type, nearestDate, title);
     // console.log(newPath);
 
     const dest = join(env.DATA_FOLDER, "photos", newPath);
     // console.log(src, dest);
-    if (
-      type !== oldEvent.type ||
-      title !== oldEvent.title ||
-      date !== oldEvent.date.toISOString()
-    ) {
-      if (type !== oldEvent.type) {
-        console.log(`Type changed from ${oldEvent.type} to ${type}`);
-        move(src, dest, (err) => {
-          if (err) {
-            postHogServerClient.captureException(
-              new Error(`Failed to move files for event ${id}`),
-            );
-            return NextResponse.json(
-              { error: "Failed to move the files" },
-              { status: 500 },
-            );
-          }
-          console.log(`${id} - ${title} - Move successful !`);
-        });
-      } else if (
-        title !== oldEvent.title ||
-        date !== oldEvent.date.toISOString()
-      ) {
-        try {
-          await rename(src, dest);
-          console.log(`${id} - ${title} - Rename successful !`);
-        } catch (error) {
-          postHogServerClient.captureException(
-            new Error(`Failed to rename directory for event ${id}`),
-          );
+    const shouldRelocateFiles = oldPath !== newPath;
+
+    if (shouldRelocateFiles) {
+      try {
+        await stat(dest);
+        postHogServerClient.captureException(
+          new Error("Le dossier cible de l'événement existe déjà"),
+        );
+        return NextResponse.json(
+          { error: "Le dossier cible de l'événement existe déjà" },
+          { status: 409 },
+        );
+      } catch (error: any) {
+        if (error?.code !== "ENOENT") {
+          postHogServerClient.captureException(error);
           return NextResponse.json(
-            { error: "Failed to rename the directory" },
+            { error: "Une erreur est survenue." },
             { status: 500 },
           );
         }
-      } else {
-        // Logging everything for debugging purposes
-        console.log(
-          `No files were moved or renamed for ${title}, ${type}, ${date}`,
-        );
       }
-    } else {
-      const event = await prisma.event.update({
-        where: {
-          id: id,
-        },
-        data: {
-          pinned: pinned,
-          password: type === "AUTRE" ? password : null,
-          notes: notes,
-        },
-      });
-      // console.log(event);
-      return NextResponse.json({ event: event }, { status: 200 });
     }
 
-    const photos = oldEvent.photos.map((photo) => {
-      const url = photo.url.replace(oldPath, newPath);
-      const { createdAt, updatedAt, ...data } = photo;
-      return { ...data, url };
-    });
+    const photos = shouldRelocateFiles
+      ? oldEvent.photos.map((photo) => {
+          const url = photo.url.replace(oldPath, newPath);
+          const { createdAt, updatedAt, ...data } = photo;
+          return { ...data, url };
+        })
+      : oldEvent.photos;
 
-    const coverUrl = oldEvent.coverUrl.replace(oldPath, newPath);
+    const coverUrl = shouldRelocateFiles
+      ? oldEvent.coverUrl.replace(oldPath, newPath)
+      : oldEvent.coverUrl;
 
-    const data = await prisma.$transaction([
-      prisma.event.update({
-        where: {
-          id: id,
-        },
-        data: {
-          title: title,
-          date: nearestDate,
-          pinned: pinned,
-          type: type,
-          password: type === "AUTRE" ? password : null,
-          notes: notes,
-          coverUrl: coverUrl,
-        },
-      }),
-      ...photos.map((photo) =>
-        prisma.photo.update({
+    let updateResult;
+    try {
+      updateResult = await prisma.$transaction([
+        prisma.event.update({
           where: {
-            id: photo.id,
+            id: id,
           },
           data: {
-            url: photo.url,
+            title: title,
+            date: nearestDate,
+            pinned: pinned,
+            type: type,
+            password: type === "AUTRE" ? password : null,
+            notes: notes,
+            coverUrl: coverUrl,
           },
         }),
-      ),
-    ]);
+        ...(shouldRelocateFiles
+          ? photos.map((photo) =>
+              prisma.photo.update({
+                where: {
+                  id: photo.id,
+                },
+                data: {
+                  url: photo.url,
+                },
+              }),
+            )
+          : []),
+      ]);
+    } catch (dbError) {
+      postHogServerClient.captureException(dbError);
+      if (
+        dbError instanceof Prisma.PrismaClientKnownRequestError &&
+        dbError.code === "P2002"
+      ) {
+        return NextResponse.json(
+          {
+            error: "Un événement avec le même nom et la même date existe déjà",
+          },
+          { status: 409 },
+        );
+      }
+      return NextResponse.json(
+        { error: "Échec de la mise à jour de l'événement" },
+        { status: 500 },
+      );
+    }
+
+    if (shouldRelocateFiles) {
+      try {
+        await move(src, dest);
+        console.log(`${id} - ${title} - Move successful !`);
+      } catch (moveError) {
+        postHogServerClient.captureException(
+          new Error(`Échec du déplacement des fichiers pour l'événement ${id}`),
+        );
+        // Compensating rollback: restore DB to original state
+        try {
+          await prisma.$transaction([
+            prisma.event.update({
+              where: { id: id },
+              data: {
+                title: oldEvent.title,
+                date: oldEvent.date,
+                pinned: oldEvent.pinned,
+                type: oldEvent.type,
+                password: oldEvent.password,
+                notes: oldEvent.notes,
+                coverUrl: oldEvent.coverUrl,
+              },
+            }),
+            ...oldEvent.photos.map((photo) =>
+              prisma.photo.update({
+                where: { id: photo.id },
+                data: { url: photo.url },
+              }),
+            ),
+          ]);
+        } catch (rollbackError) {
+          postHogServerClient.captureException(rollbackError);
+          return NextResponse.json(
+            {
+              error:
+                "Échec du déplacement des fichiers et de la restauration des données - l'état peut être incohérent",
+            },
+            { status: 500 },
+          );
+        }
+        return NextResponse.json(
+          { error: "Échec du déplacement des fichiers" },
+          { status: 500 },
+        );
+      }
+    }
+
     // console.log(data);
-    return NextResponse.json({ event: data[0] }, { status: 200 });
+    return NextResponse.json({ event: updateResult[0] }, { status: 200 });
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Une erreur est survenue." },
       { status: 500 },
     );
   }

@@ -1,20 +1,25 @@
 import sizeOf from "image-size";
+import { stat } from "fs/promises";
+import { join } from "path";
+import { env } from "process";
 
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
+import { Prisma } from "@prisma/client";
 import { getNearestMidnight } from "@/lib/time";
 import { saveFile } from "@/lib/files";
+import { getDirectoryPath } from "@/lib/path";
 import { postHogServerClient } from "@/lib/posthog";
 
-type Values = {
-  type: "BAPTISE" | "OUVERT" | "AUTRE";
-  title: string;
-  notes?: string | undefined;
-  date: string;
-  pinned: boolean;
-  password?: string | undefined;
-};
+const valuesSchema = z.object({
+  type: z.enum(["BAPTISE", "OUVERT", "AUTRE"]),
+  title: z.string(),
+  notes: z.string().max(750).optional(),
+  date: z.string(),
+  pinned: z.boolean(),
+  password: z.string().optional(),
+});
 
 const photoSchema = z.object({
   name: z.string(),
@@ -27,27 +32,94 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.formData();
 
-    const values = data.get("values") as string;
+    const values = data.get("values") as string | null;
     if (!values) {
       postHogServerClient.captureException(
-        new Error("No values provided in the request"),
+        new Error("Aucune valeur fournie dans la requête"),
       );
-      return NextResponse.json({ message: "No values" }, { status: 500 });
+      return NextResponse.json(
+        { message: "Aucune valeur fournie" },
+        { status: 400 },
+      );
     }
-    const { title, date, notes, pinned, type, password }: Values =
-      JSON.parse(values);
+    let parsedValues: z.infer<typeof valuesSchema> | null = null;
+    try {
+      const json = JSON.parse(values);
+      const result = valuesSchema.safeParse(json);
+      if (!result.success) {
+        postHogServerClient.captureException(
+          new Error("Valeurs invalides fournies dans la requête"),
+        );
+        return NextResponse.json(
+          { error: "Valeurs invalides", details: result.error.format() },
+          { status: 400 },
+        );
+      }
+      parsedValues = result.data;
+    } catch (err) {
+      postHogServerClient.captureException(err);
+      return NextResponse.json(
+        { error: "JSON invalide dans les valeurs" },
+        { status: 400 },
+      );
+    }
+    const { title, date, notes, pinned, type, password } = parsedValues;
     // console.log(date);
 
     const nearestDate = getNearestMidnight(date);
     // console.log(nearestDate);
 
-    if (!password && type == "AUTRE") {
+    const existingEvent = await prisma.event.findFirst({
+      where: {
+        title,
+        date: nearestDate,
+        type,
+      },
+    });
+
+    if (existingEvent) {
       postHogServerClient.captureException(
-        new Error("No password provided for AUTRE event"),
+        new Error("Un événement avec le même nom et la même date existe déjà"),
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 },
+        {
+          error: "Un événement avec le même nom et la même date existe déjà",
+        },
+        { status: 409 },
+      );
+    }
+
+    const relativeUploadDir = getDirectoryPath(type, nearestDate, title);
+    const uploadDir = join(env.DATA_FOLDER, "photos", relativeUploadDir);
+
+    try {
+      await stat(uploadDir);
+      postHogServerClient.captureException(
+        new Error("Le dossier cible de l'événement existe déjà"),
+      );
+      return NextResponse.json(
+        { error: "Le dossier cible de l'événement existe déjà" },
+        { status: 409 },
+      );
+    } catch (error: any) {
+      if (error?.code !== "ENOENT") {
+        postHogServerClient.captureException(error);
+        return NextResponse.json(
+          { error: "Une erreur est survenue." },
+          { status: 500 },
+        );
+      }
+    }
+
+    if (!password && type == "AUTRE") {
+      postHogServerClient.captureException(
+        new Error("Aucun mot de passe fourni pour un événement AUTRE"),
+      );
+      return NextResponse.json(
+        {
+          error: "Un mot de passe est requis pour les événements de type AUTRE",
+        },
+        { status: 400 },
       );
     }
     const coverFile = data.get("cover") as File;
@@ -59,48 +131,65 @@ export async function POST(request: NextRequest) {
       coverDismensions.height >= coverDismensions.width
     ) {
       return NextResponse.json(
-        { error: "Unsupported Media Type" },
+        { error: "Format de média non pris en charge" },
         { status: 415 },
       );
     }
     const coverUrl = await saveFile(coverFile, title, nearestDate, type, true);
 
-    const parsedCover = photoSchema.parse({
+    const parsedCoverResult = photoSchema.safeParse({
       name: coverFile.name,
       url: coverUrl,
       width: coverDismensions.width,
       height: coverDismensions.height,
     });
-    if (!parsedCover) {
+    if (!parsedCoverResult.success) {
       postHogServerClient.captureException(
-        new Error("Failed parsing the cover photo"),
+        new Error("Échec de l'analyse de la photo de couverture"),
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
+        { error: "Échec de l'analyse de la photo de couverture" },
         { status: 500 },
       );
     }
-    const event = await prisma.event.create({
-      data: {
-        title: title,
-        date: nearestDate,
-        notes: notes,
-        pinned: pinned,
-        type: type,
-        password: password,
-        coverName: parsedCover.name,
-        coverUrl: parsedCover.url,
-        coverWidth: parsedCover.width,
-        coverHeight: parsedCover.height,
-      },
-    });
-    //   console.log(event);
+    const parsedCover = parsedCoverResult.data;
 
-    return NextResponse.json({ event: event }, { status: 200 });
+    try {
+      const event = await prisma.event.create({
+        data: {
+          title: title,
+          date: nearestDate,
+          notes: notes,
+          pinned: pinned,
+          type: type,
+          password: password,
+          coverName: parsedCover.name,
+          coverUrl: parsedCover.url,
+          coverWidth: parsedCover.width,
+          coverHeight: parsedCover.height,
+        },
+      });
+      //   console.log(event);
+      return NextResponse.json({ event: event }, { status: 200 });
+    } catch (dbError) {
+      if (
+        dbError instanceof Prisma.PrismaClientKnownRequestError &&
+        dbError.code === "P2002"
+      ) {
+        postHogServerClient.captureException(dbError);
+        return NextResponse.json(
+          {
+            error: "Un événement avec le même nom et la même date existe déjà",
+          },
+          { status: 409 },
+        );
+      }
+      throw dbError;
+    }
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Une erreur est survenue." },
       { status: 500 },
     );
   }

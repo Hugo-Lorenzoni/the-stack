@@ -37,6 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Event } from "@prisma/client";
 
 import { cn } from "@/lib/utils";
+import { getResponseMessage } from "@/lib/http";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -217,8 +218,11 @@ export default function NewEventPage() {
 
               return { photo, status: "OK" };
             } else {
-              toast.error(response.status.toString(), {
-                description: response.statusText,
+              toast.error("Erreur lors de l'upload de la photo", {
+                description: await getResponseMessage(
+                  response,
+                  "Une erreur est survenue pendant l'envoi de la photo.",
+                ),
               });
               setFailed((prev) => [...prev, photo]);
               return { photo, status: "FAILED" };
@@ -252,25 +256,39 @@ export default function NewEventPage() {
           toast.error(`${index} photos failed to be uploaded`);
         }
       } else if (response.status == 415) {
-        toast.warning(
-          `${response.status.toString()} - ${response.statusText}`,
-          {
-            description: "La photo de couverture doit être au format paysage !",
-          },
-        );
+        toast.warning("Photo de couverture refusée", {
+          description: await getResponseMessage(
+            response,
+            "La photo de couverture doit être au format paysage !",
+          ),
+        });
+        setDialogOpen(false);
         setImage(null);
         resetField("cover");
         setError("cover", {
           type: "string",
           message: "La photo de couverture doit être au format paysage !",
         });
+      } else if (response.status == 409) {
+        setDialogOpen(false);
+        toast.error("Impossible de créer l'événement", {
+          description: await getResponseMessage(
+            response,
+            "Un événement avec ce nom, cette date et ce type existe déjà, ou le dossier cible est déjà présent.",
+          ),
+        });
       } else {
-        toast.error(response.status.toString(), {
-          description: response.statusText,
+        setDialogOpen(false);
+        toast.error("Erreur lors de la création de l'événement", {
+          description: await getResponseMessage(
+            response,
+            "Une erreur est survenue pendant la création de l'événement.",
+          ),
         });
       }
     } catch (error) {
       console.log(error);
+      setDialogOpen(false);
       toast.error(`${error}`);
     }
     setLoading(false);
@@ -306,8 +324,11 @@ export default function NewEventPage() {
 
           return { photo, status: "OK" };
         } else {
-          toast.error(response.status.toString(), {
-            description: response.statusText,
+          toast.error("Erreur lors de la reprise de l'upload", {
+            description: await getResponseMessage(
+              response,
+              "Une erreur est survenue pendant la reprise de l'envoi.",
+            ),
           });
           return { photo, status: "FAILED" };
         }
@@ -371,7 +392,7 @@ export default function NewEventPage() {
               name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="py-[5px]">
+                  <FormLabel className="py-1.25">
                     Date de l&apos;événement
                   </FormLabel>
                   <Popover>
@@ -380,7 +401,7 @@ export default function NewEventPage() {
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-[240px] text-left font-normal",
+                            "w-60 text-left font-normal",
                             !field.value && "text-muted-foreground",
                           )}
                         >

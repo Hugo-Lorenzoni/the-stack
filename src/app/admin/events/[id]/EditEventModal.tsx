@@ -37,6 +37,7 @@ import { CalendarIcon, Loader2, Pencil } from "lucide-react";
 
 import { memo, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { getResponseMessage } from "@/lib/http";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -142,16 +143,36 @@ const EditEventModal = memo(function EditEventModal({
         window.location.reload();
         // router.refresh();
         toast.success("Modification de l'événement réussie");
+        setModalOpen(false);
+      } else if (response.status == 409) {
+        toast.error("Impossible de modifier l'événement", {
+          description: await getResponseMessage(
+            response,
+            "Un événement avec ce nom et cette date existe déjà, ou le dossier cible est déjà présent.",
+          ),
+        });
+      } else if (response.status == 404) {
+        toast.error("Événement non trouvé", {
+          description: await getResponseMessage(
+            response,
+            "L'événement que vous essayez de modifier n'existe pas.",
+          ),
+        });
       } else {
-        toast.error(response.status.toString(), {
-          description: response.statusText,
+        toast.error("Erreur lors de la modification", {
+          description: await getResponseMessage(
+            response,
+            "Une erreur est survenue pendant la modification de l'événement.",
+          ),
         });
       }
     } catch (error) {
       console.log(error);
+      toast.error("Erreur", {
+        description: "Une erreur est survenue lors de la requête.",
+      });
     }
     setLoading(false);
-    setModalOpen(false);
   }
 
   return (
