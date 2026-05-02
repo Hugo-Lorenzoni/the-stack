@@ -29,7 +29,7 @@ export default function MobileNav({ children }: { children: React.ReactNode }) {
       <SheetContent className="border-orange-600 bg-orange-600 text-white xl:hidden">
         <SheetHeader>
           <SheetTitle className="mb-8 text-white">Menu</SheetTitle>
-          <SheetDescription className="sr-only">
+          <SheetDescription className="sr-only text-white">
             Navigation menu
           </SheetDescription>
         </SheetHeader>
