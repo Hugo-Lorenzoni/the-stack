@@ -16,7 +16,7 @@ export default async function VideosPage() {
         <div className="text-muted-foreground flex flex-1 items-center justify-center gap-4 text-center">
           <Search className="size-10" />
           <p className="text-lg font-semibold">
-            Il n&apos;y pas encore de vidéos disponibles...
+            Il n&apos;y a pas encore de vidéos disponibles...
           </p>
         </div>
       )}
