@@ -29,8 +29,8 @@ export default function VideosPagination({ videos }: PropsType) {
       ),
   );
 
-  const start = (Number(currentPage) - 1) * Number(VIDEOS_PER_PAGE); // 0, 5, 10 ...
-  const end = start + Number(VIDEOS_PER_PAGE); // 5, 10, 15 ...
+  const start = (Number(currentPage) - 1) * Number(VIDEOS_PER_PAGE);
+  const end = start + Number(VIDEOS_PER_PAGE);
   const results = filteredVideos.slice(start, end);
 
   return (
