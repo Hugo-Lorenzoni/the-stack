@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import Link from "./Link";
 
