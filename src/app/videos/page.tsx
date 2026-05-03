@@ -1,6 +1,6 @@
 import VideosPagination from "@/app/videos/VideosPagination";
 import { getVideos } from "@/utils/getVideos";
-import { Search, SearchX } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default async function VideosPage() {
   const videos = await getVideos();
