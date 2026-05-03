@@ -576,46 +576,48 @@ export default function NewEventPage() {
                 ? "Upload de l'événement en cours..."
                 : "Enregistrement de l'événement et des photos réussi !"}
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              {isLoading || isRetryLoading ? (
-                <>
-                  <Progress color="red" value={progress} />
-                  <div>{progress < 100 ? progress.toFixed(0) : 100} %</div>
-                </>
-              ) : (
-                ""
-              )}
-              {failed.length ? (
-                <div className="mt-4 max-w-lg rounded-lg border-2 border-red-600 bg-red-200 px-4 py-2 text-red-600">
-                  <h5 className="mb-2">
-                    Ces photos ne se sont pas uploadées :
-                  </h5>
-                  {failed.map((photo) => (
-                    <p key={photo.name}>{photo.name}</p>
-                  ))}
-                  <Button
-                    type="button"
-                    onClick={(e) => handleRetry(e)}
-                    variant="destructive"
-                    className="mt-2"
-                    disabled={isLoading || isRetryLoading}
-                  >
-                    {isRetryLoading ? (
-                      <>
-                        <Loader2
-                          color="#ffffff"
-                          className="size-4 animate-spin text-white"
-                        />
-                        Loading
-                      </>
-                    ) : (
-                      "Réessayer"
-                    )}
-                  </Button>
-                </div>
-              ) : (
-                ""
-              )}
+            <AlertDialogDescription asChild>
+              <div>
+                {isLoading || isRetryLoading ? (
+                  <>
+                    <Progress color="red" value={progress} />
+                    <div>{progress < 100 ? progress.toFixed(0) : 100} %</div>
+                  </>
+                ) : (
+                  ""
+                )}
+                {failed.length ? (
+                  <div className="mt-4 max-w-lg rounded-lg border-2 border-red-600 bg-red-200 px-4 py-2 text-red-600">
+                    <h5 className="mb-2">
+                      Ces photos ne se sont pas uploadées :
+                    </h5>
+                    {failed.map((photo) => (
+                      <p key={photo.name}>{photo.name}</p>
+                    ))}
+                    <Button
+                      type="button"
+                      onClick={(e) => handleRetry(e)}
+                      variant="destructive"
+                      className="mt-2"
+                      disabled={isLoading || isRetryLoading}
+                    >
+                      {isRetryLoading ? (
+                        <>
+                          <Loader2
+                            color="#ffffff"
+                            className="size-4 animate-spin text-white"
+                          />
+                          Loading
+                        </>
+                      ) : (
+                        "Réessayer"
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

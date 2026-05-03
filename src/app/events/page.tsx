@@ -1,5 +1,4 @@
 import Link from "@/components/Link";
-import Image from "next/image";
 import PaginationControls from "@/components/PaginationControls";
 
 import { getEventsCount } from "@/utils/getEventsCount";
@@ -29,12 +28,12 @@ export default async function EventsPage(props: {
   // console.log(Number(page) * eventPerPage);
 
   return (
-    <main className="container my-8 min-h-[calc(100vh-10rem)]">
+    <main className="container my-8 flex min-h-[calc(100vh-10rem)] flex-col">
       <h1 className="relative w-fit text-2xl font-semibold after:absolute after:-bottom-1.5 after:left-2 after:h-1 after:w-full after:rounded-full after:bg-orange-600">
         Événements ouverts
       </h1>
-      {events ? (
-        <>
+      {events.length > 0 ? (
+        <div className="flex flex-1 flex-col justify-between">
           <ul className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {events.map((event) => (
               <li
@@ -69,9 +68,11 @@ export default async function EventsPage(props: {
             hasNextPage={count > Number(page) * eventPerPage}
             hasPrevPage={Number(page) != 1}
           />
-        </>
+        </div>
       ) : (
-        <></>
+        <p className="text-muted-foreground flex flex-1 items-center justify-center text-center">
+          Aucun événement ouvert trouvé.
+        </p>
       )}
     </main>
   );
