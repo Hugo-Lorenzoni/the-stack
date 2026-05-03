@@ -10,7 +10,7 @@ type PropsType = {
   videos: Video[];
 };
 
-const VIDEOS_PER_PAGE = 1;
+const VIDEOS_PER_PAGE = 6;
 
 export default function VideosPagination({ videos }: PropsType) {
   const [currentPage, setCurrentPage] = useState(1);
