@@ -117,27 +117,29 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Précédent
-        </Button>
-        <div>
-          {table.getState().pagination.pageIndex + 1}/{table.getPageCount()}
+      {table.getCanPreviousPage() || table.getCanNextPage() ? (
+        <div className="flex items-center justify-between space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Précédent
+          </Button>
+          <div>
+            {table.getState().pagination.pageIndex + 1}/{table.getPageCount()}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Suivant
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Suivant
-        </Button>
-      </div>
+      ) : null}
     </>
   );
 }

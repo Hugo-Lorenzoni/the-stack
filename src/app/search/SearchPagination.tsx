@@ -85,27 +85,29 @@ export default function SearchPagination(props: {
           );
         })}
       </ul>
-      <div className="mt-4 flex items-center justify-between gap-2">
-        <Button
-          disabled={currentPage == 1}
-          onClick={() => setCurrentPage((page) => page - 1)}
-        >
-          Précédent
-        </Button>
+      {events.length > eventPerPage ? (
+        <div className="mt-4 flex items-center justify-between gap-2">
+          <Button
+            disabled={currentPage == 1}
+            onClick={() => setCurrentPage((page) => page - 1)}
+          >
+            Précédent
+          </Button>
 
-        <div>
-          {currentPage} / {Math.ceil(events.length / eventPerPage)}
+          <div>
+            {currentPage} / {Math.ceil(events.length / eventPerPage)}
+          </div>
+
+          <Button
+            disabled={currentPage >= Math.ceil(events.length / eventPerPage)}
+            onClick={() => {
+              setCurrentPage((page) => page + 1);
+            }}
+          >
+            Suivant
+          </Button>
         </div>
-
-        <Button
-          disabled={currentPage >= Math.ceil(events.length / eventPerPage)}
-          onClick={() => {
-            setCurrentPage((page) => page + 1);
-          }}
-        >
-          Suivant
-        </Button>
-      </div>
+      ) : null}
     </>
   );
 }
