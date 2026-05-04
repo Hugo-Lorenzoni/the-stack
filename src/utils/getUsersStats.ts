@@ -67,62 +67,53 @@ export const getUsersStats = cache(
 
     const afterEndDate = addMonths(endDate, 1);
 
-    const [usersInWindow, usersBeforeWindow] = await Promise.all([
-      prisma.user.findMany({
-        where: {
-          createdAt: {
-            gte: startDate,
-            lt: afterEndDate,
-          },
-        },
-        select: {
-          role: true,
-          createdAt: true,
-        },
-      }),
-      prisma.user.findMany({
-        where: {
-          createdAt: {
-            lt: startDate,
-          },
-        },
-        select: {
-          role: true,
-        },
+    const [windowGroups, baselineGroups] = await Promise.all([
+      prisma.$queryRaw<{ month: string; role: string; count: bigint }[]>`
+        SELECT DATE_FORMAT(createdAt, '%Y-%m') AS month,
+               role,
+               COUNT(*) AS count
+        FROM User
+        WHERE createdAt >= ${startDate} AND createdAt < ${afterEndDate}
+        GROUP BY DATE_FORMAT(createdAt, '%Y-%m'), role
+        ORDER BY month
+      `,
+      prisma.user.groupBy({
+        by: ["role"],
+        where: { createdAt: { lt: startDate } },
+        _count: { _all: true },
       }),
     ]);
 
-    const monthlyNewByRole: Record<StatsRole, number[]> = {
-      USER: [],
-      WAITING: [],
-      BAPTISE: [],
-      ADMIN: [],
-    };
-
     const totalMonths =
-      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-      (endDate.getMonth() - startDate.getMonth()) +
+      (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
+      (endDate.getUTCMonth() - startDate.getUTCMonth()) +
       1;
 
-    for (const role of STATS_ROLES) {
-      monthlyNewByRole[role] = Array(totalMonths).fill(0);
+    const monthlyNewByRole: Record<StatsRole, number[]> = {
+      USER: Array(totalMonths).fill(0),
+      WAITING: Array(totalMonths).fill(0),
+      BAPTISE: Array(totalMonths).fill(0),
+      ADMIN: Array(totalMonths).fill(0),
+    };
+
+    const startMonthIndex =
+      startDate.getUTCFullYear() * 12 + startDate.getUTCMonth();
+
+    for (const row of windowGroups) {
+      const role = row.role as StatsRole;
+      if (!STATS_ROLES.includes(role)) continue;
+      const [year, month] = row.month.split("-").map(Number);
+      const index = year * 12 + (month - 1) - startMonthIndex;
+      if (index >= 0 && index < totalMonths) {
+        monthlyNewByRole[role][index] += Number(row.count);
+      }
     }
 
     const baselineByRole = buildEmptyRoleCounts();
-
-    for (const user of usersBeforeWindow) {
-      baselineByRole[user.role] += 1;
-    }
-
-    const startMonthIndex = startDate.getFullYear() * 12 + startDate.getMonth();
-
-    for (const user of usersInWindow) {
-      const monthIndex =
-        user.createdAt.getFullYear() * 12 + user.createdAt.getMonth();
-      const index = monthIndex - startMonthIndex;
-
-      if (index >= 0 && index < totalMonths) {
-        monthlyNewByRole[user.role][index] += 1;
+    for (const group of baselineGroups) {
+      const role = group.role as StatsRole;
+      if (STATS_ROLES.includes(role)) {
+        baselineByRole[role] = group._count._all;
       }
     }
 
