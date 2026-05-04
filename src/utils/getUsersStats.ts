@@ -5,6 +5,8 @@ import { formatMonthInputValue, parseMonthInputValue } from "@/utils/month";
 
 export const STATS_ROLES = [Role.USER, Role.WAITING, Role.BAPTISE, Role.ADMIN];
 
+export const MAX_STATS_MONTHS = 120;
+
 export type StatsRole = (typeof STATS_ROLES)[number];
 
 export type UserStatsMonth = {
@@ -65,6 +67,17 @@ export const getUsersStats = cache(
 
     const afterEndDate = addMonths(endDate, 1);
 
+    const totalMonths =
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth()) +
+      1;
+
+    if (totalMonths > MAX_STATS_MONTHS) {
+      throw new RangeError(
+        `La période demandée dépasse le maximum autorisé de ${MAX_STATS_MONTHS} mois.`,
+      );
+    }
+
     const [windowGroups, baselineGroups] = await Promise.all([
       prisma.$queryRaw<{ month: string; role: string; count: bigint }[]>`
         SELECT DATE_FORMAT(createdAt, '%Y-%m') AS month,
@@ -82,11 +95,6 @@ export const getUsersStats = cache(
       }),
     ]);
 
-    const totalMonths =
-      (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
-      (endDate.getUTCMonth() - startDate.getUTCMonth()) +
-      1;
-
     const monthlyNewByRole: Record<StatsRole, number[]> = {
       USER: Array(totalMonths).fill(0),
       WAITING: Array(totalMonths).fill(0),
@@ -95,7 +103,7 @@ export const getUsersStats = cache(
     };
 
     const startMonthIndex =
-      startDate.getUTCFullYear() * 12 + startDate.getUTCMonth();
+      startDate.getFullYear() * 12 + startDate.getMonth();
 
     for (const row of windowGroups) {
       const role = row.role as StatsRole;
