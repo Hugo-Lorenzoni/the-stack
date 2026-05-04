@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const stats = await getUsersStats(beginDate, endDate);
+  const stats = await getUsersStats(begin, end);
 
   return NextResponse.json(stats);
 }
