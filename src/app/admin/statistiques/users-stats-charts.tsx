@@ -188,6 +188,41 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="justify-between">
+              Filtrer les rôles ({selectedLabel})
+              <ChevronDown className="size-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-72 p-3">
+            <div className="space-y-2">
+              {roles.map((role: StatsRole) => (
+                <label
+                  key={role}
+                  className="hover:bg-muted flex items-center gap-2 rounded px-2 py-1 text-sm"
+                >
+                  <Checkbox
+                    checked={selectedSet.has(role)}
+                    onCheckedChange={(value) =>
+                      toggleRole(role, value === true)
+                    }
+                  />
+                  <span className="inline-flex items-center gap-2">
+                    <span
+                      className="inline-block size-2.5 rounded-full"
+                      style={{ backgroundColor: ROLE_COLORS[role] }}
+                    />
+                    {ROLE_LABELS[role]}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2">
         <MonthYearSelect
           label="Début de période"
@@ -228,47 +263,6 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
         <p className="text-sm text-red-600">{errorMessage}</p>
       ) : null}
 
-      {isLoading ? (
-        <p className="text-muted-foreground text-sm">
-          Chargement des statistiques...
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap items-center gap-3">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="justify-between">
-              Filtrer les rôles ({selectedLabel})
-              <ChevronDown className="size-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-72 p-3">
-            <div className="space-y-2">
-              {roles.map((role: StatsRole) => (
-                <label
-                  key={role}
-                  className="hover:bg-muted flex items-center gap-2 rounded px-2 py-1 text-sm"
-                >
-                  <Checkbox
-                    checked={selectedSet.has(role)}
-                    onCheckedChange={(value) =>
-                      toggleRole(role, value === true)
-                    }
-                  />
-                  <span className="inline-flex items-center gap-2">
-                    <span
-                      className="inline-block size-2.5 rounded-full"
-                      style={{ backgroundColor: ROLE_COLORS[role] }}
-                    />
-                    {ROLE_LABELS[role]}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-
       <Card className="gap-3 border-2">
         <CardHeader>
           <CardTitle className="text-lg">
@@ -276,8 +270,12 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {selectedRoles.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
+          {isLoading ? (
+            <p className="text-muted-foreground flex h-90.5 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-50 text-sm">
+              Chargement des statistiques...
+            </p>
+          ) : selectedRoles.length === 0 ? (
+            <p className="text-muted-foreground flex h-90.5 w-full items-center justify-center text-sm">
               Sélectionnez au moins un rôle pour afficher le graphique.
             </p>
           ) : (
@@ -298,8 +296,12 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {selectedRoles.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
+          {isLoading ? (
+            <p className="text-muted-foreground flex h-90.5 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-50 text-sm">
+              Chargement des statistiques...
+            </p>
+          ) : selectedRoles.length === 0 ? (
+            <p className="text-muted-foreground flex h-90.5 w-full items-center justify-center text-sm">
               Sélectionnez au moins un rôle pour afficher le graphique.
             </p>
           ) : (
