@@ -81,6 +81,15 @@ export default function AdminLayout({
           >
             Gestion des comptes
           </Link>
+          <Link
+            className={
+              currentRoute === "/admin/statistiques" ? activeStyle : linkStyle
+            }
+            href="/admin/statistiques"
+            prefetch={false}
+          >
+            Statistiques
+          </Link>
           {/* <ResponsiveSeparator />
           <Link
             className={
