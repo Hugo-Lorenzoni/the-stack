@@ -44,131 +44,133 @@ function buildEmptyRoleCounts() {
   } satisfies Record<StatsRole, number>;
 }
 
-export const getUsersStats = cache(async (beginMonth?: string, endMonth?: string) => {
-  const now = new Date();
-  const defaultEndMonth = normalizeMonth(now);
-  const defaultBeginMonth = addMonths(defaultEndMonth, -11);
+export const getUsersStats = cache(
+  async (beginMonth?: string, endMonth?: string) => {
+    const now = new Date();
+    const defaultEndMonth = normalizeMonth(now);
+    const defaultBeginMonth = addMonths(defaultEndMonth, -11);
 
-  const parsedBegin = beginMonth ? parseMonthInputValue(beginMonth) : null;
-  const parsedEnd = endMonth ? parseMonthInputValue(endMonth) : null;
+    const parsedBegin = beginMonth ? parseMonthInputValue(beginMonth) : null;
+    const parsedEnd = endMonth ? parseMonthInputValue(endMonth) : null;
 
-  const normalizedBegin = normalizeMonth(parsedBegin ?? defaultBeginMonth);
-  const normalizedEnd = normalizeMonth(parsedEnd ?? defaultEndMonth);
+    const normalizedBegin = normalizeMonth(parsedBegin ?? defaultBeginMonth);
+    const normalizedEnd = normalizeMonth(parsedEnd ?? defaultEndMonth);
 
-  const startDate =
-    compareMonths(normalizedBegin, normalizedEnd) <= 0
-      ? normalizedBegin
-      : normalizedEnd;
-  const endDate =
-    compareMonths(normalizedBegin, normalizedEnd) <= 0
-      ? normalizedEnd
-      : normalizedBegin;
+    const startDate =
+      compareMonths(normalizedBegin, normalizedEnd) <= 0
+        ? normalizedBegin
+        : normalizedEnd;
+    const endDate =
+      compareMonths(normalizedBegin, normalizedEnd) <= 0
+        ? normalizedEnd
+        : normalizedBegin;
 
-  const afterEndDate = addMonths(endDate, 1);
+    const afterEndDate = addMonths(endDate, 1);
 
-  const [usersInWindow, usersBeforeWindow] = await Promise.all([
-    prisma.user.findMany({
-      where: {
-        createdAt: {
-          gte: startDate,
-          lt: afterEndDate,
+    const [usersInWindow, usersBeforeWindow] = await Promise.all([
+      prisma.user.findMany({
+        where: {
+          createdAt: {
+            gte: startDate,
+            lt: afterEndDate,
+          },
         },
-      },
-      select: {
-        role: true,
-        createdAt: true,
-      },
-    }),
-    prisma.user.findMany({
-      where: {
-        createdAt: {
-          lt: startDate,
+        select: {
+          role: true,
+          createdAt: true,
         },
-      },
-      select: {
-        role: true,
-      },
-    }),
-  ]);
+      }),
+      prisma.user.findMany({
+        where: {
+          createdAt: {
+            lt: startDate,
+          },
+        },
+        select: {
+          role: true,
+        },
+      }),
+    ]);
 
-  const monthlyNewByRole: Record<StatsRole, number[]> = {
-    USER: [],
-    WAITING: [],
-    BAPTISE: [],
-    ADMIN: [],
-  };
+    const monthlyNewByRole: Record<StatsRole, number[]> = {
+      USER: [],
+      WAITING: [],
+      BAPTISE: [],
+      ADMIN: [],
+    };
 
-  const totalMonths =
-    (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-    (endDate.getMonth() - startDate.getMonth()) +
-    1;
+    const totalMonths =
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth()) +
+      1;
 
-  for (const role of STATS_ROLES) {
-    monthlyNewByRole[role] = Array(totalMonths).fill(0);
-  }
-
-  const baselineByRole = buildEmptyRoleCounts();
-
-  for (const user of usersBeforeWindow) {
-    baselineByRole[user.role] += 1;
-  }
-
-  const startMonthIndex = startDate.getFullYear() * 12 + startDate.getMonth();
-
-  for (const user of usersInWindow) {
-    const monthIndex =
-      user.createdAt.getFullYear() * 12 + user.createdAt.getMonth();
-    const index = monthIndex - startMonthIndex;
-
-    if (index >= 0 && index < totalMonths) {
-      monthlyNewByRole[user.role][index] += 1;
+    for (const role of STATS_ROLES) {
+      monthlyNewByRole[role] = Array(totalMonths).fill(0);
     }
-  }
 
-  const formatter = new Intl.DateTimeFormat("fr-BE", {
-    month: "short",
-    year: "2-digit",
-  });
+    const baselineByRole = buildEmptyRoleCounts();
 
-  const runningTotals: Record<StatsRole, number> = {
-    ...baselineByRole,
-  };
+    for (const user of usersBeforeWindow) {
+      baselineByRole[user.role] += 1;
+    }
 
-  const months: UserStatsMonth[] = Array.from(
-    { length: totalMonths },
-    (_, index) => {
-      const date = addMonths(startDate, index);
-      const key = formatMonthInputValue(date);
+    const startMonthIndex = startDate.getFullYear() * 12 + startDate.getMonth();
 
-      const newUsersByRole: Record<StatsRole, number> = {
-        USER: monthlyNewByRole.USER[index],
-        WAITING: monthlyNewByRole.WAITING[index],
-        BAPTISE: monthlyNewByRole.BAPTISE[index],
-        ADMIN: monthlyNewByRole.ADMIN[index],
-      };
+    for (const user of usersInWindow) {
+      const monthIndex =
+        user.createdAt.getFullYear() * 12 + user.createdAt.getMonth();
+      const index = monthIndex - startMonthIndex;
 
-      runningTotals.USER += newUsersByRole.USER;
-      runningTotals.WAITING += newUsersByRole.WAITING;
-      runningTotals.BAPTISE += newUsersByRole.BAPTISE;
-      runningTotals.ADMIN += newUsersByRole.ADMIN;
+      if (index >= 0 && index < totalMonths) {
+        monthlyNewByRole[user.role][index] += 1;
+      }
+    }
 
-      const cumulativeByRole: Record<StatsRole, number> = {
-        ...runningTotals,
-      };
+    const formatter = new Intl.DateTimeFormat("fr-BE", {
+      month: "short",
+      year: "2-digit",
+    });
 
-      return {
-        key,
-        label: formatter.format(date),
-        newUsersByRole,
-        cumulativeByRole,
-      };
-    },
-  );
+    const runningTotals: Record<StatsRole, number> = {
+      ...baselineByRole,
+    };
 
-  return {
-    months,
-    roles: STATS_ROLES,
-    beginMonth: formatMonthInputValue(startDate),
-    endMonth: formatMonthInputValue(endDate),
-  } satisfies UsersStats;
-});
+    const months: UserStatsMonth[] = Array.from(
+      { length: totalMonths },
+      (_, index) => {
+        const date = addMonths(startDate, index);
+        const key = formatMonthInputValue(date);
+
+        const newUsersByRole: Record<StatsRole, number> = {
+          USER: monthlyNewByRole.USER[index],
+          WAITING: monthlyNewByRole.WAITING[index],
+          BAPTISE: monthlyNewByRole.BAPTISE[index],
+          ADMIN: monthlyNewByRole.ADMIN[index],
+        };
+
+        runningTotals.USER += newUsersByRole.USER;
+        runningTotals.WAITING += newUsersByRole.WAITING;
+        runningTotals.BAPTISE += newUsersByRole.BAPTISE;
+        runningTotals.ADMIN += newUsersByRole.ADMIN;
+
+        const cumulativeByRole: Record<StatsRole, number> = {
+          ...runningTotals,
+        };
+
+        return {
+          key,
+          label: formatter.format(date),
+          newUsersByRole,
+          cumulativeByRole,
+        };
+      },
+    );
+
+    return {
+      months,
+      roles: STATS_ROLES,
+      beginMonth: formatMonthInputValue(startDate),
+      endMonth: formatMonthInputValue(endDate),
+    } satisfies UsersStats;
+  },
+);
