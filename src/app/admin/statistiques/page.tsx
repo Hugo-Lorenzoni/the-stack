@@ -8,7 +8,7 @@ export default async function StatisticsPage() {
     <section className="space-y-5">
       <h2 className="text-xl font-semibold">Statistiques utilisateurs</h2>
       <p className="text-muted-foreground text-sm">
-        Vue sur les 12 derniers mois, groupée par role.
+        Vue sur les 12 derniers mois, groupée par rôle.
       </p>
       <UsersStatsCharts months={stats.months} roles={stats.roles} />
     </section>

@@ -13,10 +13,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { StatsRole, UserStatsMonth } from "@/utils/getUsersStats";
 
 const ROLE_LABELS: Record<StatsRole, string> = {
-  USER: "USER",
-  WAITING: "WAITING",
-  BAPTISE: "BAPTISE",
-  ADMIN: "ADMIN",
+  USER: "Utilisateur",
+  WAITING: "En attente",
+  BAPTISE: "Baptisé",
+  ADMIN: "Administrateur",
 };
 
 const ROLE_COLORS: Record<StatsRole, string> = {
@@ -36,8 +36,8 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
 
   const selectedLabel =
     selectedRoles.length === roles.length
-      ? "Tous les roles"
-      : `${selectedRoles.length} role(s) selectionne(s)`;
+      ? "Tous les rôles"
+      : `${selectedRoles.length} rôles sélectionnés`;
 
   const selectedSet = useMemo(() => new Set(selectedRoles), [selectedRoles]);
 
@@ -79,7 +79,7 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="justify-between">
-              Filtrer les roles ({selectedLabel})
+              Filtrer les rôles ({selectedLabel})
               <ChevronDown className="size-4" />
             </Button>
           </PopoverTrigger>
@@ -113,13 +113,13 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
       <Card className="gap-3 border-2">
         <CardHeader>
           <CardTitle className="text-lg">
-            Evolution cumulative des utilisateurs
+            Évolution cumulée des utilisateurs
           </CardTitle>
         </CardHeader>
         <CardContent>
           {selectedRoles.length === 0 ? (
             <p className="text-muted-foreground text-sm">
-              Selectionnez au moins un role pour afficher le graphique.
+              Sélectionnez au moins un rôle pour afficher le graphique.
             </p>
           ) : (
             <LineChart
@@ -141,7 +141,7 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
         <CardContent>
           {selectedRoles.length === 0 ? (
             <p className="text-muted-foreground text-sm">
-              Selectionnez au moins un role pour afficher le graphique.
+              Sélectionnez au moins un rôle pour afficher le graphique.
             </p>
           ) : (
             <BarsChart
@@ -194,7 +194,7 @@ function LineChart({
           viewBox={`0 0 ${width} ${height}`}
           className="h-full w-full min-w-180"
           role="img"
-          aria-label="Graphique en lignes du cumul d'utilisateurs par role"
+          aria-label="Graphique en lignes du cumul d'utilisateurs par rôle"
         >
           {Array.from({ length: 5 }, (_, index) => {
             const value = Math.round((maxValue / 4) * index);
@@ -297,7 +297,7 @@ function BarsChart({
           viewBox={`0 0 ${width} ${height}`}
           className="h-full w-full min-w-180"
           role="img"
-          aria-label="Graphique en barres des nouveaux utilisateurs par role"
+          aria-label="Graphique en barres des nouveaux utilisateurs par rôle"
         >
           {Array.from({ length: 5 }, (_, index) => {
             const value = Math.round((maxValue / 4) * index);
