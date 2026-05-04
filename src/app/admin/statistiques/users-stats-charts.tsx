@@ -201,7 +201,7 @@ function LineChart({
             const y = yAt(value);
 
             return (
-              <g key={value}>
+              <g key={`line-grid-${index}-${value}`}>
                 <line
                   x1={left}
                   y1={y}
@@ -304,7 +304,7 @@ function BarsChart({
             const y = yAt(value);
 
             return (
-              <g key={value}>
+              <g key={`bar-grid-${index}-${value}`}>
                 <line
                   x1={left}
                   y1={y}
