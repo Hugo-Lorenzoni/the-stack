@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import { cache } from "react";
+import { formatMonthInputValue } from "@/utils/month";
 
 export const STATS_ROLES = [Role.USER, Role.WAITING, Role.BAPTISE, Role.ADMIN];
 
@@ -13,20 +14,62 @@ export type UserStatsMonth = {
   cumulativeByRole: Record<StatsRole, number>;
 };
 
-export const getUsersStats = cache(async () => {
+export type UsersStats = {
+  months: UserStatsMonth[];
+  roles: StatsRole[];
+  beginMonth: string;
+  endMonth: string;
+};
+
+function normalizeMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function addMonths(date: Date, amount: number) {
+  return new Date(date.getFullYear(), date.getMonth() + amount, 1);
+}
+
+function compareMonths(left: Date, right: Date) {
+  const leftKey = left.getFullYear() * 12 + left.getMonth();
+  const rightKey = right.getFullYear() * 12 + right.getMonth();
+
+  return leftKey - rightKey;
+}
+
+function buildEmptyRoleCounts() {
+  return {
+    USER: 0,
+    WAITING: 0,
+    BAPTISE: 0,
+    ADMIN: 0,
+  } satisfies Record<StatsRole, number>;
+}
+
+export const getUsersStats = cache(async (beginDate?: Date, endDate?: Date) => {
   const now = new Date();
-  const endMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const startMonth = new Date(
-    endMonth.getFullYear(),
-    endMonth.getMonth() - 11,
-    1,
-  );
+  const defaultEndMonth = normalizeMonth(now);
+  const defaultBeginMonth = addMonths(defaultEndMonth, -11);
+
+  const normalizedBegin = normalizeMonth(beginDate ?? defaultBeginMonth);
+  const normalizedEnd = normalizeMonth(endDate ?? defaultEndMonth);
+
+  const beginMonth =
+    compareMonths(normalizedBegin, normalizedEnd) <= 0
+      ? normalizedBegin
+      : normalizedEnd;
+  const endMonth =
+    compareMonths(normalizedBegin, normalizedEnd) <= 0
+      ? normalizedEnd
+      : normalizedBegin;
+
+  const afterEndMonth = addMonths(endMonth, 1);
 
   const [usersInWindow, usersBeforeWindow] = await Promise.all([
     prisma.user.findMany({
       where: {
         createdAt: {
-          gte: startMonth,
+          gte: beginMonth,
+          lt: afterEndMonth,
         },
       },
       select: {
@@ -37,7 +80,7 @@ export const getUsersStats = cache(async () => {
     prisma.user.findMany({
       where: {
         createdAt: {
-          lt: startMonth,
+          lt: beginMonth,
         },
       },
       select: {
@@ -47,31 +90,35 @@ export const getUsersStats = cache(async () => {
   ]);
 
   const monthlyNewByRole: Record<StatsRole, number[]> = {
-    USER: Array(12).fill(0),
-    WAITING: Array(12).fill(0),
-    BAPTISE: Array(12).fill(0),
-    ADMIN: Array(12).fill(0),
+    USER: [],
+    WAITING: [],
+    BAPTISE: [],
+    ADMIN: [],
   };
 
-  const baselineByRole: Record<StatsRole, number> = {
-    USER: 0,
-    WAITING: 0,
-    BAPTISE: 0,
-    ADMIN: 0,
-  };
+  const totalMonths =
+    (endMonth.getFullYear() - beginMonth.getFullYear()) * 12 +
+    (endMonth.getMonth() - beginMonth.getMonth()) +
+    1;
+
+  for (const role of STATS_ROLES) {
+    monthlyNewByRole[role] = Array(totalMonths).fill(0);
+  }
+
+  const baselineByRole = buildEmptyRoleCounts();
 
   for (const user of usersBeforeWindow) {
     baselineByRole[user.role] += 1;
   }
 
-  const startMonthIndex = startMonth.getFullYear() * 12 + startMonth.getMonth();
+  const startMonthIndex = beginMonth.getFullYear() * 12 + beginMonth.getMonth();
 
   for (const user of usersInWindow) {
     const monthIndex =
       user.createdAt.getFullYear() * 12 + user.createdAt.getMonth();
     const index = monthIndex - startMonthIndex;
 
-    if (index >= 0 && index < 12) {
+    if (index >= 0 && index < totalMonths) {
       monthlyNewByRole[user.role][index] += 1;
     }
   }
@@ -85,13 +132,9 @@ export const getUsersStats = cache(async () => {
     ...baselineByRole,
   };
 
-  const months: UserStatsMonth[] = Array.from({ length: 12 }, (_, index) => {
-    const date = new Date(
-      startMonth.getFullYear(),
-      startMonth.getMonth() + index,
-      1,
-    );
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  const months: UserStatsMonth[] = Array.from({ length: totalMonths }, (_, index) => {
+    const date = addMonths(beginMonth, index);
+    const key = formatMonthInputValue(date);
 
     const newUsersByRole: Record<StatsRole, number> = {
       USER: monthlyNewByRole.USER[index],
@@ -120,5 +163,7 @@ export const getUsersStats = cache(async () => {
   return {
     months,
     roles: STATS_ROLES,
-  };
+    beginMonth: formatMonthInputValue(beginMonth),
+    endMonth: formatMonthInputValue(endMonth),
+  } satisfies UsersStats;
 });

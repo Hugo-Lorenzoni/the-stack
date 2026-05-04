@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { StatsRole, UserStatsMonth } from "@/utils/getUsersStats";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  StatsRole,
+  UserStatsMonth,
+  UsersStats,
+} from "../../../utils/getUsersStats";
+import {
+  formatMonthInputValue,
+  isValidMonthInputValue,
+} from "../../../utils/month";
 
 const ROLE_LABELS: Record<StatsRole, string> = {
   USER: "Utilisateur",
@@ -26,13 +41,95 @@ const ROLE_COLORS: Record<StatsRole, string> = {
   ADMIN: "#ef4444",
 };
 
+const MONTH_LABELS = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
+
 type UsersStatsChartsProps = {
-  months: UserStatsMonth[];
-  roles: StatsRole[];
+  initialStats: UsersStats;
 };
 
-export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
-  const [selectedRoles, setSelectedRoles] = useState<StatsRole[]>(roles);
+const API_ROUTE = "/api/admin/statistiques";
+
+export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
+  const [selectedRoles, setSelectedRoles] = useState<StatsRole[]>(
+    initialStats.roles,
+  );
+  const [beginMonth, setBeginMonth] = useState(initialStats.beginMonth);
+  const [endMonth, setEndMonth] = useState(initialStats.endMonth);
+  const [stats, setStats] = useState<UsersStats>(initialStats);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadStats() {
+      if (
+        !isValidMonthInputValue(beginMonth) ||
+        !isValidMonthInputValue(endMonth)
+      ) {
+        return;
+      }
+
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      try {
+        const response = await fetch(
+          `${API_ROUTE}?begin=${beginMonth}&end=${endMonth}`,
+          {
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          const payload = (await response.json().catch(() => null)) as {
+            message?: string;
+          } | null;
+
+          throw new Error(
+            payload?.message ?? "Impossible de charger les statistiques.",
+          );
+        }
+
+        const nextStats = (await response.json()) as UsersStats;
+        setStats(nextStats);
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        const message =
+          error instanceof Error ? error.message : "Erreur inconnue.";
+        setErrorMessage(message);
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadStats();
+
+    return () => {
+      controller.abort();
+    };
+  }, [beginMonth, endMonth]);
+
+  const months = stats.months;
+  const roles = stats.roles;
 
   const selectedLabel =
     selectedRoles.length === roles.length
@@ -40,12 +137,28 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
       : `${selectedRoles.length} rôles sélectionnés`;
 
   const selectedSet = useMemo(() => new Set(selectedRoles), [selectedRoles]);
+  const availableYears = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const beginYear = Number(beginMonth.slice(0, 4));
+    const endYear = Number(endMonth.slice(0, 4));
+    const minimumYear = Math.min(beginYear, endYear, currentYear - 5);
+    const maximumYear = Math.max(beginYear, endYear, currentYear);
+
+    return Array.from({ length: maximumYear - minimumYear + 1 }, (_, index) =>
+      String(minimumYear + index),
+    );
+  }, [beginMonth, endMonth]);
+
+  const beginMonthIndex = Number(beginMonth.slice(5, 7)) - 1;
+  const beginYearValue = beginMonth.slice(0, 4);
+  const endMonthIndex = Number(endMonth.slice(5, 7)) - 1;
+  const endYearValue = endMonth.slice(0, 4);
 
   const cumulativeMax = useMemo(() => {
     return Math.max(
       1,
-      ...months.flatMap((month) =>
-        roles.map((role) =>
+      ...months.flatMap((month: UserStatsMonth) =>
+        roles.map((role: StatsRole) =>
           selectedSet.has(role) ? month.cumulativeByRole[role] : 0,
         ),
       ),
@@ -55,8 +168,8 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
   const newUsersMax = useMemo(() => {
     return Math.max(
       1,
-      ...months.flatMap((month) =>
-        roles.map((role) =>
+      ...months.flatMap((month: UserStatsMonth) =>
+        roles.map((role: StatsRole) =>
           selectedSet.has(role) ? month.newUsersByRole[role] : 0,
         ),
       ),
@@ -75,6 +188,52 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
 
   return (
     <div className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-2">
+        <MonthYearSelect
+          label="Début de période"
+          monthValue={beginMonthIndex}
+          yearValue={beginYearValue}
+          years={availableYears}
+          maxYear={Number(endYearValue)}
+          onMonthChange={(monthIndex) => {
+            const nextMonth = String(monthIndex + 1).padStart(2, "0");
+            setBeginMonth(`${beginYearValue}-${nextMonth}`);
+          }}
+          onYearChange={(year) => {
+            const nextYear = year;
+            const nextMonth = String(beginMonthIndex + 1).padStart(2, "0");
+            setBeginMonth(`${nextYear}-${nextMonth}`);
+          }}
+        />
+        <MonthYearSelect
+          label="Fin de période"
+          monthValue={endMonthIndex}
+          yearValue={endYearValue}
+          years={availableYears}
+          minYear={Number(beginYearValue)}
+          maxYear={new Date().getFullYear()}
+          onMonthChange={(monthIndex) => {
+            const nextMonth = String(monthIndex + 1).padStart(2, "0");
+            setEndMonth(`${endYearValue}-${nextMonth}`);
+          }}
+          onYearChange={(year) => {
+            const nextYear = year;
+            const nextMonth = String(endMonthIndex + 1).padStart(2, "0");
+            setEndMonth(`${nextYear}-${nextMonth}`);
+          }}
+        />
+      </div>
+
+      {errorMessage ? (
+        <p className="text-sm text-red-600">{errorMessage}</p>
+      ) : null}
+
+      {isLoading ? (
+        <p className="text-muted-foreground text-sm">
+          Chargement des statistiques...
+        </p>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-3">
         <Popover>
           <PopoverTrigger asChild>
@@ -85,7 +244,7 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
           </PopoverTrigger>
           <PopoverContent className="w-72 p-3">
             <div className="space-y-2">
-              {roles.map((role) => (
+              {roles.map((role: StatsRole) => (
                 <label
                   key={role}
                   className="hover:bg-muted flex items-center gap-2 rounded px-2 py-1 text-sm"
@@ -154,6 +313,75 @@ export function UsersStatsCharts({ months, roles }: UsersStatsChartsProps) {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function MonthYearSelect({
+  label,
+  monthValue,
+  yearValue,
+  years,
+  onMonthChange,
+  onYearChange,
+  minYear,
+  maxYear,
+}: {
+  label: string;
+  monthValue: number;
+  yearValue: string;
+  years: string[];
+  onMonthChange: (monthIndex: number) => void;
+  onYearChange: (year: string) => void;
+  minYear?: number;
+  maxYear?: number;
+}) {
+  const filteredYears = years.filter((year) => {
+    const numericYear = Number(year);
+
+    if (typeof minYear === "number" && numericYear < minYear) {
+      return false;
+    }
+
+    if (typeof maxYear === "number" && numericYear > maxYear) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return (
+    <label className="space-y-1 text-sm">
+      <span className="font-medium">{label}</span>
+      <div className="grid grid-cols-2 gap-2">
+        <Select
+          value={String(monthValue)}
+          onValueChange={(value) => onMonthChange(Number(value))}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Mois" />
+          </SelectTrigger>
+          <SelectContent>
+            {MONTH_LABELS.map((monthLabel, index) => (
+              <SelectItem key={monthLabel} value={String(index)}>
+                {monthLabel}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={yearValue} onValueChange={onYearChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Année" />
+          </SelectTrigger>
+          <SelectContent>
+            {filteredYears.map((year) => (
+              <SelectItem key={year} value={year}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </label>
   );
 }
 
@@ -245,7 +473,7 @@ function LineChart({
 
           {months.map((month, index) => (
             <text
-              key={month.key}
+              key={`${month.key}-line-label`}
               x={xAt(index)}
               y={height - 12}
               fontSize={11}
@@ -355,7 +583,7 @@ function BarsChart({
             const x = left + index * groupWidth + groupWidth / 2;
             return (
               <text
-                key={month.key}
+                key={`${month.key}-bar-label`}
                 x={x}
                 y={height - 12}
                 fontSize={11}

@@ -1,5 +1,5 @@
-import { getUsersStats } from "@/utils/getUsersStats";
-import { UsersStatsCharts } from "@/app/admin/statistiques/users-stats-charts";
+import { getUsersStats } from "../../../utils/getUsersStats";
+import { UsersStatsCharts } from "./users-stats-charts";
 
 export default async function StatisticsPage() {
   const stats = await getUsersStats();
@@ -10,7 +10,7 @@ export default async function StatisticsPage() {
       <p className="text-muted-foreground text-sm">
         Vue sur les 12 derniers mois, groupée par rôle.
       </p>
-      <UsersStatsCharts months={stats.months} roles={stats.roles} />
+      <UsersStatsCharts initialStats={stats} />
     </section>
   );
 }
