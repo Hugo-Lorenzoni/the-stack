@@ -21,11 +21,8 @@ import type {
   StatsRole,
   UserStatsMonth,
   UsersStats,
-} from "../../../utils/getUsersStats";
-import {
-  formatMonthInputValue,
-  isValidMonthInputValue,
-} from "../../../utils/month";
+} from "@/utils/getUsersStats";
+import { formatMonthInputValue, isValidMonthInputValue } from "@/utils/month";
 
 const ROLE_LABELS: Record<StatsRole, string> = {
   USER: "Utilisateur",

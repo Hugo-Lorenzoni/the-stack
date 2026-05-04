@@ -132,33 +132,36 @@ export const getUsersStats = cache(async (beginDate?: Date, endDate?: Date) => {
     ...baselineByRole,
   };
 
-  const months: UserStatsMonth[] = Array.from({ length: totalMonths }, (_, index) => {
-    const date = addMonths(beginMonth, index);
-    const key = formatMonthInputValue(date);
+  const months: UserStatsMonth[] = Array.from(
+    { length: totalMonths },
+    (_, index) => {
+      const date = addMonths(beginMonth, index);
+      const key = formatMonthInputValue(date);
 
-    const newUsersByRole: Record<StatsRole, number> = {
-      USER: monthlyNewByRole.USER[index],
-      WAITING: monthlyNewByRole.WAITING[index],
-      BAPTISE: monthlyNewByRole.BAPTISE[index],
-      ADMIN: monthlyNewByRole.ADMIN[index],
-    };
+      const newUsersByRole: Record<StatsRole, number> = {
+        USER: monthlyNewByRole.USER[index],
+        WAITING: monthlyNewByRole.WAITING[index],
+        BAPTISE: monthlyNewByRole.BAPTISE[index],
+        ADMIN: monthlyNewByRole.ADMIN[index],
+      };
 
-    runningTotals.USER += newUsersByRole.USER;
-    runningTotals.WAITING += newUsersByRole.WAITING;
-    runningTotals.BAPTISE += newUsersByRole.BAPTISE;
-    runningTotals.ADMIN += newUsersByRole.ADMIN;
+      runningTotals.USER += newUsersByRole.USER;
+      runningTotals.WAITING += newUsersByRole.WAITING;
+      runningTotals.BAPTISE += newUsersByRole.BAPTISE;
+      runningTotals.ADMIN += newUsersByRole.ADMIN;
 
-    const cumulativeByRole: Record<StatsRole, number> = {
-      ...runningTotals,
-    };
+      const cumulativeByRole: Record<StatsRole, number> = {
+        ...runningTotals,
+      };
 
-    return {
-      key,
-      label: formatter.format(date),
-      newUsersByRole,
-      cumulativeByRole,
-    };
-  });
+      return {
+        key,
+        label: formatter.format(date),
+        newUsersByRole,
+        cumulativeByRole,
+      };
+    },
+  );
 
   return {
     months,

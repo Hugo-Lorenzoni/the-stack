@@ -1,4 +1,4 @@
-import { getUsersStats } from "../../../utils/getUsersStats";
+import { getUsersStats } from "@/utils/getUsersStats";
 import { UsersStatsCharts } from "./users-stats-charts";
 
 export default async function StatisticsPage() {
