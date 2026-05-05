@@ -5,9 +5,9 @@ export default async function StatisticsPage() {
   const stats = await getUsersStats();
 
   return (
-    <section className="space-y-5">
-      <h2 className="text-xl font-semibold">Statistiques utilisateurs</h2>
-      <p className="text-muted-foreground text-sm">
+    <section>
+      <h2 className="pb-4">Statistiques utilisateurs</h2>
+      <p className="text-muted-foreground pb-6 text-sm">
         Vue sur les 12 derniers mois, groupée par rôle.
       </p>
       <UsersStatsCharts initialStats={stats} />
