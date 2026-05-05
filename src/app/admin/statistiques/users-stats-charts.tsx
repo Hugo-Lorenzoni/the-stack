@@ -23,6 +23,24 @@ import type {
   UsersStats,
 } from "@/utils/getUsersStats";
 import { isValidMonthInputValue } from "@/utils/month";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 const ROLE_LABELS: Record<StatsRole, string> = {
   USER: "Utilisateur",
@@ -260,7 +278,7 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
         <p className="text-sm text-red-600">{errorMessage}</p>
       ) : null}
 
-      <div className="3xl:grid-cols-2 grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 2xl:grid-cols-2">
         <Card className="gap-3 border-2">
           <CardHeader>
             <CardTitle className="text-lg">
@@ -277,7 +295,7 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
                 Sélectionnez au moins un rôle pour afficher le graphique.
               </p>
             ) : (
-              <LineChart
+              <CumulativeChart
                 months={months}
                 roles={roles}
                 selectedSet={selectedSet}
@@ -303,7 +321,7 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
                 Sélectionnez au moins un rôle pour afficher le graphique.
               </p>
             ) : (
-              <BarsChart
+              <NewUsersChart
                 months={months}
                 roles={roles}
                 selectedSet={selectedSet}
@@ -386,7 +404,7 @@ function MonthYearSelect({
   );
 }
 
-function LineChart({
+function CumulativeChart({
   months,
   roles,
   selectedSet,
@@ -397,236 +415,85 @@ function LineChart({
   selectedSet: Set<StatsRole>;
   maxValue: number;
 }) {
-  const width = 1000;
-  const height = 340;
-  const left = 44;
-  const right = 16;
-  const top = 16;
-  const bottom = 42;
-  const plotWidth = width - left - right;
-  const plotHeight = height - top - bottom;
+  const data = months.map((m) => ({
+    label: m.label,
+    ...m.cumulativeByRole,
+  }));
 
-  const xAt = (index: number) => {
-    if (months.length === 1) {
-      return left + plotWidth / 2;
-    }
-
-    return left + (index / (months.length - 1)) * plotWidth;
-  };
-
-  const yAt = (value: number) => top + (1 - value / maxValue) * plotHeight;
-
-  return (
-    <div className="space-y-4">
-      <div className="h-80 w-full overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="h-full w-full min-w-180"
-          role="img"
-          aria-label="Graphique en lignes du cumul d'utilisateurs par rôle"
-        >
-          {Array.from({ length: 5 }, (_, index) => {
-            const value = Math.round((maxValue / 4) * index);
-            const y = yAt(value);
-
-            return (
-              <g key={`line-grid-${index}-${value}`}>
-                <line
-                  x1={left}
-                  y1={y}
-                  x2={width - right}
-                  y2={y}
-                  stroke="#e5e7eb"
-                  strokeWidth={1}
-                />
-                <text
-                  x={left - 8}
-                  y={y + 4}
-                  fontSize={11}
-                  textAnchor="end"
-                  fill="#6b7280"
-                >
-                  {value}
-                </text>
-              </g>
-            );
-          })}
-
-          {roles
-            .filter((role) => selectedSet.has(role))
-            .map((role) => {
-              const points = months
-                .map((month, index) => {
-                  return `${xAt(index)},${yAt(month.cumulativeByRole[role])}`;
-                })
-                .join(" ");
-
-              return (
-                <polyline
-                  key={role}
-                  fill="none"
-                  stroke={ROLE_COLORS[role]}
-                  strokeWidth={3}
-                  points={points}
-                />
-              );
-            })}
-
-          {months.map((month, index) => (
-            <text
-              key={`${month.key}-line-label`}
-              x={xAt(index)}
-              y={height - 12}
-              fontSize={11}
-              fill="#6b7280"
-              textAnchor="middle"
-            >
-              {index % 2 === 0 || index === months.length - 1
-                ? month.label
-                : ""}
-            </text>
-          ))}
-        </svg>
-      </div>
-      <RolesLegend roles={roles} selectedSet={selectedSet} />
-    </div>
+  const config = Object.fromEntries(
+    roles.map((role) => [
+      role,
+      { label: ROLE_LABELS[role], color: ROLE_COLORS[role] },
+    ]),
   );
-}
-
-function BarsChart({
-  months,
-  roles,
-  selectedSet,
-  maxValue,
-}: {
-  months: UserStatsMonth[];
-  roles: StatsRole[];
-  selectedSet: Set<StatsRole>;
-  maxValue: number;
-}) {
-  const width = 1000;
-  const height = 340;
-  const left = 44;
-  const right = 16;
-  const top = 16;
-  const bottom = 42;
-  const plotWidth = width - left - right;
-  const plotHeight = height - top - bottom;
-  const activeRoles = roles.filter((role) => selectedSet.has(role));
-  const groupWidth = plotWidth / months.length;
-  const barsPerGroup = Math.max(1, activeRoles.length);
-  const barWidth = Math.max(4, (groupWidth - 10) / barsPerGroup);
-
-  const yAt = (value: number) => top + (1 - value / maxValue) * plotHeight;
 
   return (
-    <div className="space-y-4">
-      <div className="h-80 w-full overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="h-full w-full min-w-180"
-          role="img"
-          aria-label="Graphique en barres des nouveaux utilisateurs par rôle"
-        >
-          {Array.from({ length: 5 }, (_, index) => {
-            const value = Math.round((maxValue / 4) * index);
-            const y = yAt(value);
-
-            return (
-              <g key={`bar-grid-${index}-${value}`}>
-                <line
-                  x1={left}
-                  y1={y}
-                  x2={width - right}
-                  y2={y}
-                  stroke="#e5e7eb"
-                  strokeWidth={1}
-                />
-                <text
-                  x={left - 8}
-                  y={y + 4}
-                  fontSize={11}
-                  textAnchor="end"
-                  fill="#6b7280"
-                >
-                  {value}
-                </text>
-              </g>
-            );
-          })}
-
-          {months.map((month, monthIndex) => {
-            const xBase = left + monthIndex * groupWidth + 5;
-
-            return (
-              <g key={month.key}>
-                {activeRoles.map((role, roleIndex) => {
-                  const value = month.newUsersByRole[role];
-                  const barHeight = (value / maxValue) * plotHeight;
-
-                  return (
-                    <rect
-                      key={`${month.key}-${role}`}
-                      x={xBase + roleIndex * barWidth}
-                      y={top + plotHeight - barHeight}
-                      width={barWidth - 2}
-                      height={Math.max(0, barHeight)}
-                      fill={ROLE_COLORS[role]}
-                      rx={2}
-                    />
-                  );
-                })}
-              </g>
-            );
-          })}
-
-          {months.map((month, index) => {
-            const x = left + index * groupWidth + groupWidth / 2;
-            return (
-              <text
-                key={`${month.key}-bar-label`}
-                x={x}
-                y={height - 12}
-                fontSize={11}
-                fill="#6b7280"
-                textAnchor="middle"
-              >
-                {index % 2 === 0 || index === months.length - 1
-                  ? month.label
-                  : ""}
-              </text>
-            );
-          })}
-        </svg>
-      </div>
-      <RolesLegend roles={roles} selectedSet={selectedSet} />
-    </div>
-  );
-}
-
-function RolesLegend({
-  roles,
-  selectedSet,
-}: {
-  roles: StatsRole[];
-  selectedSet: Set<StatsRole>;
-}) {
-  return (
-    <div className="flex flex-wrap gap-3">
-      {roles
-        .filter((role) => selectedSet.has(role))
-        .map((role) => (
-          <span
-            key={role}
-            className="border-muted-foreground/20 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs"
-          >
-            <span
-              className="inline-block size-2.5 rounded-full"
-              style={{ backgroundColor: ROLE_COLORS[role] }}
+    <ChartContainer config={config} className="min-h-80 w-full">
+      <LineChart data={data} accessibilityLayer>
+        <CartesianGrid vertical={false} />
+        <XAxis dataKey="label" />
+        <YAxis domain={[0, Math.max(1, maxValue)]} />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
+        {roles
+          .filter((role) => selectedSet.has(role))
+          .map((role) => (
+            <Line
+              key={role}
+              type="monotone"
+              dataKey={role}
+              stroke={`var(--color-${role})`}
+              strokeWidth={3}
+              dot={{ r: 2 }}
+              activeDot={{ r: 4 }}
             />
-            {ROLE_LABELS[role]}
-          </span>
+          ))}
+      </LineChart>
+    </ChartContainer>
+  );
+}
+
+function NewUsersChart({
+  months,
+  roles,
+  selectedSet,
+  maxValue,
+}: {
+  months: UserStatsMonth[];
+  roles: StatsRole[];
+  selectedSet: Set<StatsRole>;
+  maxValue: number;
+}) {
+  const activeRoles = roles.filter((role) => selectedSet.has(role));
+  const data = months.map((m) => ({
+    label: m.label,
+    ...m.newUsersByRole,
+  }));
+
+  const config = Object.fromEntries(
+    roles.map((role) => [
+      role,
+      { label: ROLE_LABELS[role], color: ROLE_COLORS[role] },
+    ]),
+  );
+
+  return (
+    <ChartContainer config={config} className="min-h-80 w-full">
+      <BarChart data={data} accessibilityLayer>
+        <CartesianGrid vertical={false} />
+        <XAxis dataKey="label" />
+        <YAxis domain={[0, Math.max(1, maxValue)]} />
+        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
+        {activeRoles.map((role) => (
+          <Bar
+            key={role}
+            dataKey={role}
+            fill={`var(--color-${role})`}
+            radius={[4, 4, 0, 0]}
+          />
         ))}
-    </div>
+      </BarChart>
+    </ChartContainer>
   );
 }
