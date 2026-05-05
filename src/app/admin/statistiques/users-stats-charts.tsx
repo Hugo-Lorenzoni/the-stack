@@ -260,57 +260,59 @@ export function UsersStatsCharts({ initialStats }: UsersStatsChartsProps) {
         <p className="text-sm text-red-600">{errorMessage}</p>
       ) : null}
 
-      <Card className="gap-3 border-2">
-        <CardHeader>
-          <CardTitle className="text-lg">
-            Évolution cumulée des utilisateurs
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <p className="text-muted-foreground flex h-90.5 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-50 text-sm">
-              Chargement des statistiques...
-            </p>
-          ) : selectedRoles.length === 0 ? (
-            <p className="text-muted-foreground flex h-90.5 w-full items-center justify-center text-sm">
-              Sélectionnez au moins un rôle pour afficher le graphique.
-            </p>
-          ) : (
-            <LineChart
-              months={months}
-              roles={roles}
-              selectedSet={selectedSet}
-              maxValue={cumulativeMax}
-            />
-          )}
-        </CardContent>
-      </Card>
+      <div className="3xl:grid-cols-2 grid grid-cols-1 gap-4">
+        <Card className="gap-3 border-2">
+          <CardHeader>
+            <CardTitle className="text-lg">
+              Évolution cumulée des utilisateurs
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground flex h-90.5 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-50 text-sm">
+                Chargement des statistiques...
+              </p>
+            ) : selectedRoles.length === 0 ? (
+              <p className="text-muted-foreground flex h-90.5 w-full items-center justify-center text-sm">
+                Sélectionnez au moins un rôle pour afficher le graphique.
+              </p>
+            ) : (
+              <LineChart
+                months={months}
+                roles={roles}
+                selectedSet={selectedSet}
+                maxValue={cumulativeMax}
+              />
+            )}
+          </CardContent>
+        </Card>
 
-      <Card className="gap-3 border-2">
-        <CardHeader>
-          <CardTitle className="text-lg">
-            Nouveaux utilisateurs par mois
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <p className="text-muted-foreground flex h-90.5 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-50 text-sm">
-              Chargement des statistiques...
-            </p>
-          ) : selectedRoles.length === 0 ? (
-            <p className="text-muted-foreground flex h-90.5 w-full items-center justify-center text-sm">
-              Sélectionnez au moins un rôle pour afficher le graphique.
-            </p>
-          ) : (
-            <BarsChart
-              months={months}
-              roles={roles}
-              selectedSet={selectedSet}
-              maxValue={newUsersMax}
-            />
-          )}
-        </CardContent>
-      </Card>
+        <Card className="gap-3 border-2">
+          <CardHeader>
+            <CardTitle className="text-lg">
+              Nouveaux utilisateurs par mois
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <p className="text-muted-foreground flex h-90.5 w-full animate-pulse items-center justify-center rounded-2xl bg-gray-50 text-sm">
+                Chargement des statistiques...
+              </p>
+            ) : selectedRoles.length === 0 ? (
+              <p className="text-muted-foreground flex h-90.5 w-full items-center justify-center text-sm">
+                Sélectionnez au moins un rôle pour afficher le graphique.
+              </p>
+            ) : (
+              <BarsChart
+                months={months}
+                roles={roles}
+                selectedSet={selectedSet}
+                maxValue={newUsersMax}
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
