@@ -142,6 +142,16 @@ export default function AdminLayout({
           >
             Texte d&apos;introduction
           </Link>
+          <ResponsiveSeparator />
+          <Link
+            className={
+              currentRoute === "/admin/statistiques" ? activeStyle : linkStyle
+            }
+            href="/admin/statistiques"
+            prefetch={false}
+          >
+            Statistiques
+          </Link>
         </ul>
       </aside>
       <main className="my-8 flex grow flex-col overflow-x-auto px-4 md:px-14">
