@@ -27,7 +27,9 @@ function normalizeMonth(date: Date) {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 function addMonths(date: Date, amount: number) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + amount, 1));
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + amount, 1),
+  );
 }
 function compareMonths(left: Date, right: Date) {
   const leftKey = left.getUTCFullYear() * 12 + left.getUTCMonth();
