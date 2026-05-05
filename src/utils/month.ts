@@ -1,6 +1,6 @@
 export function formatMonthInputValue(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
 
   return `${year}-${month}`;
 }
@@ -19,7 +19,7 @@ export function parseMonthInputValue(value: string) {
     return null;
   }
 
-  return new Date(year, month - 1, 1);
+  return new Date(Date.UTC(year, month - 1, 1));
 }
 
 export function isValidMonthInputValue(value: string) {

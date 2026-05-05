@@ -24,14 +24,14 @@ export type UsersStats = {
 };
 
 function normalizeMonth(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 function addMonths(date: Date, amount: number) {
-  return new Date(date.getFullYear(), date.getMonth() + amount, 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + amount, 1));
 }
 function compareMonths(left: Date, right: Date) {
-  const leftKey = left.getFullYear() * 12 + left.getMonth();
-  const rightKey = right.getFullYear() * 12 + right.getMonth();
+  const leftKey = left.getUTCFullYear() * 12 + left.getUTCMonth();
+  const rightKey = right.getUTCFullYear() * 12 + right.getUTCMonth();
   return leftKey - rightKey;
 }
 
@@ -68,8 +68,8 @@ export const getUsersStats = cache(
     const afterEndDate = addMonths(endDate, 1);
 
     const totalMonths =
-      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-      (endDate.getMonth() - startDate.getMonth()) +
+      (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
+      (endDate.getUTCMonth() - startDate.getUTCMonth()) +
       1;
 
     if (totalMonths > MAX_STATS_MONTHS) {
@@ -103,7 +103,7 @@ export const getUsersStats = cache(
     };
 
     const startMonthIndex =
-      startDate.getFullYear() * 12 + startDate.getMonth();
+      startDate.getUTCFullYear() * 12 + startDate.getUTCMonth();
 
     for (const row of windowGroups) {
       const role = row.role as StatsRole;
