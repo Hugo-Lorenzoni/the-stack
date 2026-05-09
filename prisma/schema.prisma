@@ -51,7 +51,7 @@ model Event {
 model Photo {
   id              String      @id @default(uuid())
   name            String
-  url             String
+  url             String      @unique
   width           Int
   height          Int
   eventId         String
@@ -60,7 +60,6 @@ model Photo {
   updatedAt       DateTime    @updatedAt @default(now())
 
   @@index([eventId])
-  @@unique([eventId, url])
 }
 
 model Sponsor {
