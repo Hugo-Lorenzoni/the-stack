@@ -1,10 +1,15 @@
 import sizeOf from "image-size";
 
 import { saveFile } from "@/lib/files";
+import { getDirectoryPath, getFileName } from "@/lib/path";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 import { postHogServerClient } from "@/lib/posthog";
+import { stat } from "fs/promises";
+import { join } from "path";
+import { env } from "process";
 
 const photoSchema = z.object({
   name: z.string(),
@@ -54,8 +59,76 @@ export async function POST(request: NextRequest) {
     }
 
     const photosFiles = data.getAll("file") as Array<File>;
+    const relativeUploadDir = getDirectoryPath(
+      currentEvent.type,
+      currentEvent.date,
+      currentEvent.title,
+    );
+    const fileInfos = photosFiles.map((photo) => {
+      const filename = getFileName(photo, false);
+      const relativeUrl = `${relativeUploadDir}/${filename}`;
+      return {
+        photo,
+        relativeUrl,
+        absolutePath: join(env.DATA_FOLDER, "photos", relativeUrl),
+      };
+    });
+
+    const existingDbPhotos = await prisma.photo.findMany({
+      where: { url: { in: fileInfos.map((info) => info.relativeUrl) } },
+      select: { url: true },
+    });
+    if (existingDbPhotos.length > 0) {
+      postHogServerClient.captureException(
+        new Error(
+          `Photo already exists in db: ${existingDbPhotos
+            .map((photo) => photo.url)
+            .join(", ")}`,
+        ),
+      );
+      return NextResponse.json(
+        { error: "Photo already exists" },
+        { status: 409 },
+      );
+    }
+
+    try {
+      const existingDiskPhotos = await Promise.all(
+        fileInfos.map(async (info) => {
+          try {
+            await stat(info.absolutePath);
+            return info.relativeUrl;
+          } catch (error: any) {
+            if (error?.code === "ENOENT") {
+              return null;
+            }
+            throw error;
+          }
+        }),
+      );
+      const existingDiskUrls = existingDiskPhotos.filter((url): url is string =>
+        Boolean(url),
+      );
+      if (existingDiskUrls.length > 0) {
+        postHogServerClient.captureException(
+          new Error(
+            `Photo already exists on disk: ${existingDiskUrls.join(", ")}`,
+          ),
+        );
+        return NextResponse.json(
+          { error: "Photo already exists" },
+          { status: 409 },
+        );
+      }
+    } catch (error) {
+      postHogServerClient.captureException(error);
+      return NextResponse.json(
+        { error: "Something went wrong." },
+        { status: 500 },
+      );
+    }
     const photos = await Promise.all(
-      photosFiles.map(async (photo) => {
+      fileInfos.map(async ({ photo }) => {
         const photoURL = await saveFile(
           photo,
           currentEvent.title,
@@ -80,22 +153,36 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const event = await prisma.event.update({
-      where: { id: result.data },
-      data: {
-        photos: {
-          createMany: {
-            data: parsedPhotos,
+    let event;
+    try {
+      event = await prisma.event.update({
+        where: { id: result.data },
+        data: {
+          photos: {
+            createMany: {
+              data: parsedPhotos,
+            },
           },
         },
-      },
-      select: {
-        id: true,
-        title: true,
-        date: true,
-        photos: { orderBy: { name: "asc" } },
-      },
-    });
+        select: {
+          id: true,
+          title: true,
+          date: true,
+          photos: { orderBy: { name: "asc" } },
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        return NextResponse.json(
+          { error: "Photo already exists" },
+          { status: 409 },
+        );
+      }
+      throw error;
+    }
     if (!event) {
       return NextResponse.json(
         { error: "Something went wrong." },
