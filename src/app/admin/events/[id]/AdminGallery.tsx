@@ -194,7 +194,7 @@ export default function AdminGallery({
         ))}
       </ul>
 
-      {photoId !== null && !isNaN(photoId) && photoId <= totalPhotos ? (
+      {photoId !== null && !isNaN(photoId) && photoId < totalPhotos ? (
         <section
           {...swipeHandlers}
           className="fixed inset-0 z-20 bg-black py-8 text-white"
