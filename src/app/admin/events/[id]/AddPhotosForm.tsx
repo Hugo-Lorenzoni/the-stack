@@ -120,7 +120,15 @@ const AddPhotosForm = memo(function AddPhotosForm({
             toast(`${res.photo.name} successfully added !`);
             // setPhotos(res.event.photos);
           }
-          return index;
+          return { status: "success" as const, index };
+        } else if (response.status == 409) {
+          const errorPayload = await response.json().catch(() => null);
+          toast.warning("Photo déjà existante", {
+            description:
+              errorPayload?.error ||
+              "Cette photo existe déjà pour cet événement.",
+          });
+          return { status: "duplicate" as const, index };
         } else if (response.status == 504) {
           toast.warning(
             `${response.status.toString()} - ${response.statusText}`,
@@ -130,34 +138,46 @@ const AddPhotosForm = memo(function AddPhotosForm({
               duration: 20000,
             },
           );
+          return { status: "failed" as const, index };
         } else {
           toast.error(response.status.toString(), {
             description: response.statusText,
           });
+          return { status: "failed" as const, index };
         }
       } catch (error) {
         console.log(error);
+        return { status: "failed" as const, index };
       }
     });
 
-    let index = 0;
+    let successCount = 0;
+    let duplicateCount = 0;
+    let failedCount = 0;
     for (let i = 0; i < values.photos.length; i++) {
-      const file = await files[i];
-      if (typeof file === "number") {
-        index++;
+      const result = await files[i];
+      if (result?.status === "success") {
+        successCount++;
+      } else if (result?.status === "duplicate") {
+        duplicateCount++;
+      } else {
+        failedCount++;
       }
     }
-    if (index == values.photos.length) {
-      toast.success(`${index} photos were successfully added !`);
+    if (successCount > 0) {
+      toast.success(`${successCount} photos were successfully added !`);
       reset();
-    } else {
-      toast.error(
-        `${values.photos.length - index} photos failed to be uploaded`,
-      );
+    }
+    if (failedCount > 0) {
+      toast.error(`${failedCount} photos failed to be uploaded`);
     }
     setLoading(false);
     setProgress(0);
-    window.location.reload();
+    if (successCount > 0) {
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   }
 
   return (
