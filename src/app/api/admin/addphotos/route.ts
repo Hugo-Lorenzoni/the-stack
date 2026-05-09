@@ -176,7 +176,10 @@ export async function POST(request: NextRequest) {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === "P2002"
       ) {
-        return NextResponse.json({ error: "Photo already exists" }, { status: 409 });
+        return NextResponse.json(
+          { error: "Photo already exists" },
+          { status: 409 },
+        );
       }
       throw error;
     }
