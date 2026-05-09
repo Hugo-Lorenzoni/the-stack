@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       );
       return NextResponse.json(
         { message: "Aucune valeur fournie dans la requête" },
-        { status: 500 },
+        { status: 400 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       postHogServerClient.captureException(result.error);
       return NextResponse.json(
         { message: "Une erreur est survenue lors de l'upload de la photo." },
-        { status: 500 },
+        { status: 400 },
       );
     }
     const currentEvent = result.data;
