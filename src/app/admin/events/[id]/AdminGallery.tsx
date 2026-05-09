@@ -97,7 +97,7 @@ export default function AdminGallery({
 
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {
-      if (photoId != eventPhotos.length - 1) {
+      if (photoId != totalPhotos - 1) {
         nextPhoto();
       }
     },
@@ -135,6 +135,13 @@ export default function AdminGallery({
         eventTitle={eventTitle}
         eventDate={eventDate}
         eventType={eventType}
+        onPhotosAdded={(newPhotos) => {
+          setPhotos((prev) =>
+            [...prev, ...newPhotos].sort((a, b) =>
+              a.name.localeCompare(b.name, "fr", { sensitivity: "base" }),
+            ),
+          );
+        }}
       />
       <div className="mt-4 flex flex-wrap justify-end gap-2">
         <EditEventModal
@@ -187,7 +194,7 @@ export default function AdminGallery({
         ))}
       </ul>
 
-      {photoId !== null && !isNaN(photoId) && photoId <= eventPhotos.length ? (
+      {photoId !== null && !isNaN(photoId) && photoId <= totalPhotos ? (
         <section
           {...swipeHandlers}
           className="fixed inset-0 z-20 bg-black py-8 text-white"
@@ -233,7 +240,7 @@ export default function AdminGallery({
           </Button>
           <Button
             className="absolute right-8 bottom-4 size-16 rounded-full p-2 sm:top-1/2"
-            disabled={photoId == eventPhotos.length - 1}
+            disabled={photoId == totalPhotos - 1}
             onClick={() => nextPhoto()}
           >
             <ChevronRight className="size-10" />

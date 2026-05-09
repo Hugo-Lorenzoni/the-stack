@@ -9,7 +9,7 @@ import AddPhotosInput from "./AddPhotosInput";
 import { Loader2 } from "lucide-react";
 import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Type } from "@prisma/client";
+import { Photo, Type } from "@prisma/client";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -62,11 +62,13 @@ const AddPhotosForm = memo(function AddPhotosForm({
   eventTitle,
   eventDate,
   eventType,
+  onPhotosAdded,
 }: {
   eventId: string;
   eventTitle: string;
   eventDate: Date;
   eventType: Type;
+  onPhotosAdded: (photos: Photo[]) => void;
 }) {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState(0);
@@ -115,12 +117,15 @@ const AddPhotosForm = memo(function AddPhotosForm({
         if (response.status == 200) {
           const res = await response.json();
           // console.log(res);
-          if (res.photo && res.event.photos) {
+          if (res.photo) {
             setProgress((value) => value + (1 / values.photos.length) * 100);
             toast(`${res.photo.name} successfully added !`);
-            // setPhotos(res.event.photos);
           }
-          return { status: "success" as const, index };
+          return {
+            status: "success" as const,
+            index,
+            photo: res.photo as Photo,
+          };
         } else if (response.status == 409) {
           const errorPayload = await response.json().catch(() => null);
           toast.warning("Photo déjà existante", {
@@ -152,19 +157,23 @@ const AddPhotosForm = memo(function AddPhotosForm({
     });
 
     let successCount = 0;
-    let duplicateCount = 0;
     let failedCount = 0;
+    const newPhotos: Photo[] = [];
     for (let i = 0; i < values.photos.length; i++) {
       const result = await files[i];
       if (result?.status === "success") {
         successCount++;
-      } else if (result?.status === "duplicate") {
-        duplicateCount++;
-      } else {
+        if (result.photo) {
+          newPhotos.push(result.photo);
+        }
+      } else if (result?.status !== "duplicate") {
         failedCount++;
       }
     }
     if (successCount > 0) {
+      if (newPhotos.length > 0) {
+        onPhotosAdded(newPhotos);
+      }
       toast.success(`${successCount} photos were successfully added !`);
       reset();
     }
@@ -173,11 +182,6 @@ const AddPhotosForm = memo(function AddPhotosForm({
     }
     setLoading(false);
     setProgress(0);
-    if (successCount > 0) {
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    }
   }
 
   return (

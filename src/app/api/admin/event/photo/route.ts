@@ -121,22 +121,21 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const event = await prisma.event.update({
-      where: { id: currentEvent.id },
+    const createdPhoto = await prisma.photo.create({
       data: {
-        photos: {
-          create: {
-            ...parsedPhoto,
-          },
-        },
+        ...parsedPhoto,
+        event: { connect: { id: currentEvent.id } },
       },
       select: {
         id: true,
-        title: true,
-        date: true,
+        name: true,
+        url: true,
+        width: true,
+        height: true,
+        eventId: true,
       },
     });
-    if (!event) {
+    if (!createdPhoto) {
       postHogServerClient.captureException(
         new Error(`${photo.name} - db query failed`),
       );
@@ -145,10 +144,7 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    return NextResponse.json(
-      { event: event, photo: parsedPhoto },
-      { status: 200 },
-    );
+    return NextResponse.json({ photo: createdPhoto }, { status: 200 });
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
