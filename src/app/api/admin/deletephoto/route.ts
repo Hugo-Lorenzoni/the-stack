@@ -14,13 +14,15 @@ export async function DELETE(request: Request) {
     const filePath = join(env.DATA_FOLDER, "photos", body.url);
     // console.log(await stat(filePath));
 
+    let fileMissing = false;
     if (!existsSync(filePath)) {
+      fileMissing = true;
       postHogServerClient.captureException(
         new Error(`File not found at path: ${filePath}`),
       );
-      return NextResponse.json({ message: "File not found" }, { status: 404 });
+    } else {
+      await unlink(filePath);
     }
-    await unlink(filePath);
 
     // Delete the other versions of the photo
     for (const quality of [
@@ -58,7 +60,13 @@ export async function DELETE(request: Request) {
       );
     }
     const { name } = result;
-    return new Response(JSON.stringify(name));
+    return NextResponse.json(
+      {
+        name,
+        fileMissing,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
