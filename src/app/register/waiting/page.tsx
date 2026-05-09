@@ -20,10 +20,10 @@ export default function Waiting() {
       <main className="mx-auto flex min-h-[calc(100vh-10rem)] max-w-3xl items-center justify-center px-6 pb-40">
         <section className="mt-4 space-y-4 rounded-2xl border-2 border-orange-600 p-4">
           <h1 className="text-2xl font-semibold">
-            Votre comptre est en attente d&apos;approbation
+            Votre compte est en attente d&apos;approbation
           </h1>
           <p>
-            Afin de permettre la vérification de votre comptre,{" "}
+            Afin de permettre la vérification de votre compte,{" "}
             <b>
               veuillez envoyer votre code de validation par message au{" "}
               <a
