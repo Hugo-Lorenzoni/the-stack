@@ -182,7 +182,7 @@ const AddPhotosForm = memo(function AddPhotosForm({
           ? `Photos ajoutées : ${successNames.join(", ")}.`
           : "Aucune photo n'a été ajoutée.";
       toast.error("Certaines photos n'ont pas été ajoutées", {
-        description: `${failedCount} échec(s). ${successList} Consultez les notifications précédents pour plus d'informations.`,
+        description: `${failedCount} échec(s). ${successList} Consultez les notifications précédentes pour plus d'informations.`,
         duration: 10000,
       });
     } else if (successCount > 0) {
