@@ -60,6 +60,7 @@ model Photo {
   updatedAt       DateTime    @updatedAt @default(now())
 
   @@index([eventId])
+  @@unique([eventId, url])
 }
 
 model Sponsor {

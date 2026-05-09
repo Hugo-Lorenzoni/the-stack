@@ -3,6 +3,7 @@ import sizeOf from "image-size";
 import { saveFile } from "@/lib/files";
 import { getDirectoryPath, getFileName } from "@/lib/path";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 import { postHogServerClient } from "@/lib/posthog";
@@ -152,22 +153,33 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const event = await prisma.event.update({
-      where: { id: result.data },
-      data: {
-        photos: {
-          createMany: {
-            data: parsedPhotos,
+    let event;
+    try {
+      event = await prisma.event.update({
+        where: { id: result.data },
+        data: {
+          photos: {
+            createMany: {
+              data: parsedPhotos,
+            },
           },
         },
-      },
-      select: {
-        id: true,
-        title: true,
-        date: true,
-        photos: { orderBy: { name: "asc" } },
-      },
-    });
+        select: {
+          id: true,
+          title: true,
+          date: true,
+          photos: { orderBy: { name: "asc" } },
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        return NextResponse.json({ error: "Photo already exists" }, { status: 409 });
+      }
+      throw error;
+    }
     if (!event) {
       return NextResponse.json(
         { error: "Something went wrong." },

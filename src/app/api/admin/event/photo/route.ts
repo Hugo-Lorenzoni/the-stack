@@ -3,6 +3,7 @@ import sizeOf from "image-size";
 import { saveFile } from "@/lib/files";
 import { getDirectoryPath, getFileName } from "@/lib/path";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 import { postHogServerClient } from "@/lib/posthog";
@@ -130,20 +131,37 @@ export async function POST(request: NextRequest) {
         { status: 500 },
       );
     }
-    const createdPhoto = await prisma.photo.create({
-      data: {
-        ...parsedPhoto,
-        event: { connect: { id: currentEvent.id } },
-      },
-      select: {
-        id: true,
-        name: true,
-        url: true,
-        width: true,
-        height: true,
-        eventId: true,
-      },
-    });
+    let createdPhoto;
+    try {
+      createdPhoto = await prisma.photo.create({
+        data: {
+          ...parsedPhoto,
+          event: { connect: { id: currentEvent.id } },
+        },
+        select: {
+          id: true,
+          name: true,
+          url: true,
+          width: true,
+          height: true,
+          eventId: true,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              "Cette photo existe déjà dans la base de données pour cet événement.",
+          },
+          { status: 409 },
+        );
+      }
+      throw error;
+    }
     if (!createdPhoto) {
       postHogServerClient.captureException(
         new Error(`${photo.name} - db query failed`),
