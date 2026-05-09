@@ -1,10 +1,14 @@
 import sizeOf from "image-size";
 
 import { saveFile } from "@/lib/files";
+import { getDirectoryPath, getFileName } from "@/lib/path";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import * as z from "zod";
 import { postHogServerClient } from "@/lib/posthog";
+import { stat } from "fs/promises";
+import { join } from "path";
+import { env } from "process";
 
 const photoSchema = z.object({
   name: z.string(),
@@ -46,6 +50,48 @@ export async function POST(request: NextRequest) {
     const currentEvent = result.data;
 
     const photoFile = data.get("file") as File;
+
+    const relativeUploadDir = getDirectoryPath(
+      currentEvent.type,
+      new Date(currentEvent.date),
+      currentEvent.title,
+    );
+    const filename = getFileName(photoFile, false);
+    const relativePhotoUrl = `${relativeUploadDir}/${filename}`;
+
+    const existingPhoto = await prisma.photo.findFirst({
+      where: { url: relativePhotoUrl },
+      select: { id: true },
+    });
+    if (existingPhoto) {
+      postHogServerClient.captureException(
+        new Error(`Photo already exists in db: ${relativePhotoUrl}`),
+      );
+      return NextResponse.json(
+        { error: "Photo already exists" },
+        { status: 409 },
+      );
+    }
+
+    const photoPath = join(env.DATA_FOLDER, "photos", relativePhotoUrl);
+    try {
+      await stat(photoPath);
+      postHogServerClient.captureException(
+        new Error(`Photo already exists on disk: ${photoPath}`),
+      );
+      return NextResponse.json(
+        { error: "Photo already exists" },
+        { status: 409 },
+      );
+    } catch (error: any) {
+      if (error?.code !== "ENOENT") {
+        postHogServerClient.captureException(error);
+        return NextResponse.json(
+          { error: "Something went wrong." },
+          { status: 500 },
+        );
+      }
+    }
 
     const photoURL = await saveFile(
       photoFile,
