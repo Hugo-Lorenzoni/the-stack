@@ -52,9 +52,13 @@ const DeletePhotoButton = memo(function DeletePhotoButton({
       const response = await fetch(apiUrlEndpoint, postData);
       console.log(response);
       if (response.status == 200) {
-        const name = await response.json();
+        const payload = await response.json();
+        const name = payload?.name || photo.name;
+        const fileMissing = Boolean(payload?.fileMissing);
         toast.success("Suppression de la photo réussie", {
-          description: `${name} a été supprimé !`,
+          description: fileMissing
+            ? `${name} a été supprimée de la base de données. Le fichier était déjà absent sur le disque.`
+            : `${name} a été supprimée !`,
         });
         if (photos !== null) {
           setPhotos((prevPhotos: Photo[]) =>
@@ -62,8 +66,9 @@ const DeletePhotoButton = memo(function DeletePhotoButton({
           );
         }
       } else {
-        toast.error(response.status.toString(), {
-          description: response.statusText,
+        toast.error("Erreur lors de la suppression", {
+          description:
+            "Une erreur est survenue pendant la suppression de la photo.",
         });
       }
     } catch (error) {
@@ -82,7 +87,7 @@ const DeletePhotoButton = memo(function DeletePhotoButton({
           <div className="flex size-5 items-center justify-center">
             <Plus className="flex rotate-45 items-center justify-center" />
           </div>
-          <span className="sr-only text-lg">Delete</span>
+          <span className="sr-only text-lg">Supprimer</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -96,7 +101,7 @@ const DeletePhotoButton = memo(function DeletePhotoButton({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>Annuler</AlertDialogCancel>
           <AlertDialogAction
             className="bg-red-600 hover:bg-red-500"
             onClick={(e) => deletePhoto(e, photo)}
