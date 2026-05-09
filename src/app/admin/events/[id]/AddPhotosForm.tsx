@@ -128,11 +128,12 @@ const AddPhotosForm = memo(function AddPhotosForm({
             photo: res.photo as Photo,
           };
         } else if (response.status == 409) {
-          toast.warning("Photo déjà existante", {
+          toast.warning(`Photo déjà existante : ${values.photos[index].name}`, {
             description: await getResponseMessage(
               response,
               "Un événement avec ce nom et cette date existe déjà, ou le dossier cible est déjà présent.",
             ),
+            duration: 10000,
           });
           return { status: "duplicate" as const, index };
         } else if (response.status == 504) {
@@ -145,6 +146,7 @@ const AddPhotosForm = memo(function AddPhotosForm({
         } else {
           toast.error("Erreur lors de l'upload", {
             description: "Une erreur est survenue pendant l'envoi de la photo.",
+            duration: 10000,
           });
           return { status: "failed" as const, index };
         }
@@ -157,26 +159,34 @@ const AddPhotosForm = memo(function AddPhotosForm({
     let successCount = 0;
     let failedCount = 0;
     const newPhotos: Photo[] = [];
+    const successNames: string[] = [];
     for (let i = 0; i < values.photos.length; i++) {
       const result = await files[i];
       if (result?.status === "success") {
         successCount++;
         if (result.photo) {
           newPhotos.push(result.photo);
+          successNames.push(result.photo.name);
         }
-      } else if (result?.status !== "duplicate") {
+      } else {
         failedCount++;
       }
     }
-    if (successCount > 0) {
-      if (newPhotos.length > 0) {
-        onPhotosAdded(newPhotos);
-      }
-      toast.success(`${successCount} photos ajoutées avec succès !`);
+    if (newPhotos.length > 0) {
+      onPhotosAdded(newPhotos);
       reset();
     }
     if (failedCount > 0) {
-      toast.error(`${failedCount} photos n'ont pas été uploadées`);
+      const successList =
+        successNames.length > 0
+          ? `Photos ajoutées : ${successNames.join(", ")}.`
+          : "Aucune photo n'a été ajoutée.";
+      toast.error("Certaines photos n'ont pas été ajoutées", {
+        description: `${failedCount} échec(s). ${successList} Consultez les notifications précédents pour plus d'informations.`,
+        duration: 10000,
+      });
+    } else if (successCount > 0) {
+      toast.success(`${successCount} photos ajoutées avec succès !`);
     }
     setLoading(false);
     setProgress(0);
