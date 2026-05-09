@@ -35,7 +35,10 @@ export async function POST(request: NextRequest) {
       postHogServerClient.captureException(
         new Error("No values provided in the request"),
       );
-      return NextResponse.json({ message: "No values" }, { status: 500 });
+      return NextResponse.json(
+        { message: "Aucune valeur fournie dans la requête" },
+        { status: 500 },
+      );
     }
 
     const result = valuesSchema.safeParse(JSON.parse(values));
@@ -43,7 +46,7 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       postHogServerClient.captureException(result.error);
       return NextResponse.json(
-        { message: "Something went wrong !" },
+        { message: "Une erreur est survenue lors de l'upload de la photo." },
         { status: 500 },
       );
     }
@@ -68,7 +71,7 @@ export async function POST(request: NextRequest) {
         new Error(`Photo already exists in db: ${relativePhotoUrl}`),
       );
       return NextResponse.json(
-        { error: "Photo already exists" },
+        { error: "Cette photo existe déjà pour cet événement." },
         { status: 409 },
       );
     }
@@ -80,14 +83,17 @@ export async function POST(request: NextRequest) {
         new Error(`Photo already exists on disk: ${photoPath}`),
       );
       return NextResponse.json(
-        { error: "Photo already exists" },
+        {
+          error:
+            "Cette photo existe déjà dans la base de données pour cet événement.",
+        },
         { status: 409 },
       );
     } catch (error: any) {
       if (error?.code !== "ENOENT") {
         postHogServerClient.captureException(error);
         return NextResponse.json(
-          { error: "Something went wrong." },
+          { error: "Une erreur est survenue lors de l'upload de la photo." },
           { status: 500 },
         );
       }
@@ -117,7 +123,7 @@ export async function POST(request: NextRequest) {
         new Error("Failed parsing the photo"),
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
+        { error: "Une erreur est survenue lors de l'upload de la photo." },
         { status: 500 },
       );
     }
@@ -140,7 +146,7 @@ export async function POST(request: NextRequest) {
         new Error(`${photo.name} - db query failed`),
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
+        { error: "Une erreur est survenue lors de l'upload de la photo." },
         { status: 500 },
       );
     }
@@ -148,7 +154,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     postHogServerClient.captureException(error);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Une erreur est survenue lors de l'upload de la photo." },
       { status: 500 },
     );
   }

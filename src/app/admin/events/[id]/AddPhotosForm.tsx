@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Photo, Type } from "@prisma/client";
+import { getResponseMessage } from "@/lib/http";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -119,7 +120,7 @@ const AddPhotosForm = memo(function AddPhotosForm({
           // console.log(res);
           if (res.photo) {
             setProgress((value) => value + (1 / values.photos.length) * 100);
-            toast(`${res.photo.name} successfully added !`);
+            toast(`Photo ajoutée : ${res.photo.name}`);
           }
           return {
             status: "success" as const,
@@ -127,26 +128,23 @@ const AddPhotosForm = memo(function AddPhotosForm({
             photo: res.photo as Photo,
           };
         } else if (response.status == 409) {
-          const errorPayload = await response.json().catch(() => null);
           toast.warning("Photo déjà existante", {
-            description:
-              errorPayload?.error ||
-              "Cette photo existe déjà pour cet événement.",
+            description: await getResponseMessage(
+              response,
+              "Un événement avec ce nom et cette date existe déjà, ou le dossier cible est déjà présent.",
+            ),
           });
           return { status: "duplicate" as const, index };
         } else if (response.status == 504) {
-          toast.warning(
-            `${response.status.toString()} - ${response.statusText}`,
-            {
-              description:
-                "L'upload a pris trop de temps - La photo ne s'est peut-être pas uploadée correctement",
-              duration: 20000,
-            },
-          );
+          toast.warning("Délai dépassé", {
+            description:
+              "L'upload a pris trop de temps - La photo ne s'est peut-être pas uploadée correctement",
+            duration: 20000,
+          });
           return { status: "failed" as const, index };
         } else {
-          toast.error(response.status.toString(), {
-            description: response.statusText,
+          toast.error("Erreur lors de l'upload", {
+            description: "Une erreur est survenue pendant l'envoi de la photo.",
           });
           return { status: "failed" as const, index };
         }
@@ -174,11 +172,11 @@ const AddPhotosForm = memo(function AddPhotosForm({
       if (newPhotos.length > 0) {
         onPhotosAdded(newPhotos);
       }
-      toast.success(`${successCount} photos were successfully added !`);
+      toast.success(`${successCount} photos ajoutées avec succès !`);
       reset();
     }
     if (failedCount > 0) {
-      toast.error(`${failedCount} photos failed to be uploaded`);
+      toast.error(`${failedCount} photos n'ont pas été uploadées`);
     }
     setLoading(false);
     setProgress(0);
@@ -213,7 +211,7 @@ const AddPhotosForm = memo(function AddPhotosForm({
               reset();
             }}
           >
-            Reset
+            Réinitialiser
           </Button>
         </div>
       </form>
