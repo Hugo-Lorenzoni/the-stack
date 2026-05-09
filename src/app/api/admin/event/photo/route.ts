@@ -71,7 +71,10 @@ export async function POST(request: NextRequest) {
         new Error(`Photo already exists in db: ${relativePhotoUrl}`),
       );
       return NextResponse.json(
-        { error: "Cette photo existe déjà pour cet événement." },
+        {
+          error:
+            "Cette photo existe déjà dans la base de données pour cet événement.",
+        },
         { status: 409 },
       );
     }
@@ -85,7 +88,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Cette photo existe déjà dans la base de données pour cet événement.",
+            "Cette photo existe déjà dans le dossier d'upload pour cet événement.",
         },
         { status: 409 },
       );
