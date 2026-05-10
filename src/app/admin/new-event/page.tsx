@@ -317,8 +317,6 @@ export default function NewEventPage() {
         const response = await fetch(apiUrlEndpoint, postData);
         // console.log(response);
         if (response.status == 200) {
-          const res = await response.json();
-          console.log(res);
           setProgress((value) => value + (1 / failed.length) * 100);
           setFailed((prev) => prev.filter((p) => p.name !== photo.name));
 
@@ -531,6 +529,7 @@ export default function NewEventPage() {
                         required
                         placeholder="merciCPV"
                         {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
