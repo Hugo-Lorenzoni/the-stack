@@ -187,9 +187,9 @@ const EditEventModal = memo(function EditEventModal({
         </DialogTrigger>
         <DialogContent className="max-h-[95vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier l'événement</DialogTitle>
+            <DialogTitle>Modifier l&apos;événement</DialogTitle>
             <DialogDescription>
-              Vous pouvez modifier les détails de l'événement.
+              Vous pouvez modifier les détails de l&apos;événement.
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
