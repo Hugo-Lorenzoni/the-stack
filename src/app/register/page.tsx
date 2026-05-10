@@ -24,6 +24,7 @@ import { toast } from "sonner";
 
 import { AlertTriangle, Eye, EyeOff } from "lucide-react";
 import posthog from "posthog-js";
+import Link from "@/components/Link";
 
 const CercleList = [
   "FPMS",
@@ -138,8 +139,30 @@ export default function RegisterPage() {
         });
         router.push("/connexion");
       } else {
-        toast.error(response.status.toString(), {
-          description: response.statusText,
+        toast.error("Une erreur est survenue", {
+          description: (
+            <>
+              <div>
+                Il est possible que le compte avec cette adresse email existe
+                déjà ou qu&apos;un autre problème soit survenu.
+              </div>
+              <div>
+                Si vous avez déjà un compte et que vous ne parvenez pas à vous
+                connecter, vous pouvez{" "}
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-orange-600 underline"
+                >
+                  réinitialiser votre mot de passe
+                </Link>
+                .
+              </div>
+              <div className="italic">
+                Veuillez réessayer ou contacter un administrateur si le problème
+                persiste.
+              </div>
+            </>
+          ),
         });
       }
     } catch (error) {
