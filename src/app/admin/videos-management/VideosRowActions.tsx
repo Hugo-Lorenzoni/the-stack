@@ -47,6 +47,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 type Props = {
   row: Row<Video>;
@@ -171,6 +172,9 @@ export default function VideosRowActions({ row }: Props) {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Modification de la vidéo</DialogTitle>
+                <DialogDescription>
+                  Vous pouvez modifier les détails de la vidéo.
+                </DialogDescription>
               </DialogHeader>
               <Form {...form}>
                 <form
@@ -225,7 +229,7 @@ export default function VideosRowActions({ row }: Props) {
                               <Button
                                 variant="outline"
                                 className={cn(
-                                  "w-[240px] pl-3 text-left font-normal",
+                                  "w-60 pl-3 text-left font-normal",
                                   !field.value && "text-muted-foreground",
                                 )}
                               >

@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 import { getResponseMessage } from "@/lib/http";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
@@ -181,12 +182,15 @@ const EditEventModal = memo(function EditEventModal({
         <DialogTrigger asChild>
           <Button>
             <Pencil className="size-4" />
-            Edit
+            Modifier
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[95vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit event</DialogTitle>
+            <DialogTitle>Modifier l'événement</DialogTitle>
+            <DialogDescription>
+              Vous pouvez modifier les détails de l'événement.
+            </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form

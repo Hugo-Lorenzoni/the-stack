@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { NewCoverInput } from "./NewCoverInput";
 import ImageComponent from "@/components/ImageComponent";
 import { Input } from "@/components/ui/input";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 const MAX_FILE_SIZE = 10000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -148,6 +149,9 @@ const ChangeCoverModal = memo(function ChangeCoverModal({
         <DialogContent className="max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Changer la photo de couverture</DialogTitle>
+            <DialogDescription>
+              Choisissez une nouvelle photo de couverture pour l&apos;événement.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 text-sm">
             <div>Photo de couverture actuelle</div>
