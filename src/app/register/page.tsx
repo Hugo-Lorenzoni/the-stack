@@ -327,8 +327,8 @@ export default function RegisterPage() {
                             type="text"
                             required
                             placeholder="Exemple : Cercle des Sciences"
-                            defaultValue=""
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -346,8 +346,8 @@ export default function RegisterPage() {
                             type="text"
                             required
                             placeholder="Bruxelles"
-                            defaultValue=""
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -366,6 +366,7 @@ export default function RegisterPage() {
                             required
                             placeholder="Exemple : 183 ou 2020"
                             {...field}
+                            value={field.value ?? ""}
                             onChange={(event) =>
                               field.onChange(+event.target.value)
                             }
@@ -390,6 +391,7 @@ export default function RegisterPage() {
                           required
                           placeholder="Exemple : 183 ou 2020"
                           {...field}
+                          value={field.value ?? ""}
                           onChange={(event) =>
                             field.onChange(+event.target.value)
                           }
