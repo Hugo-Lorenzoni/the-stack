@@ -8,6 +8,8 @@ import Providers from "@/components/Providers";
 import { Toaster } from "sonner";
 import { env } from "node:process";
 
+export const dynamic = "force-dynamic";
+
 const inter = Poppins({
   subsets: ["latin"],
   weight: ["400", "600"],
