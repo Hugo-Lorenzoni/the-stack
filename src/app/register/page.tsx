@@ -390,9 +390,13 @@ export default function RegisterPage() {
                             placeholder="Exemple : 183 ou 2020"
                             {...field}
                             value={field.value ?? ""}
-                            onChange={(event) =>
-                              field.onChange(+event.target.value)
-                            }
+                            onChange={(e) => {
+                              field.onChange(
+                                e.target.value === ""
+                                  ? undefined
+                                  : +e.target.value,
+                              );
+                            }}
                           />
                         </FormControl>
                         <FormDescription>*Année de bâptème</FormDescription>
@@ -415,9 +419,13 @@ export default function RegisterPage() {
                           placeholder="Exemple : 183 ou 2020"
                           {...field}
                           value={field.value ?? ""}
-                          onChange={(event) =>
-                            field.onChange(+event.target.value)
-                          }
+                          onChange={(e) => {
+                            field.onChange(
+                              e.target.value === ""
+                                ? undefined
+                                : +e.target.value,
+                            );
+                          }}
                         />
                       </FormControl>
                       <FormDescription>*Année de bâptème</FormDescription>
