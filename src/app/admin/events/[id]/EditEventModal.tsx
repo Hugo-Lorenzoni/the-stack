@@ -3,6 +3,7 @@ import { Type } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -40,7 +41,6 @@ import { cn } from "@/lib/utils";
 import { getResponseMessage } from "@/lib/http";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { DialogDescription } from "@radix-ui/react-dialog";
 
 const TypeList = ["BAPTISE", "OUVERT", "AUTRE"] as const;
 
