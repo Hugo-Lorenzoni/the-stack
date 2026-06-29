@@ -3,6 +3,7 @@ import { Type } from "@prisma/client";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -181,12 +182,15 @@ const EditEventModal = memo(function EditEventModal({
         <DialogTrigger asChild>
           <Button>
             <Pencil className="size-4" />
-            Edit
+            Modifier
           </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[95vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit event</DialogTitle>
+            <DialogTitle>Modifier l&apos;événement</DialogTitle>
+            <DialogDescription>
+              Vous pouvez modifier les détails de l&apos;événement.
+            </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form

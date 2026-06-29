@@ -74,7 +74,20 @@ export default function ConnectionPage() {
             email: values.email,
           });
           toast.error("Erreur lors de la connexion", {
-            description: "Nom d'utilisateur ou mot de passe incorrect",
+            description: (
+              <div>
+                L&apos;adresse email ou le mot de passe est incorrect.
+                <br />
+                Si vous avez oublié votre mot de passe, vous pouvez{" "}
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-orange-600 underline"
+                >
+                  réinitialiser votre mot de passe
+                </Link>
+                .
+              </div>
+            ),
           });
         } else {
           toast.error(results.status.toString(), {
